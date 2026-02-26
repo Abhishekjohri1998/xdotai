@@ -18,12 +18,12 @@
 <body>
     <div class="admin-layout">
         <aside class="admin-sidebar">
-            <a href="/admin" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
+            <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
                     class="admin-badge">BLOG</span></a>
             <nav class="admin-nav">
-                <a href="/admin" class="admin-nav-link">📊 Dashboard</a>
-                <a href="/admin/blog" class="admin-nav-link active">📝 All Posts</a>
-                <a href="/admin/blog/new" class="admin-nav-link">✨ New Post</a>
+                <a href="/" class="admin-nav-link">📊 Dashboard</a>
+                <a href="/blog" class="admin-nav-link active">📝 All Posts</a>
+                <a href="/blog/new" class="admin-nav-link">✨ New Post</a>
                 <a href="/blogs" target="_blank" class="admin-nav-link">🌐 View Blog</a>
                 <hr style="border-color: var(--border-subtle); margin: 1rem 0;">
                 <span class="admin-nav-label"
@@ -33,14 +33,14 @@
                         <span style="font-size:0.8rem;color:var(--text-secondary);">
                             <%= cat.name %>
                         </span>
-                        <form method="POST" action="/admin/blog/category/<%= cat.id %>/delete" style="margin:0;"
+                        <form method="POST" action="/blog/category/<%= cat.id %>/delete" style="margin:0;"
                             onsubmit="return confirm('Delete category?')">
                             <button type="submit"
                                 style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.7rem;">✕</button>
                         </form>
                     </div>
                     <% }) %>
-                        <form method="POST" action="/admin/blog/category" style="padding:0.5rem 0.75rem;">
+                        <form method="POST" action="/blog/category" style="padding:0.5rem 0.75rem;">
                             <div style="display:flex;gap:4px;">
                                 <input type="text" name="name" placeholder="New category..." required
                                     style="flex:1;font-size:0.75rem;padding:0.3rem 0.5rem;">
@@ -51,14 +51,14 @@
             </nav>
             <div class="admin-sidebar-footer">
                 <span>Logged in as admin</span>
-                <a href="/admin/logout">Logout →</a>
+                <a href="/logout">Logout →</a>
             </div>
         </aside>
 
         <main class="admin-main">
             <div class="admin-header">
                 <h1>📝 Blog Manager</h1>
-                <a href="/admin/blog/new" class="admin-btn admin-btn-primary">✨ New Post</a>
+                <a href="/blog/new" class="admin-btn admin-btn-primary">✨ New Post</a>
             </div>
 
             <!-- Stats -->
@@ -96,7 +96,7 @@
                         <p style="font-size:2rem;">📝</p>
                         <h3>No blog posts yet</h3>
                         <p>Create your first blog post to get started!</p>
-                        <a href="/admin/blog/new" class="admin-btn admin-btn-primary" style="margin-top:1rem;">✨ Create
+                        <a href="/blog/new" class="admin-btn admin-btn-primary" style="margin-top:1rem;">✨ Create
                             First Post</a>
                     </div>
                     <% } else { %>
@@ -118,7 +118,7 @@
                                                 <div class="blog-table-thumb blog-table-thumb-empty">📄</div>
                                                 <% } %>
                                                     <div>
-                                                        <a href="/admin/blog/<%= post.slug %>/edit"
+                                                        <a href="/blog/<%= post.slug %>/edit"
                                                             class="blog-table-title">
                                                             <%= post.title %>
                                                         </a>
@@ -146,9 +146,9 @@
                                             {month:'short',day:'numeric',year:'numeric'}) : '—' %>
                                     </span>
                                     <div style="flex:0 0 120px;display:flex;gap:0.5rem;justify-content:flex-end;">
-                                        <a href="/admin/blog/<%= post.slug %>/edit"
+                                        <a href="/blog/<%= post.slug %>/edit"
                                             class="admin-btn admin-btn-secondary admin-btn-small">Edit</a>
-                                        <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
+                                        <form method="POST" action="/blog/<%= post.slug %>/delete"
                                             style="margin:0;" onsubmit="return confirm('Delete this post?')">
                                             <button type="submit" class="admin-btn admin-btn-small"
                                                 style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">✕</button>
@@ -165,7 +165,7 @@
     <script>
         async function toggleFeatured(id, btn) {
             try {
-                const res = await fetch(`/admin/api/blog/toggle-featured/${id}`, { method: 'POST' });
+                const res = await fetch(`/api/blog/toggle-featured/${id}`, { method: 'POST' });
                 const data = await res.json();
                 if (data.success) {
                     btn.textContent = data.is_featured ? '⭐' : '☆';

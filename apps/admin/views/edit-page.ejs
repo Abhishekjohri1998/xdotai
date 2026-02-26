@@ -21,27 +21,27 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <a href="/" class="admin-logo">
+                <a href="https://xdotai.in" class="admin-logo">
                     <span class="logo-x">X</span> DOT AI
                 </a>
                 <span class="admin-badge">CMS</span>
             </div>
             <nav class="admin-nav">
-                <a href="/admin" class="admin-nav-item">
+                <a href="/" class="admin-nav-item">
                     <span class="admin-nav-icon">📊</span> Dashboard
                 </a>
                 <div class="admin-nav-separator">Pages</div>
                 <% const allSlugs=['home','services','process','portfolio','insights','faq','contact','about'];
                     allSlugs.forEach(slug=> {
                     %>
-                    <a href="/admin/page/<%= slug %>" class="admin-nav-item <%= slug === page.slug ? 'active' : '' %>">
+                    <a href="/page/<%= slug %>" class="admin-nav-item <%= slug === page.slug ? 'active' : '' %>">
                         <span class="admin-nav-icon">📄</span>
                         <%= slug.charAt(0).toUpperCase() + slug.slice(1) %>
                     </a>
                     <% }) %>
             </nav>
             <div class="admin-sidebar-footer">
-                <a href="/admin/logout" class="admin-logout">Logout →</a>
+                <a href="/logout" class="admin-logout">Logout →</a>
             </div>
         </aside>
 
@@ -61,7 +61,7 @@
                     <!-- Page Meta -->
                     <div class="admin-card">
                         <h2>Page Settings & SEO</h2>
-                        <form method="POST" action="/admin/page/<%= page.slug %>">
+                        <form method="POST" action="/page/<%= page.slug %>">
                             <div class="admin-form-group">
                                 <label>Page Title (SEO)</label>
                                 <input type="text" name="title" value="<%= page.title %>" required>
@@ -99,7 +99,7 @@
 
                             <% portfolioCategories.forEach(cat=> { %>
                                 <div class="admin-section-item">
-                                    <form method="POST" action="/admin/category/<%= cat.id %>"
+                                    <form method="POST" action="/category/<%= cat.id %>"
                                         class="admin-section-form">
                                         <div class="admin-form-row">
                                             <div class="admin-form-group" style="flex:2">
@@ -120,7 +120,7 @@
                                                 class="admin-btn admin-btn-primary admin-btn-small">Save</button>
                                         </div>
                                     </form>
-                                    <form method="POST" action="/admin/category/<%= cat.id %>/delete"
+                                    <form method="POST" action="/category/<%= cat.id %>/delete"
                                         class="admin-delete-form"
                                         onsubmit="return confirm('Delete category: <%= cat.name %>?')">
                                         <button type="submit"
@@ -133,7 +133,7 @@
                                     <details class="admin-add-section">
                                         <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add Category
                                         </summary>
-                                        <form method="POST" action="/admin/category" class="admin-section-form"
+                                        <form method="POST" action="/category" class="admin-section-form"
                                             style="margin-top: 1rem;">
                                             <div class="admin-form-row">
                                                 <div class="admin-form-group" style="flex:2">
@@ -173,7 +173,7 @@
 
                                         <% sections[type].forEach(s=> { %>
                                             <div class="admin-section-item">
-                                                <form method="POST" action="/admin/section/<%= s.id %>"
+                                                <form method="POST" action="/section/<%= s.id %>"
                                                     class="admin-section-form">
 
                                                     <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
@@ -255,7 +255,7 @@
                                                                         class="admin-btn admin-btn-primary admin-btn-small">Save</button>
                                                                 </div>
                                                 </form>
-                                                <form method="POST" action="/admin/section/<%= s.id %>/delete"
+                                                <form method="POST" action="/section/<%= s.id %>/delete"
                                                     class="admin-delete-form"
                                                     onsubmit="return confirm('Delete this section?')">
                                                     <button type="submit"
@@ -270,7 +270,7 @@
                                                         <%= type.replace(/-/g, ' ' ) %>
                                                     </summary>
                                                     <form method="POST"
-                                                        action="/admin/page/<%= page.slug %>/add-section"
+                                                        action="/page/<%= page.slug %>/add-section"
                                                         class="admin-section-form" style="margin-top: 1rem;">
                                                         <input type="hidden" name="type" value="<%= type %>">
 
@@ -374,7 +374,7 @@
                         this.style.borderColor = '#7c3aed';
 
                         try {
-                            const res = await fetch(`/admin/api/youtube-info?url=${encodeURIComponent(url)}`);
+                            const res = await fetch(`/api/youtube-info?url=${encodeURIComponent(url)}`);
                             const data = await res.json();
                             if (data.title && titleField && (!titleField.value || titleField.value === titleField.defaultValue)) {
                                 titleField.value = data.title;

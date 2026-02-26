@@ -920,7 +920,7 @@
         <div class="vb-center">
             <div class="vb-toolbar">
                 <div class="vb-toolbar-group">
-                    <a href="/admin/page/<%= page.slug %>" class="vb-toolbar-btn">← Back</a>
+                    <a href="/page/<%= page.slug %>" class="vb-toolbar-btn">← Back</a>
                     <span class="vb-toolbar-title">Editing: <strong>
                             <%= page.title %>
                         </strong></span>
@@ -1021,7 +1021,7 @@
             btn.textContent = '⏳ Saving...';
             status.textContent = '';
             try {
-                const res = await fetch('/admin/api/save-blocks', {
+                const res = await fetch('/api/save-blocks', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ slug: PAGE_SLUG, blocks })
@@ -1231,7 +1231,7 @@
                 formData.append('file', file);
                 formData.append('alt_text', file.name.replace(/\.[^.]+$/, ''));
                 try {
-                    const res = await fetch('/admin/api/upload', { method: 'POST', body: formData });
+                    const res = await fetch('/api/upload', { method: 'POST', body: formData });
                     const data = await res.json();
                     if (data.success && data.media) {
                         const block = blocks.find(b => b.id === targetBlockId);

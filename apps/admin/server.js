@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 
 // ─── Routes ──────────────────────────────────────────────
 const adminRoutes = require('./routes/admin');
-app.use('/admin', adminRoutes);
+app.use('/', adminRoutes);
 
 // ─── Start Server ────────────────────────────────────────
 if (require.main === module) {

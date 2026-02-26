@@ -19,19 +19,19 @@
 <body>
     <div class="admin-layout">
         <aside class="admin-sidebar">
-            <a href="/admin" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
+            <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
                     class="admin-badge">BLOG</span></a>
             <nav class="admin-nav">
-                <a href="/admin" class="admin-nav-link">📊 Dashboard</a>
-                <a href="/admin/blog" class="admin-nav-link">📝 All Posts</a>
-                <a href="/admin/blog/new" class="admin-nav-link <%= isNew ? 'active' : '' %>">✨ New Post</a>
+                <a href="/" class="admin-nav-link">📊 Dashboard</a>
+                <a href="/blog" class="admin-nav-link">📝 All Posts</a>
+                <a href="/blog/new" class="admin-nav-link <%= isNew ? 'active' : '' %>">✨ New Post</a>
                 <% if (!isNew && post) { %>
                     <a href="/blogs/<%= post.slug %>" target="_blank" class="admin-nav-link">🌐 View Post</a>
                     <% } %>
             </nav>
             <div class="admin-sidebar-footer">
                 <span>Logged in as admin</span>
-                <a href="/admin/logout">Logout →</a>
+                <a href="/logout">Logout →</a>
             </div>
         </aside>
 
@@ -39,14 +39,14 @@
             <% if (typeof success !=='undefined' || (typeof req !=='undefined' )) { %>
                 <% } %>
 
-                    <form method="POST" action="/admin/blog/<%= isNew ? 'new' : post.slug %>"
+                    <form method="POST" action="/blog/<%= isNew ? 'new' : post.slug %>"
                         enctype="multipart/form-data" id="blogForm">
                         <div class="admin-header" style="margin-bottom:1rem;">
                             <h1>
                                 <%= isNew ? '✨ New Blog Post' : '✏️ Edit Post' %>
                             </h1>
                             <div style="display:flex;gap:0.5rem;">
-                                <a href="/admin/blog" class="admin-btn admin-btn-secondary">← Back</a>
+                                <a href="/blog" class="admin-btn admin-btn-secondary">← Back</a>
                                 <button type="submit" name="status" value="draft"
                                     class="admin-btn admin-btn-secondary">💾 Save Draft</button>
                                 <button type="submit" name="status" value="published"
@@ -281,7 +281,7 @@
                                     <div class="admin-card" style="padding:1.25rem;">
                                         <h3 style="margin:0 0 0.75rem;font-size:0.9rem;color:#ef4444;">⚠️ Danger Zone
                                         </h3>
-                                        <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
+                                        <form method="POST" action="/blog/<%= post.slug %>/delete"
                                             onsubmit="return confirm('Are you sure you want to delete this post? This cannot be undone.')">
                                             <button type="submit" class="admin-btn admin-btn-small"
                                                 style="width:100%;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">🗑️
@@ -389,7 +389,7 @@
             status.textContent = '⏳ Generating article...';
 
             try {
-                const res = await fetch('/admin/api/blog/ai-generate', {
+                const res = await fetch('/api/blog/ai-generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ topic, style })
@@ -424,7 +424,7 @@
             status.textContent = '⏳ Optimizing SEO...';
 
             try {
-                const res = await fetch('/admin/api/blog/ai-seo', {
+                const res = await fetch('/api/blog/ai-seo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ title, content })
@@ -516,7 +516,7 @@
 
             const content = quill.root.innerHTML;
             try {
-                const res = await fetch('/admin/api/ai-generate-faqs', {
+                const res = await fetch('/api/ai-generate-faqs', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ title, content, pageType: 'blog' })

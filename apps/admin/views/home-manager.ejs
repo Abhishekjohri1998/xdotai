@@ -18,19 +18,19 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+                <a href="https://xdotai.in" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
                 <span class="admin-badge">CMS</span>
             </div>
             <nav class="admin-nav">
-                <a href="/admin" class="admin-nav-item"><span class="admin-nav-icon">📊</span> Dashboard</a>
-                <a href="/admin/blog" class="admin-nav-item"><span class="admin-nav-icon">📝</span> Blog Manager</a>
-                <a href="/admin/nav-logos" class="admin-nav-item"><span class="admin-nav-icon">🧭</span> Nav &
+                <a href="/" class="admin-nav-item"><span class="admin-nav-icon">📊</span> Dashboard</a>
+                <a href="/blog" class="admin-nav-item"><span class="admin-nav-icon">📝</span> Blog Manager</a>
+                <a href="/nav-logos" class="admin-nav-item"><span class="admin-nav-icon">🧭</span> Nav &
                     Logos</a>
-                <a href="/admin/home-manager" class="admin-nav-item active"><span class="admin-nav-icon">🏠</span> Home
+                <a href="/home-manager" class="admin-nav-item active"><span class="admin-nav-icon">🏠</span> Home
                     Manager</a>
                 <div class="admin-nav-separator">Pages</div>
                 <% pages.forEach(p=> { %>
-                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
+                    <a href="/page/<%= p.slug %>" class="admin-nav-item">
                         <span class="admin-nav-icon">📄</span>
                         <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
                     </a>
@@ -40,7 +40,7 @@
                 <span>Logged in as <strong>
                         <%= adminUser %>
                     </strong></span>
-                <a href="/admin/logout" class="admin-logout">Logout →</a>
+                <a href="/logout" class="admin-logout">Logout →</a>
             </div>
         </aside>
 
@@ -48,10 +48,10 @@
             <div class="admin-header">
                 <h1>🏠 Home Page Manager</h1>
                 <div style="display:flex;gap:0.5rem;">
-                    <a href="/admin/page/home" class="admin-btn admin-btn-secondary">⚙️ Page Settings</a>
-                    <a href="/admin/visual-builder/home" class="admin-btn"
+                    <a href="/page/home" class="admin-btn admin-btn-secondary">⚙️ Page Settings</a>
+                    <a href="/visual-builder/home" class="admin-btn"
                         style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;">🎨 Visual Builder</a>
-                    <a href="/" target="_blank" class="admin-btn admin-btn-secondary">View Site ↗</a>
+                    <a href="https://xdotai.in" target="_blank" class="admin-btn admin-btn-secondary">View Site ↗</a>
                 </div>
             </div>
 
@@ -102,11 +102,11 @@
                                 <!-- Edit form (hidden by default) -->
                                 <div class="section-edit-form hm-hidden"
                                     style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);">
-                                    <form action="/admin/home-sections/<%= sec.id %>" method="POST">
+                                    <form action="/home-sections/<%= sec.id %>" method="POST">
 
                                         <% if (sec.section_key==='hero' ) { %>
                                             <p style="color:#888;font-size:0.8rem;margin:0 0 0.75rem;">Hero title, label
-                                                & subtitle are set in <a href="/admin/page/home"
+                                                & subtitle are set in <a href="/page/home"
                                                     style="color:#a78bfa;">Page Settings</a>. Edit the hero buttons
                                                 below:</p>
                                             <div
@@ -186,7 +186,7 @@
 
                                                 <% } else if (sec.section_key==='partners' ) { %>
                                                     <p style="color:#888;font-size:0.8rem;margin:0 0 0.5rem;">Logos
-                                                        managed in <a href="/admin/nav-logos" style="color:#a78bfa;">Nav
+                                                        managed in <a href="/nav-logos" style="color:#a78bfa;">Nav
                                                             & Logos</a>.</p>
                                                     <div><label class="admin-form-label">Header Text</label><input
                                                             type="text" name="heading" value="<%= sec.heading %>"
@@ -309,7 +309,7 @@
 
                     <script>
                         function toggleSection(id, checkbox) {
-                            fetch('/admin/home-sections/' + id + '/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                            fetch('/home-sections/' + id + '/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
                                 .then(r => r.json()).then(() => {
                                     const card = checkbox.closest('.home-section-card');
                                     card.style.opacity = checkbox.checked ? '1' : '0.6';
@@ -355,7 +355,7 @@
 
                         function saveOrder() {
                             const order = [...container.querySelectorAll('.home-section-card')].map(c => parseInt(c.dataset.id));
-                            fetch('/admin/home-sections/reorder', {
+                            fetch('/home-sections/reorder', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ order })

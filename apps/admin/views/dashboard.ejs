@@ -21,28 +21,28 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <a href="/" class="admin-logo">
+                <a href="https://xdotai.in" class="admin-logo">
                     <span class="logo-x">X</span> DOT AI
                 </a>
                 <span class="admin-badge">CMS</span>
             </div>
 
             <nav class="admin-nav">
-                <a href="/admin" class="admin-nav-item active">
+                <a href="/" class="admin-nav-item active">
                     <span class="admin-nav-icon">📊</span> Dashboard
                 </a>
-                <a href="/admin/blog" class="admin-nav-item">
+                <a href="/blog" class="admin-nav-item">
                     <span class="admin-nav-icon">📝</span> Blog Manager
                 </a>
-                <a href="/admin/nav-logos" class="admin-nav-item">
+                <a href="/nav-logos" class="admin-nav-item">
                     <span class="admin-nav-icon">🧭</span> Nav & Logos
                 </a>
-                <a href="/admin/home-manager" class="admin-nav-item">
+                <a href="/home-manager" class="admin-nav-item">
                     <span class="admin-nav-icon">🏠</span> Home Manager
                 </a>
                 <div class="admin-nav-separator">Pages</div>
                 <% pages.forEach(p=> { %>
-                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
+                    <a href="/page/<%= p.slug %>" class="admin-nav-item">
                         <span class="admin-nav-icon">📄</span>
                         <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
                             <span class="admin-nav-badge">
@@ -56,7 +56,7 @@
                 <span>Logged in as <strong>
                         <%= adminUser %>
                     </strong></span>
-                <a href="/admin/logout" class="admin-logout">Logout →</a>
+                <a href="/logout" class="admin-logout">Logout →</a>
             </div>
         </aside>
 
@@ -64,8 +64,8 @@
         <main class="admin-main">
             <div class="admin-header">
                 <h1>Dashboard</h1>
-                <a href="/" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
-                <a href="/admin/page-create" class="admin-btn admin-btn-primary">✨ Create New Page</a>
+                <a href="https://xdotai.in" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
+                <a href="/page-create" class="admin-btn admin-btn-primary">✨ Create New Page</a>
             </div>
 
             <% if (typeof saved !=='undefined' && saved) { %>
@@ -109,7 +109,7 @@
                     <!-- Site Settings -->
                     <div class="admin-card">
                         <h2>Site Settings</h2>
-                        <form method="POST" action="/admin/settings" class="admin-settings-form">
+                        <form method="POST" action="/settings" class="admin-settings-form">
                             <div class="admin-form-row">
                                 <div class="admin-form-group">
                                     <label>Site Name</label>
@@ -161,7 +161,7 @@
                     <!-- Branding: Favicon & Logo -->
                     <div class="admin-card">
                         <h2>🎨 Branding</h2>
-                        <form method="POST" action="/admin/branding" enctype="multipart/form-data">
+                        <form method="POST" action="/branding" enctype="multipart/form-data">
                             <div class="admin-form-row">
                                 <div class="admin-form-group">
                                     <label>🔷 Favicon <small
@@ -207,7 +207,7 @@
                     <!-- Change Password -->
                     <div class="admin-card">
                         <h2>🔒 Change Admin Password</h2>
-                        <form method="POST" action="/admin/change-password">
+                        <form method="POST" action="/change-password">
                             <% if (typeof pwError !=='undefined' && pwError) { %>
                                 <div class="admin-alert"
                                     style="background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.3); color:#ef4444; margin-bottom:1rem;">
@@ -267,7 +267,7 @@
                                                 <%= p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '—' %>
                                             </td>
                                             <td>
-                                                <a href="/admin/page/<%= p.slug %>"
+                                                <a href="/page/<%= p.slug %>"
                                                     class="admin-btn admin-btn-small">Edit</a>
                                                 <a href="/<%= p.slug === 'home' ? '' : p.slug %>"
                                                     class="admin-btn admin-btn-small admin-btn-secondary"

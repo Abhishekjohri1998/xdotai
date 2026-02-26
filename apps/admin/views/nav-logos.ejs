@@ -18,19 +18,19 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+                <a href="https://xdotai.in" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
                 <span class="admin-badge">CMS</span>
             </div>
             <nav class="admin-nav">
-                <a href="/admin" class="admin-nav-item"><span class="admin-nav-icon">📊</span> Dashboard</a>
-                <a href="/admin/blog" class="admin-nav-item"><span class="admin-nav-icon">📝</span> Blog Manager</a>
-                <a href="/admin/nav-logos" class="admin-nav-item active"><span class="admin-nav-icon">🧭</span> Nav &
+                <a href="/" class="admin-nav-item"><span class="admin-nav-icon">📊</span> Dashboard</a>
+                <a href="/blog" class="admin-nav-item"><span class="admin-nav-icon">📝</span> Blog Manager</a>
+                <a href="/nav-logos" class="admin-nav-item active"><span class="admin-nav-icon">🧭</span> Nav &
                     Logos</a>
-                <a href="/admin/home-manager" class="admin-nav-item"><span class="admin-nav-icon">🏠</span> Home
+                <a href="/home-manager" class="admin-nav-item"><span class="admin-nav-icon">🏠</span> Home
                     Manager</a>
                 <div class="admin-nav-separator">Pages</div>
                 <% pages.forEach(p=> { %>
-                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
+                    <a href="/page/<%= p.slug %>" class="admin-nav-item">
                         <span class="admin-nav-icon">📄</span>
                         <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
                     </a>
@@ -40,14 +40,14 @@
                 <span>Logged in as <strong>
                         <%= adminUser %>
                     </strong></span>
-                <a href="/admin/logout" class="admin-logout">Logout →</a>
+                <a href="/logout" class="admin-logout">Logout →</a>
             </div>
         </aside>
 
         <main class="admin-main">
             <div class="admin-header">
                 <h1>🧭 Navigation & 🏢 Client Logos</h1>
-                <a href="/" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
+                <a href="https://xdotai.in" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
             </div>
 
             <% if (saved) { %>
@@ -78,7 +78,7 @@
                                     <% navLinks.forEach(n=> { %>
                                         <tr style="<%= n.parent_id ? 'opacity:0.75;' : '' %>">
                                             <td>
-                                                <form method="POST" action="/admin/nav-links/<%= n.id %>"
+                                                <form method="POST" action="/nav-links/<%= n.id %>"
                                                     style="display:inline;">
                                                     <input type="hidden" name="label" value="<%= n.label %>">
                                                     <input type="hidden" name="url" value="<%= n.url %>">
@@ -99,7 +99,7 @@
                                                     || '—' : '—' %>
                                             </td>
                                             <td>
-                                                <form method="POST" action="/admin/nav-links/<%= n.id %>/toggle"
+                                                <form method="POST" action="/nav-links/<%= n.id %>/toggle"
                                                     style="display:inline;">
                                                     <button type="submit" class="admin-btn admin-btn-small"
                                                         style="min-width:40px;">
@@ -112,7 +112,7 @@
                                                     data-id="<%= n.id %>" data-label="<%= n.label %>"
                                                     data-url="<%= n.url %>" data-parent="<%= n.parent_id || '' %>"
                                                     data-order="<%= n.sort_order %>">Edit</button>
-                                                <form method="POST" action="/admin/nav-links/<%= n.id %>/delete"
+                                                <form method="POST" action="/nav-links/<%= n.id %>/delete"
                                                     style="display:inline;">
                                                     <button type="submit"
                                                         class="admin-btn admin-btn-small admin-btn-danger"
@@ -128,7 +128,7 @@
                         <!-- Add / Edit Nav Link -->
                         <div class="admin-card" style="margin-top:1rem; background:var(--bg-tertiary);" id="navForm">
                             <h3 id="navFormTitle">Add Navigation Link</h3>
-                            <form method="POST" action="/admin/nav-links/add" id="navLinkForm">
+                            <form method="POST" action="/nav-links/add" id="navLinkForm">
                                 <input type="hidden" name="edit_id" id="navEditId" value="">
                                 <div class="admin-form-row">
                                     <div class="admin-form-group" style="flex:2">
@@ -194,7 +194,7 @@
                                                 </div>
                                                 <div style="display:flex; gap:0.5rem; justify-content:center;">
                                                     <form method="POST"
-                                                        action="/admin/client-logos/<%= logo.id %>/toggle"
+                                                        action="/client-logos/<%= logo.id %>/toggle"
                                                         style="display:inline;">
                                                         <button type="submit" class="admin-btn admin-btn-small">
                                                             <%= logo.is_active ? '✅ Active' : '❌ Hidden' %>
@@ -206,7 +206,7 @@
                                                         data-website="<%= logo.website_url %>"
                                                         data-order="<%= logo.sort_order %>">Edit</button>
                                                     <form method="POST"
-                                                        action="/admin/client-logos/<%= logo.id %>/delete"
+                                                        action="/client-logos/<%= logo.id %>/delete"
                                                         style="display:inline;">
                                                         <button type="submit"
                                                             class="admin-btn admin-btn-small admin-btn-danger"
@@ -220,7 +220,7 @@
                         <!-- Add / Edit Logo -->
                         <div class="admin-card" style="background:var(--bg-tertiary);" id="logoForm">
                             <h3 id="logoFormTitle">Add Client Logo</h3>
-                            <form method="POST" action="/admin/client-logos/add" id="logoFormEl"
+                            <form method="POST" action="/client-logos/add" id="logoFormEl"
                                 enctype="multipart/form-data">
                                 <input type="hidden" name="edit_id" id="logoEditId" value="">
                                 <div class="admin-form-row">
@@ -272,7 +272,7 @@
                 document.getElementById('navParent').value = btn.dataset.parent;
                 document.getElementById('navOrder').value = btn.dataset.order;
                 document.getElementById('navFormTitle').textContent = 'Edit Navigation Link';
-                document.getElementById('navLinkForm').action = '/admin/nav-links/' + btn.dataset.id;
+                document.getElementById('navLinkForm').action = '/nav-links/' + btn.dataset.id;
                 document.getElementById('navCancelBtn').style.display = '';
                 document.getElementById('navForm').scrollIntoView({ behavior: 'smooth' });
             });
@@ -285,7 +285,7 @@
             document.getElementById('navParent').value = '';
             document.getElementById('navOrder').value = '0';
             document.getElementById('navFormTitle').textContent = 'Add Navigation Link';
-            document.getElementById('navLinkForm').action = '/admin/nav-links/add';
+            document.getElementById('navLinkForm').action = '/nav-links/add';
             document.getElementById('navCancelBtn').style.display = 'none';
         }
 
@@ -298,7 +298,7 @@
                 document.getElementById('logoWebsiteUrl').value = btn.dataset.website;
                 document.getElementById('logoOrder').value = btn.dataset.order;
                 document.getElementById('logoFormTitle').textContent = 'Edit Client Logo';
-                document.getElementById('logoFormEl').action = '/admin/client-logos/' + btn.dataset.id;
+                document.getElementById('logoFormEl').action = '/client-logos/' + btn.dataset.id;
                 document.getElementById('logoCancelBtn').style.display = '';
                 document.getElementById('logoForm').scrollIntoView({ behavior: 'smooth' });
             });
@@ -311,7 +311,7 @@
             document.getElementById('logoWebsiteUrl').value = '';
             document.getElementById('logoOrder').value = '0';
             document.getElementById('logoFormTitle').textContent = 'Add Client Logo';
-            document.getElementById('logoFormEl').action = '/admin/client-logos/add';
+            document.getElementById('logoFormEl').action = '/client-logos/add';
             document.getElementById('logoCancelBtn').style.display = 'none';
         }
     </script>

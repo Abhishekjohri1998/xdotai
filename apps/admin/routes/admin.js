@@ -9,7 +9,7 @@ const upload = require('@xdotai/shared/backend/middleware/upload');
 
 // ─── Login ───────────────────────────────────────────────
 router.get('/login', (req, res) => {
-    if (req.session && req.session.isAdmin) return res.redirect('/admin');
+    if (req.session && req.session.isAdmin) return res.redirect('/');
     res.render('login', { error: null, title: 'Admin Login — X DOT AI' });
 });
 
@@ -19,12 +19,12 @@ router.post('/login', async (req, res) => {
     if (user && bcrypt.compareSync(password, user.password)) {
         req.session.isAdmin = true;
         req.session.adminUser = username;
-        return res.redirect('/admin');
+        return res.redirect('/');
     }
     res.render('login', { error: 'Invalid credentials', title: 'Admin Login — X DOT AI' });
 });
 
-router.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/admin/login'); });
+router.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/login'); });
 
 // ─── Dashboard ───────────────────────────────────────────
 router.get('/', requireAuth, async (req, res) => {
@@ -47,10 +47,10 @@ router.get('/', requireAuth, async (req, res) => {
 // ─── Page Builder (Edit Page) ────────────────────────────
 router.get('/page/:slug', requireAuth, async (req, res) => {
     const page = await Page.findOne({ slug: req.params.slug }).lean();
-    if (!page) return res.redirect('/admin');
+    if (!page) return res.redirect('/');
     page.id = page._id;
 
-    if (page.template === 'blog') return res.redirect('/admin/blog');
+    if (page.template === 'blog') return res.redirect('/blog');
 
     const sections = await Section.find({ page_id: page._id }).sort({ type: 1, sort_order: 1 }).lean();
     const grouped = {};

@@ -22,22 +22,22 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+                <a href="https://xdotai.in" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
                 <span class="admin-badge">PAGE BUILDER</span>
             </div>
             <nav class="admin-nav">
-                <a href="/admin" class="admin-nav-item">
+                <a href="/" class="admin-nav-item">
                     <span class="admin-nav-icon">📊</span> Dashboard
                 </a>
                 <div class="admin-nav-separator">Pages</div>
                 <% allPages.forEach(p=> { %>
-                    <a href="/admin/page/<%= p.slug %>"
+                    <a href="/page/<%= p.slug %>"
                         class="admin-nav-item <%= p.slug === page.slug ? 'active' : '' %>">
                         <span class="admin-nav-icon">📄</span>
                         <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
                     </a>
                     <% }) %>
-                        <a href="/admin/page-create" class="admin-nav-item"
+                        <a href="/page-create" class="admin-nav-item"
                             style="color: var(--accent-secondary); margin-top: 0.5rem;">
                             <span class="admin-nav-icon">➕</span> Create New Page
                         </a>
@@ -46,7 +46,7 @@
                 <span>Logged in as <strong>
                         <%= typeof settings !=='undefined' ? 'admin' : 'admin' %>
                     </strong></span>
-                <a href="/admin/logout" class="admin-logout">Logout →</a>
+                <a href="/logout" class="admin-logout">Logout →</a>
             </div>
         </aside>
 
@@ -59,7 +59,7 @@
                     <span class="pb-page-slug">/<%= page.slug==='home' ? '' : page.slug %></span>
                 </div>
                 <div class="pb-header-actions">
-                    <a href="/admin/visual-builder/<%= page.slug %>" class="admin-btn admin-btn-primary">🎨 Visual
+                    <a href="/visual-builder/<%= page.slug %>" class="admin-btn admin-btn-primary">🎨 Visual
                         Builder</a>
                     <a href="/<%= page.slug === 'home' ? '' : (page.slug === 'about' ? 'about-da-sachin' : page.slug) %>"
                         class="admin-btn admin-btn-secondary" target="_blank">View Page ↗</a>
@@ -79,7 +79,7 @@
                             <span class="pb-toggle-icon">▾</span>
                         </h2>
                         <div class="pb-card-body">
-                            <form method="POST" action="/admin/page/<%= page.slug %>">
+                            <form method="POST" action="/page/<%= page.slug %>">
                                 <div class="admin-form-row">
                                     <div class="admin-form-group" style="flex:3">
                                         <label>Page Title (SEO) <span class="pb-char-count"
@@ -149,7 +149,7 @@
                             <span class="pb-toggle-icon">▸</span>
                         </h2>
                         <div class="pb-card-body" style="display:none;">
-                            <form method="POST" action="/admin/page/<%= page.slug %>" id="schemaFaqForm">
+                            <form method="POST" action="/page/<%= page.slug %>" id="schemaFaqForm">
                                 <!-- Hidden fields to carry page settings -->
                                 <input type="hidden" name="title" value="<%= page.title %>">
                                 <input type="hidden" name="meta_description" value="<%= page.meta_description %>">
@@ -236,7 +236,7 @@
                                                         : '🔴 Inactive' %></small>
                                         </div>
                                     </div>
-                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>"
+                                    <form method="POST" action="/hero-banner/<%= b.id %>"
                                         enctype="multipart/form-data" class="admin-section-form">
                                         <div class="admin-form-row">
                                             <div class="admin-form-group" style="flex:2">
@@ -306,7 +306,7 @@
                                                 class="admin-btn admin-btn-primary admin-btn-small">Save Banner</button>
                                         </div>
                                     </form>
-                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>/delete"
+                                    <form method="POST" action="/hero-banner/<%= b.id %>/delete"
                                         class="admin-delete-form" onsubmit="return confirm('Delete this banner?')">
                                         <button type="submit"
                                             class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
@@ -317,7 +317,7 @@
                                     <details class="admin-add-section">
                                         <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add Hero Banner
                                         </summary>
-                                        <form method="POST" action="/admin/page/<%= page.slug %>/hero-banner"
+                                        <form method="POST" action="/page/<%= page.slug %>/hero-banner"
                                             enctype="multipart/form-data" class="admin-section-form"
                                             style="margin-top:1rem;">
                                             <div class="admin-form-row">
@@ -385,7 +385,7 @@
                             <div class="pb-card-body">
                                 <% portfolioCategories.forEach(cat=> { %>
                                     <div class="admin-section-item">
-                                        <form method="POST" action="/admin/category/<%= cat.id %>"
+                                        <form method="POST" action="/category/<%= cat.id %>"
                                             class="admin-section-form">
                                             <div class="admin-form-row">
                                                 <div class="admin-form-group" style="flex:2">
@@ -407,7 +407,7 @@
                                                     class="admin-btn admin-btn-primary admin-btn-small">Save</button>
                                             </div>
                                         </form>
-                                        <form method="POST" action="/admin/category/<%= cat.id %>/delete"
+                                        <form method="POST" action="/category/<%= cat.id %>/delete"
                                             class="admin-delete-form" onsubmit="return confirm('Delete category?')">
                                             <button type="submit"
                                                 class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
@@ -417,7 +417,7 @@
                                         <details class="admin-add-section">
                                             <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add
                                                 Category</summary>
-                                            <form method="POST" action="/admin/category" class="admin-section-form"
+                                            <form method="POST" action="/category" class="admin-section-form"
                                                 style="margin-top:1rem;">
                                                 <div class="admin-form-row">
                                                     <div class="admin-form-group" style="flex:2">
@@ -465,7 +465,7 @@
                                                         <span class="pb-section-expand">▾</span>
                                                     </div>
                                                     <div class="pb-section-body" style="display:none;">
-                                                        <form method="POST" action="/admin/section/<%= s.id %>"
+                                                        <form method="POST" action="/section/<%= s.id %>"
                                                             class="admin-section-form pb-section-form">
 
                                                             <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
@@ -672,7 +672,7 @@
                                                                                 Section</button>
                                                                         </div>
                                                         </form>
-                                                        <form method="POST" action="/admin/section/<%= s.id %>/delete"
+                                                        <form method="POST" action="/section/<%= s.id %>/delete"
                                                             class="admin-delete-form"
                                                             onsubmit="return confirm('Delete this section?')">
                                                             <button type="submit"
@@ -688,7 +688,7 @@
                                                             Add <%= type.replace(/-/g, ' ' ) %>
                                                         </summary>
                                                         <form method="POST"
-                                                            action="/admin/page/<%= page.slug %>/add-section"
+                                                            action="/page/<%= page.slug %>/add-section"
                                                             class="admin-section-form" style="margin-top:1rem;">
                                                             <input type="hidden" name="type" value="<%= type %>">
                                                             <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
@@ -797,7 +797,7 @@
                                         <!-- Add New Section Type -->
                                         <div class="admin-card">
                                             <h2>➕ Add New Section Type</h2>
-                                            <form method="POST" action="/admin/page/<%= page.slug %>/add-section"
+                                            <form method="POST" action="/page/<%= page.slug %>/add-section"
                                                 class="admin-section-form">
                                                 <div class="admin-form-row">
                                                     <div class="admin-form-group" style="flex:1">
@@ -843,12 +843,12 @@
                                         <div class="admin-card pb-page-actions">
                                             <h2>🔧 Page Actions</h2>
                                             <div class="pb-actions-row">
-                                                <form method="POST" action="/admin/page/<%= page.slug %>/duplicate">
+                                                <form method="POST" action="/page/<%= page.slug %>/duplicate">
                                                     <button type="submit" class="admin-btn admin-btn-secondary">📋
                                                         Duplicate Page</button>
                                                 </form>
                                                 <% if (page.slug !=='home' ) { %>
-                                                    <form method="POST" action="/admin/page/<%= page.slug %>/delete"
+                                                    <form method="POST" action="/page/<%= page.slug %>/delete"
                                                         onsubmit="return confirm('⚠️ Are you sure you want to DELETE this entire page? This cannot be undone.')">
                                                         <button type="submit" class="admin-btn admin-btn-danger">🗑️
                                                             Delete Page</button>
@@ -1124,7 +1124,7 @@
                     id: item.dataset.id,
                     sort_order: idx
                 }));
-                fetch('/admin/api/reorder-sections', {
+                fetch('/api/reorder-sections', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ order })
@@ -1185,7 +1185,7 @@
 
             try {
                 fill.style.width = '60%';
-                const res = await fetch('/admin/api/upload', { method: 'POST', body: formData });
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
                 const data = await res.json();
                 fill.style.width = '100%';
 
@@ -1234,7 +1234,7 @@
 
         async function deleteMedia(id, btn) {
             if (!confirm('Delete this file?')) return;
-            const res = await fetch(`/admin/api/media/${id}/delete`, { method: 'POST' });
+            const res = await fetch(`/api/media/${id}/delete`, { method: 'POST' });
             const data = await res.json();
             if (data.success) btn.closest('.pb-media-item').remove();
         }
@@ -1250,7 +1250,7 @@
             showAILoading(true);
 
             try {
-                const res = await fetch('/admin/api/ai/generate', {
+                const res = await fetch('/api/ai/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt, context: document.querySelector('input[name="title"]')?.value })
@@ -1273,7 +1273,7 @@
             showAILoading(true);
 
             try {
-                const res = await fetch('/admin/api/ai/seo', {
+                const res = await fetch('/api/ai/seo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pageTitle, pageContent })
@@ -1319,7 +1319,7 @@
             showAILoading(true);
 
             try {
-                const res = await fetch('/admin/api/ai/rewrite', {
+                const res = await fetch('/api/ai/rewrite', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text, action })
@@ -1341,7 +1341,7 @@
 
             btn.textContent = '⏳ Generating...';
             try {
-                const res = await fetch('/admin/api/ai/generate', {
+                const res = await fetch('/api/ai/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: `Write engaging HTML content for a section titled "${title}" on the X DOT AI website.` })
@@ -1423,7 +1423,7 @@
                     const titleField = form.querySelector('input[name="title"]');
                     this.style.borderColor = '#7c3aed';
                     try {
-                        const res = await fetch(`/admin/api/youtube-info?url=${encodeURIComponent(url)}`);
+                        const res = await fetch(`/api/youtube-info?url=${encodeURIComponent(url)}`);
                         const data = await res.json();
                         if (data.title && titleField && !titleField.value) {
                             titleField.value = data.title;
@@ -1620,7 +1620,7 @@
             });
 
             try {
-                const res = await fetch('/admin/api/ai-generate-faqs', {
+                const res = await fetch('/api/ai-generate-faqs', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ title, content, pageType: 'page' })
