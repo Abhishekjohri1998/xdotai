@@ -1,0 +1,83 @@
+<%- include('../partials/header', { page }) %>
+
+    <!-- Hero Section -->
+    <section class="page-hero" aria-label="Publications Hero">
+        <div class="container">
+            <div class="hero-badge">
+                <%= page.nav_label %>
+            </div>
+            <h1 class="hero-title"><%- page.hero_title %></h1>
+            <p class="hero-subtitle">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+    </section>
+
+    <!-- Publications List -->
+    <% const pubs=(sections['publication'] || []); %>
+        <% if (pubs.length) { %>
+            <section class="section" aria-label="Books by Da Sachin Sharma">
+                <div class="container">
+                    <% pubs.forEach((pub, i)=> { %>
+                        <div class="publication-card glass-card <%= i % 2 === 1 ? 'publication-card-reverse' : '' %>">
+                            <div class="publication-image">
+                                <% if (pub.extra && pub.extra.image_url) { %>
+                                    <img src="<%= pub.extra.image_url %>" alt="<%= pub.title %> book cover"
+                                        loading="lazy">
+                                    <% } else { %>
+                                        <div class="publication-image-placeholder">
+                                            <span class="publication-icon">
+                                                <%= pub.icon %>
+                                            </span>
+                                        </div>
+                                        <% } %>
+                            </div>
+                            <div class="publication-content">
+                                <span class="publication-label">
+                                    <%= pub.subtitle %>
+                                </span>
+                                <h2 class="publication-title">
+                                    <%= pub.title %>
+                                </h2>
+                                <p class="publication-description">
+                                    <%= pub.description %>
+                                </p>
+                                <% if (pub.extra && pub.extra.key_takeaway) { %>
+                                    <div class="publication-takeaway">
+                                        <span class="takeaway-icon">💡</span>
+                                        <p><strong>Key Takeaway:</strong>
+                                            <%= pub.extra.key_takeaway %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                                        <div class="publication-actions">
+                                            <% if (pub.extra && pub.extra.buy_url) { %>
+                                                <a href="<%= pub.extra.buy_url %>" target="_blank"
+                                                    rel="noopener noreferrer" class="btn btn-primary">Buy on Amazon
+                                                    →</a>
+                                                <% } %>
+                                                    <a href="/contact" class="btn btn-outline">Bulk Order Enquiry</a>
+                                        </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+            </section>
+            <% } %>
+
+                <!-- Author CTA -->
+                <section class="section section-alt" aria-label="About the author">
+                    <div class="container">
+                        <div class="author-cta glass-card">
+                            <div class="author-cta-content">
+                                <h2>About the <span class="text-gradient">Author</span></h2>
+                                <p>Da Sachin Sharma is a generative AI coach, creative consultant, and published author
+                                    empowering individuals and organizations to leverage AI for creative and
+                                    professional growth.</p>
+                                <a href="/about-da-sachin" class="btn btn-primary">Learn More About Da Sachin →</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <%- include('../partials/footer') %>

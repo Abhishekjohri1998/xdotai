@@ -1,0 +1,133 @@
+<%- include('../partials/header', { page }) %>
+
+    <!-- Hero Section -->
+    <section class="page-hero" aria-label="AI Trainings Hero">
+        <div class="container">
+            <div class="hero-badge">
+                <%= page.nav_label %>
+            </div>
+            <h1 class="hero-title"><%- page.hero_title %></h1>
+            <p class="hero-subtitle">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+    </section>
+
+    <!-- Why Train With Us -->
+    <% const valueProps=(sections['training-value'] || []); %>
+        <% if (valueProps.length) { %>
+            <section class="section" aria-label="Why train with X DOT AI">
+                <div class="container">
+                    <h2 class="section-title">Why Train with <span class="text-gradient">X DOT AI?</span></h2>
+                    <div class="values-grid training-values-grid">
+                        <% valueProps.forEach(v=> { %>
+                            <div class="value-card glass-card">
+                                <span class="value-icon">
+                                    <%= v.icon %>
+                                </span>
+                                <h3>
+                                    <%= v.title %>
+                                </h3>
+                                <p>
+                                    <%= v.description %>
+                                </p>
+                            </div>
+                            <% }) %>
+                    </div>
+                </div>
+            </section>
+            <% } %>
+
+                <!-- Specialized Training Categories -->
+                <% const categories=(sections['training-category'] || []); %>
+                    <% if (categories.length) { %>
+                        <section class="section section-alt" aria-label="Specialized Training Categories">
+                            <div class="container">
+                                <h2 class="section-title">Specialized <span class="text-gradient">Training
+                                        Programs</span></h2>
+                                <p class="section-subtitle">Industry-focused AI workshops tailored for your creative
+                                    domain.</p>
+                                <div class="training-categories-grid">
+                                    <% categories.forEach(cat=> { %>
+                                        <div class="training-category-card glass-card">
+                                            <span class="training-category-icon">
+                                                <%= cat.icon %>
+                                            </span>
+                                            <h3 class="training-category-title">
+                                                <%= cat.title %>
+                                            </h3>
+                                            <p>
+                                                <%= cat.description %>
+                                            </p>
+                                            <a href="/contact" class="btn btn-outline btn-sm">Enquire Now</a>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                            </div>
+                        </section>
+                        <% } %>
+
+                            <!-- Who Are the Trainings For? -->
+                            <section class="section" aria-label="Who are the trainings for">
+                                <div class="container">
+                                    <div class="training-audience-split">
+                                        <div class="training-audience-text">
+                                            <h2 class="section-title text-left">Who are the <span
+                                                    class="text-gradient">trainings for?</span></h2>
+                                            <p>Our trainings are designed for everyone — students, freelancers,
+                                                professionals, or businesses — anyone who wants to integrate AI into
+                                                fashion, advertising, film making, or marketing.</p>
+                                        </div>
+                                        <div class="training-audience-image">
+                                            <div class="audience-image-placeholder glass-card">
+                                                <span class="audience-icon">🎯</span>
+                                                <p>Students • Freelancers • Professionals • Businesses</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- FAQ Accordion -->
+                            <% const faqs=(sections['training-faq'] || []); %>
+                                <% if (faqs.length) { %>
+                                    <section class="section section-alt" aria-label="Frequently Asked Questions">
+                                        <div class="container container-narrow">
+                                            <h2 class="section-title">Frequently Asked <span
+                                                    class="text-gradient">Questions</span></h2>
+                                            <div class="faq-list">
+                                                <% faqs.forEach((faq, i)=> { %>
+                                                    <details class="faq-item glass-card" id="training-faq-<%= i %>">
+                                                        <summary class="faq-question">
+                                                            <span>
+                                                                <%= faq.title %>
+                                                            </span>
+                                                            <span class="faq-toggle">▾</span>
+                                                        </summary>
+                                                        <div class="faq-answer">
+                                                            <p>
+                                                                <%= faq.description %>
+                                                            </p>
+                                                        </div>
+                                                    </details>
+                                                    <% }) %>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <% } %>
+
+                                        <!-- Registration CTA -->
+                                        <section class="section training-cta-section"
+                                            aria-label="Register for training">
+                                            <div class="container">
+                                                <div class="training-cta-card glass-card">
+                                                    <h2>Learn with <span class="text-gradient">X DOT AI</span></h2>
+                                                    <p>Ready to upgrade your creative workflow with AI? Get in touch and
+                                                        let's build your AI skills.</p>
+                                                    <a href="/contact" class="btn btn-primary btn-lg">Register Your
+                                                        Interest</a>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <%- include('../partials/footer') %>

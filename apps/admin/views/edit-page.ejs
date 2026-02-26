@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <a href="/" class="admin-logo">
+                    <span class="logo-x">X</span> DOT AI
+                </a>
+                <span class="admin-badge">CMS</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="admin-nav-item">
+                    <span class="admin-nav-icon">📊</span> Dashboard
+                </a>
+                <div class="admin-nav-separator">Pages</div>
+                <% const allSlugs=['home','services','process','portfolio','insights','faq','contact','about'];
+                    allSlugs.forEach(slug=> {
+                    %>
+                    <a href="/admin/page/<%= slug %>" class="admin-nav-item <%= slug === page.slug ? 'active' : '' %>">
+                        <span class="admin-nav-icon">📄</span>
+                        <%= slug.charAt(0).toUpperCase() + slug.slice(1) %>
+                    </a>
+                    <% }) %>
+            </nav>
+            <div class="admin-sidebar-footer">
+                <a href="/admin/logout" class="admin-logout">Logout →</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Edit: <%= page.slug.charAt(0).toUpperCase() + page.slug.slice(1) %>
+                </h1>
+                <a href="/<%= page.slug === 'home' ? '' : page.slug %>" class="admin-btn admin-btn-secondary"
+                    target="_blank">View Page ↗</a>
+            </div>
+
+            <% if (success) { %>
+                <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
+                <% } %>
+
+                    <!-- Page Meta -->
+                    <div class="admin-card">
+                        <h2>Page Settings & SEO</h2>
+                        <form method="POST" action="/admin/page/<%= page.slug %>">
+                            <div class="admin-form-group">
+                                <label>Page Title (SEO)</label>
+                                <input type="text" name="title" value="<%= page.title %>" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Meta Description</label>
+                                <textarea name="meta_description" rows="2"><%= page.meta_description %></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Hero Label</label>
+                                <input type="text" name="hero_label" value="<%= page.hero_label %>">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Hero Title (supports HTML)</label>
+                                <input type="text" name="hero_title" value="<%= page.hero_title %>">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Hero Subtitle</label>
+                                <textarea name="hero_subtitle" rows="2"><%= page.hero_subtitle %></textarea>
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn-primary">Save Page Settings</button>
+                        </form>
+                    </div>
+
+                    <!-- Portfolio Categories Management (only for portfolio page) -->
+                    <% if (page.slug==='portfolio' && typeof portfolioCategories !=='undefined' ) { %>
+                        <div class="admin-card">
+                            <h2>📂 Portfolio Categories <span class="admin-nav-badge">
+                                    <%= portfolioCategories.length %>
+                                </span></h2>
+                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+                                Manage category tabs and descriptions shown on the portfolio page. Each category gets
+                                its own filter tab with a description.
+                            </p>
+
+                            <% portfolioCategories.forEach(cat=> { %>
+                                <div class="admin-section-item">
+                                    <form method="POST" action="/admin/category/<%= cat.id %>"
+                                        class="admin-section-form">
+                                        <div class="admin-form-row">
+                                            <div class="admin-form-group" style="flex:2">
+                                                <label>Category Name</label>
+                                                <input type="text" name="name" value="<%= cat.name %>" required>
+                                            </div>
+                                            <div class="admin-form-group" style="flex:0 0 80px;">
+                                                <label>Order</label>
+                                                <input type="number" name="sort_order" value="<%= cat.sort_order %>">
+                                            </div>
+                                        </div>
+                                        <div class="admin-form-group">
+                                            <label>Description (shown under filter tab)</label>
+                                            <textarea name="description" rows="3"><%= cat.description %></textarea>
+                                        </div>
+                                        <div class="admin-form-actions">
+                                            <button type="submit"
+                                                class="admin-btn admin-btn-primary admin-btn-small">Save</button>
+                                        </div>
+                                    </form>
+                                    <form method="POST" action="/admin/category/<%= cat.id %>/delete"
+                                        class="admin-delete-form"
+                                        onsubmit="return confirm('Delete category: <%= cat.name %>?')">
+                                        <button type="submit"
+                                            class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
+                                    </form>
+                                </div>
+                                <% }) %>
+
+                                    <!-- Add New Category -->
+                                    <details class="admin-add-section">
+                                        <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add Category
+                                        </summary>
+                                        <form method="POST" action="/admin/category" class="admin-section-form"
+                                            style="margin-top: 1rem;">
+                                            <div class="admin-form-row">
+                                                <div class="admin-form-group" style="flex:2">
+                                                    <label>Category Name</label>
+                                                    <input type="text" name="name" required
+                                                        placeholder="e.g. AI Short Films">
+                                                </div>
+                                                <div class="admin-form-group" style="flex:0 0 80px;">
+                                                    <label>Order</label>
+                                                    <input type="number" name="sort_order" value="0">
+                                                </div>
+                                            </div>
+                                            <div class="admin-form-group">
+                                                <label>Description</label>
+                                                <textarea name="description" rows="3" required
+                                                    placeholder="Describe this category for SEO and the portfolio page..."></textarea>
+                                            </div>
+                                            <button type="submit"
+                                                class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                Category</button>
+                                        </form>
+                                    </details>
+                        </div>
+                        <% } %>
+
+                            <!-- Content Sections -->
+                            <% const sectionTypes=Object.keys(sections); %>
+                                <% sectionTypes.forEach(type=> { %>
+                                    <div class="admin-card">
+                                        <h2>
+                                            <%= type.replace(/-/g, ' ' ).replace(/\b\w/g, l=> l.toUpperCase()) %>
+                                                Sections
+                                                <span class="admin-nav-badge">
+                                                    <%= sections[type].length %>
+                                                </span>
+                                        </h2>
+
+                                        <% sections[type].forEach(s=> { %>
+                                            <div class="admin-section-item">
+                                                <form method="POST" action="/admin/section/<%= s.id %>"
+                                                    class="admin-section-form">
+
+                                                    <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
+                                                        <!-- Portfolio-Specific Form -->
+                                                        <div class="admin-form-row">
+                                                            <div class="admin-form-group" style="flex:2">
+                                                                <label>Project Title</label>
+                                                                <input type="text" name="title" value="<%= s.title %>">
+                                                            </div>
+                                                            <div class="admin-form-group" style="flex:1">
+                                                                <label>Category</label>
+                                                                <select name="tag">
+                                                                    <option value="">Select...</option>
+                                                                    <% if (typeof portfolioCategories !=='undefined' ) {
+                                                                        portfolioCategories.forEach(cat=> { %>
+                                                                        <option value="<%= cat.name %>"
+                                                                            <%=s.tag===cat.name ? 'selected' : '' %>><%=
+                                                                                cat.name %>
+                                                                        </option>
+                                                                        <% }); } %>
+                                                                </select>
+                                                            </div>
+                                                            <div class="admin-form-group" style="flex:0 0 60px;">
+                                                                <label>Order</label>
+                                                                <input type="number" name="sort_order"
+                                                                    value="<%= s.sort_order %>">
+                                                            </div>
+                                                        </div>
+                                                        <div class="admin-form-group">
+                                                            <label>YouTube URL</label>
+                                                            <input type="url" name="youtube_url"
+                                                                value="<%= (s.extra && s.extra.youtube_url) || '' %>"
+                                                                placeholder="https://www.youtube.com/watch?v=...">
+                                                        </div>
+                                                        <div class="admin-form-group">
+                                                            <label>Description</label>
+                                                            <textarea name="description"
+                                                                rows="2"><%= s.description %></textarea>
+                                                        </div>
+                                                        <input type="hidden" name="icon" value="<%= s.icon %>">
+                                                        <input type="hidden" name="extra_json"
+                                                            value='<%= JSON.stringify({youtube_url: (s.extra && s.extra.youtube_url) || "", ...s.extra}) %>'>
+                                                        <% } else { %>
+                                                            <!-- Generic Form -->
+                                                            <div class="admin-form-row">
+                                                                <div class="admin-form-group" style="flex:2">
+                                                                    <label>Title</label>
+                                                                    <input type="text" name="title"
+                                                                        value="<%= s.title %>">
+                                                                </div>
+                                                                <div class="admin-form-group" style="flex:0 0 80px;">
+                                                                    <label>Icon</label>
+                                                                    <input type="text" name="icon"
+                                                                        value="<%= s.icon %>">
+                                                                </div>
+                                                                <div class="admin-form-group" style="flex:0 0 100px;">
+                                                                    <label>Tag</label>
+                                                                    <input type="text" name="tag" value="<%= s.tag %>">
+                                                                </div>
+                                                                <div class="admin-form-group" style="flex:0 0 60px;">
+                                                                    <label>Order</label>
+                                                                    <input type="number" name="sort_order"
+                                                                        value="<%= s.sort_order %>">
+                                                                </div>
+                                                            </div>
+                                                            <div class="admin-form-group">
+                                                                <label>Description</label>
+                                                                <textarea name="description"
+                                                                    rows="3"><%= s.description %></textarea>
+                                                            </div>
+                                                            <div class="admin-form-group">
+                                                                <label>Extra JSON</label>
+                                                                <input type="text" name="extra_json"
+                                                                    value='<%= s.extra_json || "{}" %>'>
+                                                            </div>
+                                                            <% } %>
+                                                                <div class="admin-form-actions">
+                                                                    <button type="submit"
+                                                                        class="admin-btn admin-btn-primary admin-btn-small">Save</button>
+                                                                </div>
+                                                </form>
+                                                <form method="POST" action="/admin/section/<%= s.id %>/delete"
+                                                    class="admin-delete-form"
+                                                    onsubmit="return confirm('Delete this section?')">
+                                                    <button type="submit"
+                                                        class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
+                                                </form>
+                                            </div>
+                                            <% }) %>
+
+                                                <!-- Add New Section -->
+                                                <details class="admin-add-section">
+                                                    <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add
+                                                        <%= type.replace(/-/g, ' ' ) %>
+                                                    </summary>
+                                                    <form method="POST"
+                                                        action="/admin/page/<%= page.slug %>/add-section"
+                                                        class="admin-section-form" style="margin-top: 1rem;">
+                                                        <input type="hidden" name="type" value="<%= type %>">
+
+                                                        <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
+                                                            <!-- Portfolio Add Form -->
+                                                            <div class="admin-form-row">
+                                                                <div class="admin-form-group" style="flex:2">
+                                                                    <label>Project Title</label>
+                                                                    <input type="text" name="title" required>
+                                                                </div>
+                                                                <div class="admin-form-group" style="flex:1">
+                                                                    <label>Category</label>
+                                                                    <select name="tag">
+                                                                        <option value="">Select...</option>
+                                                                        <% if (typeof portfolioCategories !=='undefined'
+                                                                            ) { portfolioCategories.forEach(cat=> { %>
+                                                                            <option value="<%= cat.name %>">
+                                                                                <%= cat.name %>
+                                                                            </option>
+                                                                            <% }); } %>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="admin-form-group" style="flex:0 0 60px;">
+                                                                    <label>Order</label>
+                                                                    <input type="number" name="sort_order" value="0">
+                                                                </div>
+                                                            </div>
+                                                            <div class="admin-form-group">
+                                                                <label>YouTube URL</label>
+                                                                <input type="url" name="youtube_url"
+                                                                    placeholder="https://www.youtube.com/watch?v=..."
+                                                                    required>
+                                                            </div>
+                                                            <div class="admin-form-group">
+                                                                <label>Description</label>
+                                                                <textarea name="description" rows="2"
+                                                                    required></textarea>
+                                                            </div>
+                                                            <input type="hidden" name="icon" value="">
+                                                            <input type="hidden" name="extra_json" value='{}'>
+                                                            <% } else { %>
+                                                                <!-- Generic Add Form -->
+                                                                <div class="admin-form-row">
+                                                                    <div class="admin-form-group" style="flex:2">
+                                                                        <label>Title</label>
+                                                                        <input type="text" name="title" required>
+                                                                    </div>
+                                                                    <div class="admin-form-group"
+                                                                        style="flex:0 0 80px;">
+                                                                        <label>Icon</label>
+                                                                        <input type="text" name="icon">
+                                                                    </div>
+                                                                    <div class="admin-form-group"
+                                                                        style="flex:0 0 100px;">
+                                                                        <label>Tag</label>
+                                                                        <input type="text" name="tag">
+                                                                    </div>
+                                                                    <div class="admin-form-group"
+                                                                        style="flex:0 0 60px;">
+                                                                        <label>Order</label>
+                                                                        <input type="number" name="sort_order"
+                                                                            value="0">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="admin-form-group">
+                                                                    <label>Description</label>
+                                                                    <textarea name="description" rows="3"
+                                                                        required></textarea>
+                                                                </div>
+                                                                <div class="admin-form-group">
+                                                                    <label>Extra JSON</label>
+                                                                    <input type="text" name="extra_json" value='{}'>
+                                                                </div>
+                                                                <% } %>
+                                                                    <button type="submit"
+                                                                        class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                                        Section</button>
+                                                    </form>
+                                                </details>
+                                    </div>
+                                    <% }) %>
+
+        </main>
+    </div>
+
+    <!-- YouTube Auto-Populate Script (for portfolio pages) -->
+    <% if (page.slug==='portfolio' ) { %>
+        <script>
+            (function () {
+                document.querySelectorAll('input[name="youtube_url"]').forEach(input => {
+                    input.addEventListener('change', async function () {
+                        const url = this.value.trim();
+                        if (!url) return;
+
+                        const form = this.closest('form');
+                        const titleField = form.querySelector('input[name="title"]');
+                        const descField = form.querySelector('textarea[name="description"]');
+                        const extraField = form.querySelector('input[name="extra_json"]');
+
+                        // Show loading state
+                        this.style.borderColor = '#7c3aed';
+
+                        try {
+                            const res = await fetch(`/admin/api/youtube-info?url=${encodeURIComponent(url)}`);
+                            const data = await res.json();
+                            if (data.title && titleField && (!titleField.value || titleField.value === titleField.defaultValue)) {
+                                titleField.value = data.title;
+                                titleField.style.borderColor = '#4ade80';
+                                setTimeout(() => titleField.style.borderColor = '', 2000);
+                            }
+                            if (data.title && descField && !descField.value) {
+                                descField.value = `${data.title} by ${data.author || 'X DOT AI'}`;
+                                descField.style.borderColor = '#4ade80';
+                                setTimeout(() => descField.style.borderColor = '', 2000);
+                            }
+                            // Update extra_json with the YouTube URL
+                            if (extraField) {
+                                try {
+                                    const extra = JSON.parse(extraField.value || '{}');
+                                    extra.youtube_url = url;
+                                    extraField.value = JSON.stringify(extra);
+                                } catch { extraField.value = JSON.stringify({ youtube_url: url }); }
+                            }
+                        } catch (err) {
+                            console.warn('YouTube auto-fetch failed:', err);
+                        }
+                        this.style.borderColor = '';
+                    });
+                });
+            })();
+        </script>
+        <% } %>
+
+</body>
+
+</html>

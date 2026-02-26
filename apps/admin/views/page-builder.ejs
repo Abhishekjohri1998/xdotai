@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+                <span class="admin-badge">PAGE BUILDER</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="admin-nav-item">
+                    <span class="admin-nav-icon">📊</span> Dashboard
+                </a>
+                <div class="admin-nav-separator">Pages</div>
+                <% allPages.forEach(p=> { %>
+                    <a href="/admin/page/<%= p.slug %>"
+                        class="admin-nav-item <%= p.slug === page.slug ? 'active' : '' %>">
+                        <span class="admin-nav-icon">📄</span>
+                        <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
+                    </a>
+                    <% }) %>
+                        <a href="/admin/page-create" class="admin-nav-item"
+                            style="color: var(--accent-secondary); margin-top: 0.5rem;">
+                            <span class="admin-nav-icon">➕</span> Create New Page
+                        </a>
+            </nav>
+            <div class="admin-sidebar-footer">
+                <span>Logged in as <strong>
+                        <%= typeof settings !=='undefined' ? 'admin' : 'admin' %>
+                    </strong></span>
+                <a href="/admin/logout" class="admin-logout">Logout →</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main pb-main">
+            <div class="admin-header">
+                <div>
+                    <h1>📝 Edit: <%= page.slug.charAt(0).toUpperCase() + page.slug.slice(1) %>
+                    </h1>
+                    <span class="pb-page-slug">/<%= page.slug==='home' ? '' : page.slug %></span>
+                </div>
+                <div class="pb-header-actions">
+                    <a href="/admin/visual-builder/<%= page.slug %>" class="admin-btn admin-btn-primary">🎨 Visual
+                        Builder</a>
+                    <a href="/<%= page.slug === 'home' ? '' : (page.slug === 'about' ? 'about-da-sachin' : page.slug) %>"
+                        class="admin-btn admin-btn-secondary" target="_blank">View Page ↗</a>
+                    <button class="admin-btn admin-btn-secondary" onclick="toggleAIPanel()">🤖 AI Assistant</button>
+                    <button class="admin-btn admin-btn-secondary" onclick="toggleMediaPanel()">📁 Media</button>
+                </div>
+            </div>
+
+            <% if (success) { %>
+                <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
+                <% } %>
+
+                    <!-- Page Settings & SEO -->
+                    <div class="admin-card pb-card-collapsible">
+                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                            ⚙️ Page Settings & SEO
+                            <span class="pb-toggle-icon">▾</span>
+                        </h2>
+                        <div class="pb-card-body">
+                            <form method="POST" action="/admin/page/<%= page.slug %>">
+                                <div class="admin-form-row">
+                                    <div class="admin-form-group" style="flex:3">
+                                        <label>Page Title (SEO) <span class="pb-char-count"
+                                                data-max="60"></span></label>
+                                        <input type="text" name="title" value="<%= page.title %>" required
+                                            oninput="updateCharCount(this, 60)">
+                                    </div>
+                                    <div class="admin-form-group" style="flex:0 0 80px;">
+                                        <label>Nav Order</label>
+                                        <input type="number" name="nav_order" value="<%= page.nav_order || 99 %>">
+                                    </div>
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Meta Description <span class="pb-char-count" data-max="155"></span>
+                                        <button type="button" class="pb-ai-inline-btn" onclick="aiGenerateSEO()">🤖 AI
+                                            Optimize</button>
+                                    </label>
+                                    <textarea name="meta_description" rows="2" id="metaDescription"
+                                        oninput="updateCharCount(this, 155)"><%= page.meta_description %></textarea>
+                                </div>
+                                <div class="admin-form-row">
+                                    <div class="admin-form-group" style="flex:2">
+                                        <label>Hero Title (supports HTML)</label>
+                                        <input type="text" name="hero_title" value="<%= page.hero_title %>">
+                                    </div>
+                                    <div class="admin-form-group" style="flex:1">
+                                        <label>Hero Label</label>
+                                        <input type="text" name="hero_label" value="<%= page.hero_label %>">
+                                    </div>
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Hero Subtitle</label>
+                                    <textarea name="hero_subtitle" rows="2"><%= page.hero_subtitle %></textarea>
+                                </div>
+                                <div class="admin-form-row">
+                                    <div class="admin-form-group" style="flex:1">
+                                        <label>Template</label>
+                                        <select name="template">
+                                            <option value="default" <%=(page.template || 'default' )==='default'
+                                                ? 'selected' : '' %>>Default</option>
+                                            <option value="blog" <%=page.template==='blog' ? 'selected' : '' %>
+                                                >Blog</option>
+                                            <option value="custom" <%=page.template==='custom' ? 'selected' : '' %>
+                                                >Custom</option>
+                                        </select>
+                                    </div>
+                                    <div class="admin-form-group" style="flex:0 0 160px;">
+                                        <label>Visible in Nav</label>
+                                        <label class="pb-switch">
+                                            <input type="checkbox" name="is_visible" <%=page.is_visible !==0 ? 'checked'
+                                                : '' %>>
+                                            <span class="pb-switch-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="admin-btn admin-btn-primary">Save Page Settings</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Schema & FAQ -->
+                    <div class="admin-card pb-card-collapsible">
+                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                            🔍 Schema & FAQ (SEO) <span class="admin-nav-badge">
+                                <%= pageFaqs.length %>
+                            </span>
+                            <span class="pb-toggle-icon">▸</span>
+                        </h2>
+                        <div class="pb-card-body" style="display:none;">
+                            <form method="POST" action="/admin/page/<%= page.slug %>" id="schemaFaqForm">
+                                <!-- Hidden fields to carry page settings -->
+                                <input type="hidden" name="title" value="<%= page.title %>">
+                                <input type="hidden" name="meta_description" value="<%= page.meta_description %>">
+                                <input type="hidden" name="hero_title" value="<%- page.hero_title %>">
+                                <input type="hidden" name="hero_subtitle" value="<%= page.hero_subtitle %>">
+                                <input type="hidden" name="hero_label" value="<%= page.hero_label %>">
+                                <input type="hidden" name="nav_order" value="<%= page.nav_order %>">
+                                <input type="hidden" name="is_visible" value="<%= page.is_visible !== 0 ? 'on' : '' %>">
+                                <input type="hidden" name="template" value="<%= page.template || 'default' %>">
+
+                                <div class="admin-form-row">
+                                    <div class="admin-form-group" style="flex:1;">
+                                        <label>Schema Type</label>
+                                        <select name="schema_type" id="schemaType">
+                                            <option value="WebPage" <%=page.schema_type==='WebPage' ?'selected':''%>
+                                                >WebPage</option>
+                                            <option value="Organization" <%=page.schema_type==='Organization'
+                                                ?'selected':''%>>Organization</option>
+                                            <option value="LocalBusiness" <%=page.schema_type==='LocalBusiness'
+                                                ?'selected':''%>>LocalBusiness</option>
+                                            <option value="Service" <%=page.schema_type==='Service' ?'selected':''%>
+                                                >Service</option>
+                                            <option value="AboutPage" <%=page.schema_type==='AboutPage' ?'selected':''%>
+                                                >AboutPage</option>
+                                            <option value="ContactPage" <%=page.schema_type==='ContactPage'
+                                                ?'selected':''%>>ContactPage</option>
+                                            <option value="FAQPage" <%=page.schema_type==='FAQPage' ?'selected':''%>
+                                                >FAQPage</option>
+                                            <option value="CollectionPage" <%=page.schema_type==='CollectionPage'
+                                                ?'selected':''%>>CollectionPage</option>
+                                        </select>
+                                    </div>
+                                    <div class="admin-form-group" style="flex:0 0 auto;">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                            onclick="aiGeneratePageFaqs()" id="aiFaqBtn">
+                                            🤖 AI Generate FAQs
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="schema_json" value="<%= page.schema_json || '' %>">
+                                <input type="hidden" name="faq_json" id="pageFaqJson" value="">
+
+                                <div style="margin-top:1rem;">
+                                    <div
+                                        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                                        <label style="margin:0;font-weight:600;font-size:0.85rem;">❓ FAQ Items <small
+                                                style="color:var(--text-muted);">(generates FAQ schema)</small></label>
+                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                            onclick="addPageFaq()">+ Add FAQ</button>
+                                    </div>
+                                    <div id="pageFaqList" class="faq-editor-list">
+                                        <!-- FAQ items added dynamically -->
+                                    </div>
+                                    <span id="pageFaqStatus" style="font-size:0.75rem;color:var(--text-muted);"></span>
+                                </div>
+
+                                <button type="submit" class="admin-btn admin-btn-primary" style="margin-top:1rem;">Save
+                                    Schema & FAQs</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Hero Banners -->
+                    <div class="admin-card pb-card-collapsible">
+                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                            🖼️ Hero Banners <span class="admin-nav-badge">
+                                <%= heroBanners.length %>
+                            </span>
+                            <span class="pb-toggle-icon">▾</span>
+                        </h2>
+                        <div class="pb-card-body">
+                            <% heroBanners.forEach(b=> { %>
+                                <div class="admin-section-item">
+                                    <div class="pb-banner-preview-row">
+                                        <img src="<%= b.image_url %>" class="pb-banner-thumb"
+                                            alt="<%= b.alt_text || 'Banner' %>">
+                                        <div class="pb-banner-meta">
+                                            <strong>
+                                                <%= b.overlay_title || 'No overlay' %>
+                                            </strong>
+                                            <small>Position: <%= b.overlay_position %> | <%= b.is_active ? '🟢 Active'
+                                                        : '🔴 Inactive' %></small>
+                                        </div>
+                                    </div>
+                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>"
+                                        enctype="multipart/form-data" class="admin-section-form">
+                                        <div class="admin-form-row">
+                                            <div class="admin-form-group" style="flex:2">
+                                                <label>Overlay Title</label>
+                                                <input type="text" name="overlay_title" value="<%= b.overlay_title %>">
+                                            </div>
+                                            <div class="admin-form-group" style="flex:1">
+                                                <label>Position</label>
+                                                <select name="overlay_position">
+                                                    <option value="center" <%=b.overlay_position==='center' ? 'selected'
+                                                        : '' %>>Center</option>
+                                                    <option value="left" <%=b.overlay_position==='left' ? 'selected'
+                                                        : '' %>>Left</option>
+                                                    <option value="right" <%=b.overlay_position==='right' ? 'selected'
+                                                        : '' %>>Right</option>
+                                                    <option value="bottom" <%=b.overlay_position==='bottom' ? 'selected'
+                                                        : '' %>>Bottom</option>
+                                                    <option value="top-left" <%=b.overlay_position==='top-left'
+                                                        ? 'selected' : '' %>>Top Left</option>
+                                                </select>
+                                            </div>
+                                            <div class="admin-form-group" style="flex:0 0 60px;">
+                                                <label>Order</label>
+                                                <input type="number" name="sort_order" value="<%= b.sort_order %>">
+                                            </div>
+                                        </div>
+                                        <div class="admin-form-group">
+                                            <label>Overlay Subtitle</label>
+                                            <input type="text" name="overlay_subtitle"
+                                                value="<%= b.overlay_subtitle %>">
+                                        </div>
+                                        <div class="admin-form-row">
+                                            <div class="admin-form-group" style="flex:1">
+                                                <label>Image URL <button type="button" class="pb-ai-inline-btn"
+                                                        onclick="openMediaPicker(this, 'image_url')">📁
+                                                        Browse</button></label>
+                                                <input type="text" name="image_url" value="<%= b.image_url %>">
+                                            </div>
+                                            <div class="admin-form-group" style="flex:1">
+                                                <label>Or Upload New Image</label>
+                                                <input type="file" name="banner_image" accept="image/*"
+                                                    class="pb-file-input">
+                                            </div>
+                                        </div>
+                                        <div class="admin-form-row">
+                                            <div class="admin-form-group" style="flex:1">
+                                                <label>🔍 Alt Text (SEO)</label>
+                                                <input type="text" name="alt_text" value="<%= b.alt_text %>"
+                                                    placeholder="Describe image for accessibility">
+                                            </div>
+                                            <div class="admin-form-group" style="flex:1">
+                                                <label>🔍 SEO Title</label>
+                                                <input type="text" name="seo_title" value="<%= b.seo_title %>"
+                                                    placeholder="Search engine title">
+                                            </div>
+                                            <div class="admin-form-group" style="flex:0 0 100px;">
+                                                <label>Active</label>
+                                                <label class="pb-switch">
+                                                    <input type="checkbox" name="is_active" <%=b.is_active ? 'checked'
+                                                        : '' %>>
+                                                    <span class="pb-switch-slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="admin-form-actions">
+                                            <button type="submit"
+                                                class="admin-btn admin-btn-primary admin-btn-small">Save Banner</button>
+                                        </div>
+                                    </form>
+                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>/delete"
+                                        class="admin-delete-form" onsubmit="return confirm('Delete this banner?')">
+                                        <button type="submit"
+                                            class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
+                                    </form>
+                                </div>
+                                <% }) %>
+
+                                    <details class="admin-add-section">
+                                        <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add Hero Banner
+                                        </summary>
+                                        <form method="POST" action="/admin/page/<%= page.slug %>/hero-banner"
+                                            enctype="multipart/form-data" class="admin-section-form"
+                                            style="margin-top:1rem;">
+                                            <div class="admin-form-row">
+                                                <div class="admin-form-group" style="flex:1">
+                                                    <label>Upload Banner Image</label>
+                                                    <input type="file" name="banner_image" accept="image/*"
+                                                        class="pb-file-input" required>
+                                                </div>
+                                                <div class="admin-form-group" style="flex:1">
+                                                    <label>Or Image URL</label>
+                                                    <input type="text" name="image_url"
+                                                        placeholder="/uploads/banner.jpg or external URL">
+                                                </div>
+                                            </div>
+                                            <div class="admin-form-row">
+                                                <div class="admin-form-group" style="flex:2">
+                                                    <label>Overlay Title</label>
+                                                    <input type="text" name="overlay_title"
+                                                        placeholder="Hero headline text">
+                                                </div>
+                                                <div class="admin-form-group" style="flex:1">
+                                                    <label>Position</label>
+                                                    <select name="overlay_position">
+                                                        <option value="center">Center</option>
+                                                        <option value="left">Left</option>
+                                                        <option value="right">Right</option>
+                                                        <option value="bottom">Bottom</option>
+                                                        <option value="top-left">Top Left</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="admin-form-group">
+                                                <label>Overlay Subtitle</label>
+                                                <input type="text" name="overlay_subtitle"
+                                                    placeholder="Supporting text">
+                                            </div>
+                                            <div class="admin-form-row">
+                                                <div class="admin-form-group" style="flex:1">
+                                                    <label>🔍 Alt Text (SEO)</label>
+                                                    <input type="text" name="alt_text"
+                                                        placeholder="Describe image for accessibility & SEO">
+                                                </div>
+                                                <div class="admin-form-group" style="flex:1">
+                                                    <label>🔍 SEO Title</label>
+                                                    <input type="text" name="seo_title"
+                                                        placeholder="Image title for search engines">
+                                                </div>
+                                            </div>
+                                            <button type="submit"
+                                                class="admin-btn admin-btn-primary admin-btn-small">Add Banner</button>
+                                        </form>
+                                    </details>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Categories (only for portfolio page) -->
+                    <% if (page.slug==='portfolio' && typeof portfolioCategories !=='undefined' ) { %>
+                        <div class="admin-card pb-card-collapsible">
+                            <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                                📂 Portfolio Categories <span class="admin-nav-badge">
+                                    <%= portfolioCategories.length %>
+                                </span>
+                                <span class="pb-toggle-icon">▾</span>
+                            </h2>
+                            <div class="pb-card-body">
+                                <% portfolioCategories.forEach(cat=> { %>
+                                    <div class="admin-section-item">
+                                        <form method="POST" action="/admin/category/<%= cat.id %>"
+                                            class="admin-section-form">
+                                            <div class="admin-form-row">
+                                                <div class="admin-form-group" style="flex:2">
+                                                    <label>Category Name</label>
+                                                    <input type="text" name="name" value="<%= cat.name %>" required>
+                                                </div>
+                                                <div class="admin-form-group" style="flex:0 0 80px;">
+                                                    <label>Order</label>
+                                                    <input type="number" name="sort_order"
+                                                        value="<%= cat.sort_order %>">
+                                                </div>
+                                            </div>
+                                            <div class="admin-form-group">
+                                                <label>Description</label>
+                                                <textarea name="description" rows="2"><%= cat.description %></textarea>
+                                            </div>
+                                            <div class="admin-form-actions">
+                                                <button type="submit"
+                                                    class="admin-btn admin-btn-primary admin-btn-small">Save</button>
+                                            </div>
+                                        </form>
+                                        <form method="POST" action="/admin/category/<%= cat.id %>/delete"
+                                            class="admin-delete-form" onsubmit="return confirm('Delete category?')">
+                                            <button type="submit"
+                                                class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
+                                        </form>
+                                    </div>
+                                    <% }) %>
+                                        <details class="admin-add-section">
+                                            <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add
+                                                Category</summary>
+                                            <form method="POST" action="/admin/category" class="admin-section-form"
+                                                style="margin-top:1rem;">
+                                                <div class="admin-form-row">
+                                                    <div class="admin-form-group" style="flex:2">
+                                                        <label>Name</label><input type="text" name="name" required>
+                                                    </div>
+                                                    <div class="admin-form-group" style="flex:0 0 80px;">
+                                                        <label>Order</label><input type="number" name="sort_order"
+                                                            value="0">
+                                                    </div>
+                                                </div>
+                                                <div class="admin-form-group"><label>Description</label><textarea
+                                                        name="description" rows="2" required></textarea></div>
+                                                <button type="submit"
+                                                    class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                    Category</button>
+                                            </form>
+                                        </details>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <!-- Content Sections -->
+                            <% const sectionTypes=Object.keys(sections); %>
+                                <% sectionTypes.forEach(type=> { %>
+                                    <div class="admin-card pb-card-collapsible">
+                                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                                            📑 <%= type.replace(/-/g, ' ' ).replace(/\b\w/g, l=> l.toUpperCase()) %>
+                                                Sections
+                                                <span class="admin-nav-badge">
+                                                    <%= sections[type].length %>
+                                                </span>
+                                                <span class="pb-toggle-icon">▾</span>
+                                        </h2>
+                                        <div class="pb-card-body" id="sections-<%= type %>">
+                                            <% sections[type].forEach((s, idx)=> { %>
+                                                <div class="admin-section-item pb-section-draggable"
+                                                    data-id="<%= s.id %>" data-order="<%= s.sort_order %>">
+                                                    <div class="pb-section-header" onclick="toggleSection(this)">
+                                                        <span class="pb-drag-handle" draggable="true"
+                                                            title="Drag to reorder">⠿</span>
+                                                        <span class="pb-section-title">
+                                                            <%= s.icon %>
+                                                                <%= s.title || 'Untitled Section' %>
+                                                        </span>
+                                                        <span class="pb-section-expand">▾</span>
+                                                    </div>
+                                                    <div class="pb-section-body" style="display:none;">
+                                                        <form method="POST" action="/admin/section/<%= s.id %>"
+                                                            class="admin-section-form pb-section-form">
+
+                                                            <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
+                                                                <!-- Portfolio Section -->
+                                                                <div class="admin-form-row">
+                                                                    <div class="admin-form-group" style="flex:2">
+                                                                        <label>Project Title</label>
+                                                                        <input type="text" name="title"
+                                                                            value="<%= s.title %>">
+                                                                    </div>
+                                                                    <div class="admin-form-group" style="flex:1">
+                                                                        <label>Category</label>
+                                                                        <select name="tag">
+                                                                            <option value="">Select...</option>
+                                                                            <% if (typeof portfolioCategories
+                                                                                !=='undefined' ) {
+                                                                                portfolioCategories.forEach(cat=> { %>
+                                                                                <option value="<%= cat.name %>"
+                                                                                    <%=s.tag===cat.name ? 'selected'
+                                                                                    : '' %>><%= cat.name %>
+                                                                                </option>
+                                                                                <% }); } %>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="admin-form-group"
+                                                                        style="flex:0 0 60px;">
+                                                                        <label>Order</label>
+                                                                        <input type="number" name="sort_order"
+                                                                            value="<%= s.sort_order %>">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="admin-form-group">
+                                                                    <label>YouTube URL</label>
+                                                                    <input type="url" name="youtube_url"
+                                                                        value="<%= (s.extra && s.extra.youtube_url) || '' %>"
+                                                                        placeholder="https://www.youtube.com/watch?v=...">
+                                                                </div>
+                                                                <div class="admin-form-group">
+                                                                    <label>Description</label>
+                                                                    <textarea name="description"
+                                                                        rows="2"><%= s.description %></textarea>
+                                                                </div>
+                                                                <div class="admin-form-group" style="flex:0 0 160px;">
+                                                                    <label>⭐ Featured on Home</label>
+                                                                    <label class="pb-switch">
+                                                                        <input type="checkbox" name="is_featured_home"
+                                                                            <%=(s.extra && s.extra.is_featured_home)
+                                                                            ? 'checked' : '' %>>
+                                                                        <span class="pb-switch-slider"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <input type="hidden" name="icon" value="<%= s.icon %>">
+                                                                <input type="hidden" name="extra_json"
+                                                                    value='<%= JSON.stringify({youtube_url: (s.extra && s.extra.youtube_url) || "", ...s.extra}) %>'>
+                                                                <input type="hidden" name="content_html" value="">
+                                                                <input type="hidden" name="image_url"
+                                                                    value="<%= s.image_url || '' %>">
+                                                                <input type="hidden" name="video_url"
+                                                                    value="<%= s.video_url || '' %>">
+
+                                                                <% } else { %>
+                                                                    <!-- Generic Section with Rich Text -->
+                                                                    <div class="admin-form-row">
+                                                                        <div class="admin-form-group" style="flex:2">
+                                                                            <label>Title</label>
+                                                                            <input type="text" name="title"
+                                                                                value="<%= s.title %>">
+                                                                        </div>
+                                                                        <div class="admin-form-group pb-icon-group"
+                                                                            style="flex:0 0 200px;">
+                                                                            <label>Icon</label>
+                                                                            <div class="pb-icon-picker-wrap">
+                                                                                <select class="pb-icon-type-select"
+                                                                                    name="icon_type"
+                                                                                    onchange="toggleIconMode(this)">
+                                                                                    <option value="emoji"
+                                                                                        <%=(s.icon_type || 'emoji'
+                                                                                        )==='emoji' ? 'selected' : '' %>
+                                                                                        >Emoji</option>
+                                                                                    <option value="lucide"
+                                                                                        <%=s.icon_type==='lucide'
+                                                                                        ? 'selected' : '' %>>Lucide
+                                                                                    </option>
+                                                                                    <option value="image"
+                                                                                        <%=s.icon_type==='image'
+                                                                                        ? 'selected' : '' %>>Image
+                                                                                    </option>
+                                                                                </select>
+                                                                                <div class="pb-icon-emoji"
+                                                                                    style="<%= (s.icon_type || 'emoji') !== 'emoji' ? 'display:none' : '' %>">
+                                                                                    <input type="text" name="icon"
+                                                                                        value="<%= s.icon %>"
+                                                                                        placeholder="🔧"
+                                                                                        style="width:60px;">
+                                                                                </div>
+                                                                                <div class="pb-icon-lucide"
+                                                                                    style="<%= s.icon_type !== 'lucide' ? 'display:none' : '' %>">
+                                                                                    <input type="text"
+                                                                                        name="icon_lucide"
+                                                                                        value="<%= s.icon_type === 'lucide' ? s.icon : '' %>"
+                                                                                        placeholder="e.g. star"
+                                                                                        readonly>
+                                                                                    <button type="button"
+                                                                                        class="pb-ai-inline-btn"
+                                                                                        onclick="openIconPicker(this)">🎨
+                                                                                        Pick</button>
+                                                                                </div>
+                                                                                <div class="pb-icon-image"
+                                                                                    style="<%= s.icon_type !== 'image' ? 'display:none' : '' %>">
+                                                                                    <input type="text"
+                                                                                        name="icon_image_url"
+                                                                                        value="<%= s.icon_image_url || '' %>"
+                                                                                        placeholder="/uploads/icon.png">
+                                                                                    <button type="button"
+                                                                                        class="pb-ai-inline-btn"
+                                                                                        onclick="openMediaPicker(this, 'icon_image_url')">📁</button>
+                                                                                </div>
+                                                                                <div class="pb-icon-preview">
+                                                                                    <% if (s.icon_type==='lucide' ) { %>
+                                                                                        <i
+                                                                                            data-lucide="<%= s.icon %>"></i>
+                                                                                        <% } else if
+                                                                                            (s.icon_type==='image' &&
+                                                                                            s.icon_image_url) { %>
+                                                                                            <img src="<%= s.icon_image_url %>"
+                                                                                                alt="icon"
+                                                                                                style="width:24px;height:24px;">
+                                                                                            <% } else { %>
+                                                                                                <span>
+                                                                                                    <%= s.icon %>
+                                                                                                </span>
+                                                                                                <% } %>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="admin-form-group"
+                                                                            style="flex:0 0 100px;">
+                                                                            <label>Tag</label>
+                                                                            <input type="text" name="tag"
+                                                                                value="<%= s.tag %>">
+                                                                        </div>
+                                                                        <div class="admin-form-group"
+                                                                            style="flex:0 0 60px;">
+                                                                            <label>Order</label>
+                                                                            <input type="number" name="sort_order"
+                                                                                value="<%= s.sort_order %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="admin-form-group">
+                                                                        <label>Description (plain text)</label>
+                                                                        <textarea name="description"
+                                                                            rows="3"><%= s.description %></textarea>
+                                                                    </div>
+                                                                    <div class="admin-form-group">
+                                                                        <label>Rich Content (HTML)
+                                                                            <button type="button"
+                                                                                class="pb-ai-inline-btn"
+                                                                                onclick="aiWriteForSection(this)">🤖 AI
+                                                                                Write</button>
+                                                                        </label>
+                                                                        <div class="pb-quill-container">
+                                                                            <div class="pb-quill-editor"
+                                                                                data-field-name="content_html">
+                                                                                <%= s.content_html || '' %>
+                                                                            </div>
+                                                                        </div>
+                                                                        <input type="hidden" name="content_html"
+                                                                            value="<%= s.content_html || '' %>">
+                                                                    </div>
+                                                                    <div class="admin-form-row">
+                                                                        <div class="admin-form-group" style="flex:1">
+                                                                            <label>Image URL
+                                                                                <button type="button"
+                                                                                    class="pb-ai-inline-btn"
+                                                                                    onclick="openMediaPicker(this, 'image_url')">📁
+                                                                                    Browse</button>
+                                                                            </label>
+                                                                            <input type="text" name="image_url"
+                                                                                value="<%= s.image_url || '' %>"
+                                                                                placeholder="/uploads/image.jpg or external URL">
+                                                                            <% if (s.image_url) { %>
+                                                                                <img src="<%= s.image_url %>"
+                                                                                    class="pb-image-preview"
+                                                                                    alt="Preview">
+                                                                                <% } %>
+                                                                        </div>
+                                                                        <div class="admin-form-group" style="flex:1">
+                                                                            <label>Video URL</label>
+                                                                            <input type="text" name="video_url"
+                                                                                value="<%= s.video_url || '' %>"
+                                                                                placeholder="YouTube or uploaded video URL">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="admin-form-group">
+                                                                        <label>Extra JSON</label>
+                                                                        <input type="text" name="extra_json"
+                                                                            value='<%= s.extra_json || "{}" %>'>
+                                                                    </div>
+                                                                    <% } %>
+
+                                                                        <div class="admin-form-actions">
+                                                                            <button type="submit"
+                                                                                class="admin-btn admin-btn-primary admin-btn-small">Save
+                                                                                Section</button>
+                                                                        </div>
+                                                        </form>
+                                                        <form method="POST" action="/admin/section/<%= s.id %>/delete"
+                                                            class="admin-delete-form"
+                                                            onsubmit="return confirm('Delete this section?')">
+                                                            <button type="submit"
+                                                                class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+
+                                                    <!-- Add New Section -->
+                                                    <details class="admin-add-section">
+                                                        <summary class="admin-btn admin-btn-secondary admin-btn-small">+
+                                                            Add <%= type.replace(/-/g, ' ' ) %>
+                                                        </summary>
+                                                        <form method="POST"
+                                                            action="/admin/page/<%= page.slug %>/add-section"
+                                                            class="admin-section-form" style="margin-top:1rem;">
+                                                            <input type="hidden" name="type" value="<%= type %>">
+                                                            <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
+                                                                <div class="admin-form-row">
+                                                                    <div class="admin-form-group" style="flex:2">
+                                                                        <label>Title</label><input type="text"
+                                                                            name="title" required>
+                                                                    </div>
+                                                                    <div class="admin-form-group" style="flex:1">
+                                                                        <label>Category</label>
+                                                                        <select name="tag">
+                                                                            <option value="">Select...</option>
+                                                                            <% if (typeof portfolioCategories
+                                                                                !=='undefined' ) {
+                                                                                portfolioCategories.forEach(cat=> { %>
+                                                                                <option value="<%= cat.name %>">
+                                                                                    <%= cat.name %>
+                                                                                </option>
+                                                                                <% }); } %>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="admin-form-group"
+                                                                        style="flex:0 0 60px;">
+                                                                        <label>Order</label><input type="number"
+                                                                            name="sort_order" value="0">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="admin-form-group"><label>YouTube
+                                                                        URL</label><input type="url" name="youtube_url"
+                                                                        required></div>
+                                                                <div class="admin-form-group">
+                                                                    <label>Description</label><textarea
+                                                                        name="description" rows="2" required></textarea>
+                                                                </div>
+                                                                <div class="admin-form-group" style="flex:0 0 160px;">
+                                                                    <label>⭐ Featured on Home</label>
+                                                                    <label class="pb-switch">
+                                                                        <input type="checkbox" name="is_featured_home">
+                                                                        <span class="pb-switch-slider"></span>
+                                                                    </label>
+                                                                </div>
+                                                                <input type="hidden" name="icon" value=""><input
+                                                                    type="hidden" name="icon_type" value="emoji"><input
+                                                                    type="hidden" name="icon_image_url" value=""><input
+                                                                    type="hidden" name="extra_json" value='{}'>
+                                                                <input type="hidden" name="content_html" value=""><input
+                                                                    type="hidden" name="image_url" value=""><input
+                                                                    type="hidden" name="video_url" value="">
+                                                                <% } else { %>
+                                                                    <div class="admin-form-row">
+                                                                        <div class="admin-form-group" style="flex:2">
+                                                                            <label>Title</label><input type="text"
+                                                                                name="title" required>
+                                                                        </div>
+                                                                        <div class="admin-form-group"
+                                                                            style="flex:0 0 130px;">
+                                                                            <label>Icon</label>
+                                                                            <div style="display:flex;gap:4px;">
+                                                                                <input type="text" name="icon"
+                                                                                    placeholder="🔧"
+                                                                                    style="width:50px;">
+                                                                                <select name="icon_type"
+                                                                                    style="width:70px;font-size:0.7rem;">
+                                                                                    <option value="emoji">Emoji</option>
+                                                                                    <option value="lucide">Lucide
+                                                                                    </option>
+                                                                                    <option value="image">Image</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <input type="hidden" name="icon_image_url"
+                                                                                value="">
+                                                                        </div>
+                                                                        <div class="admin-form-group"
+                                                                            style="flex:0 0 100px;">
+                                                                            <label>Tag</label><input type="text"
+                                                                                name="tag">
+                                                                        </div>
+                                                                        <div class="admin-form-group"
+                                                                            style="flex:0 0 60px;">
+                                                                            <label>Order</label><input type="number"
+                                                                                name="sort_order" value="0">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="admin-form-group">
+                                                                        <label>Description</label><textarea
+                                                                            name="description" rows="3"
+                                                                            required></textarea>
+                                                                    </div>
+                                                                    <div class="admin-form-group"><label>Extra
+                                                                            JSON</label><input type="text"
+                                                                            name="extra_json" value='{}'></div>
+                                                                    <input type="hidden" name="content_html"
+                                                                        value=""><input type="hidden" name="image_url"
+                                                                        value=""><input type="hidden" name="video_url"
+                                                                        value="">
+                                                                    <% } %>
+                                                                        <button type="submit"
+                                                                            class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                                            Section</button>
+                                                        </form>
+                                                    </details>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+
+                                        <!-- Add New Section Type -->
+                                        <div class="admin-card">
+                                            <h2>➕ Add New Section Type</h2>
+                                            <form method="POST" action="/admin/page/<%= page.slug %>/add-section"
+                                                class="admin-section-form">
+                                                <div class="admin-form-row">
+                                                    <div class="admin-form-group" style="flex:1">
+                                                        <label>Section Type (e.g. "feature", "testimonial",
+                                                            "cta")</label>
+                                                        <input type="text" name="type" required
+                                                            placeholder="my-new-section">
+                                                    </div>
+                                                    <div class="admin-form-group" style="flex:2">
+                                                        <label>Title</label>
+                                                        <input type="text" name="title" required>
+                                                    </div>
+                                                    <div class="admin-form-group" style="flex:0 0 130px;">
+                                                        <label>Icon</label>
+                                                        <div style="display:flex;gap:4px;">
+                                                            <input type="text" name="icon" placeholder="🔧"
+                                                                style="width:50px;">
+                                                            <select name="icon_type"
+                                                                style="width:70px;font-size:0.7rem;">
+                                                                <option value="emoji">Emoji</option>
+                                                                <option value="lucide">Lucide</option>
+                                                                <option value="image">Image</option>
+                                                            </select>
+                                                        </div>
+                                                        <input type="hidden" name="icon_image_url" value="">
+                                                    </div>
+                                                </div>
+                                                <div class="admin-form-group"><label>Description</label><textarea
+                                                        name="description" rows="3"></textarea></div>
+                                                <input type="hidden" name="tag" value=""><input type="hidden"
+                                                    name="sort_order" value="0">
+                                                <input type="hidden" name="extra_json" value='{}'><input type="hidden"
+                                                    name="content_html" value="">
+                                                <input type="hidden" name="image_url" value=""><input type="hidden"
+                                                    name="video_url" value="">
+                                                <button type="submit"
+                                                    class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                    Section</button>
+                                            </form>
+                                        </div>
+
+                                        <!-- Page Actions -->
+                                        <div class="admin-card pb-page-actions">
+                                            <h2>🔧 Page Actions</h2>
+                                            <div class="pb-actions-row">
+                                                <form method="POST" action="/admin/page/<%= page.slug %>/duplicate">
+                                                    <button type="submit" class="admin-btn admin-btn-secondary">📋
+                                                        Duplicate Page</button>
+                                                </form>
+                                                <% if (page.slug !=='home' ) { %>
+                                                    <form method="POST" action="/admin/page/<%= page.slug %>/delete"
+                                                        onsubmit="return confirm('⚠️ Are you sure you want to DELETE this entire page? This cannot be undone.')">
+                                                        <button type="submit" class="admin-btn admin-btn-danger">🗑️
+                                                            Delete Page</button>
+                                                    </form>
+                                                    <% } %>
+                                            </div>
+                                        </div>
+        </main>
+
+        <!-- AI Assistant Panel -->
+        <aside class="pb-ai-panel" id="aiPanel">
+            <div class="pb-panel-header">
+                <h3>🤖 AI Assistant</h3>
+                <button class="pb-panel-close" onclick="toggleAIPanel()">✕</button>
+            </div>
+            <div class="pb-panel-content">
+                <!-- AI Generate -->
+                <div class="pb-ai-section">
+                    <h4>Generate Content</h4>
+                    <textarea id="aiPrompt" rows="3"
+                        placeholder="Describe what content you want to generate..."></textarea>
+                    <button class="admin-btn admin-btn-primary admin-btn-small pb-ai-btn" onclick="aiGenerate()">
+                        <span class="pb-ai-btn-text">✨ Generate</span>
+                        <span class="pb-ai-spinner" style="display:none;">⏳</span>
+                    </button>
+                </div>
+
+                <!-- AI SEO -->
+                <div class="pb-ai-section">
+                    <h4>SEO Optimizer</h4>
+                    <p class="pb-ai-desc">Auto-generate optimized title, meta description & keywords.</p>
+                    <button class="admin-btn admin-btn-secondary admin-btn-small" onclick="aiGenerateSEO()">
+                        📊 Optimize SEO
+                    </button>
+                    <div id="seoResults" class="pb-ai-results" style="display:none;"></div>
+                </div>
+
+                <!-- AI Rewrite -->
+                <div class="pb-ai-section">
+                    <h4>Rewrite Selected Text</h4>
+                    <p class="pb-ai-desc">Select text in any editor, then choose an action:</p>
+                    <div class="pb-ai-actions-grid">
+                        <button class="pb-ai-action-btn" onclick="aiRewrite('expand')">📝 Expand</button>
+                        <button class="pb-ai-action-btn" onclick="aiRewrite('summarize')">📄 Summarize</button>
+                        <button class="pb-ai-action-btn" onclick="aiRewrite('professional')">🎩 Professional</button>
+                        <button class="pb-ai-action-btn" onclick="aiRewrite('casual')">😊 Casual</button>
+                        <button class="pb-ai-action-btn" onclick="aiRewrite('persuasive')">🔥 Persuasive</button>
+                        <button class="pb-ai-action-btn" onclick="aiRewrite('seo')">🔍 SEO</button>
+                    </div>
+                </div>
+
+                <!-- AI Output -->
+                <div class="pb-ai-section" id="aiOutputSection" style="display:none;">
+                    <h4>AI Output</h4>
+                    <div id="aiOutput" class="pb-ai-output"></div>
+                    <div class="pb-ai-output-actions">
+                        <button class="admin-btn admin-btn-primary admin-btn-small" onclick="insertAIOutput()">Insert
+                            into Editor</button>
+                        <button class="admin-btn admin-btn-secondary admin-btn-small" onclick="copyAIOutput()">📋
+                            Copy</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Media Browser Panel -->
+        <aside class="pb-media-panel" id="mediaPanel">
+            <div class="pb-panel-header">
+                <h3>📁 Media Library</h3>
+                <button class="pb-panel-close" onclick="toggleMediaPanel()">✕</button>
+            </div>
+            <div class="pb-panel-content">
+                <!-- Upload -->
+                <div class="pb-media-upload">
+                    <div class="pb-dropzone" id="dropzone"
+                        ondragover="event.preventDefault(); this.classList.add('dragover')"
+                        ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
+                        <span class="pb-dropzone-icon">📤</span>
+                        <p>Drag & drop files here</p>
+                        <label class="admin-btn admin-btn-secondary admin-btn-small pb-upload-btn">
+                            Choose File
+                            <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;"
+                                onchange="uploadFile(this.files[0])">
+                        </label>
+                    </div>
+                    <!-- SEO Fields for Upload -->
+                    <div class="pb-upload-seo">
+                        <div class="admin-form-group" style="margin-top:0.5rem;">
+                            <label style="font-size:0.7rem;">🔍 Alt Text</label>
+                            <input type="text" id="uploadAltText" placeholder="Describe image for SEO & accessibility"
+                                style="font-size:0.75rem;">
+                        </div>
+                        <div class="admin-form-row" style="gap:0.5rem;">
+                            <div class="admin-form-group" style="flex:1;">
+                                <label style="font-size:0.7rem;">🔍 SEO Title</label>
+                                <input type="text" id="uploadSeoTitle" placeholder="Image title"
+                                    style="font-size:0.75rem;">
+                            </div>
+                            <div class="admin-form-group" style="flex:1;">
+                                <label style="font-size:0.7rem;">📝 Caption</label>
+                                <input type="text" id="uploadSeoCaption" placeholder="Image caption"
+                                    style="font-size:0.75rem;">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="uploadProgress" class="pb-upload-progress" style="display:none;">
+                        <div class="pb-progress-bar">
+                            <div class="pb-progress-fill" id="progressFill"></div>
+                        </div>
+                        <span id="uploadStatus">Uploading...</span>
+                    </div>
+                </div>
+
+                <!-- Media Grid -->
+                <div class="pb-media-grid" id="mediaGrid">
+                    <% media.forEach(m=> { %>
+                        <div class="pb-media-item" data-id="<%= m.id %>" data-url="/uploads/<%= m.filename %>">
+                            <% if (m.mime_type.startsWith('image/')) { %>
+                                <img src="/uploads/<%= m.filename %>" alt="<%= m.alt_text || m.original_name %>">
+                                <% } else { %>
+                                    <div class="pb-media-video-thumb">🎬</div>
+                                    <% } %>
+                                        <div class="pb-media-info">
+                                            <span class="pb-media-name">
+                                                <%= m.original_name %>
+                                            </span>
+                                            <div class="pb-media-actions">
+                                                <button class="pb-media-insert"
+                                                    onclick="insertMedia('/uploads/<%= m.filename %>')">Insert</button>
+                                                <button class="pb-media-delete"
+                                                    onclick="deleteMedia(<%= m.id %>, this)">✕</button>
+                                            </div>
+                                        </div>
+                        </div>
+                        <% }) %>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Lucide Icon Picker Modal -->
+        <div class="pb-icon-modal" id="iconPickerModal" style="display:none;">
+            <div class="pb-icon-modal-content">
+                <div class="pb-icon-modal-header">
+                    <h3>🎨 Choose Lucide Icon</h3>
+                    <input type="text" id="iconSearch" placeholder="Search icons..." oninput="filterIcons(this.value)">
+                    <button class="pb-panel-close" onclick="closeIconPicker()">✕</button>
+                </div>
+                <div class="pb-icon-grid" id="iconGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core toggle functions (must be global, before Quill) -->
+    <script>
+        function toggleCard(el) {
+            const body = el.nextElementSibling;
+            const icon = el.querySelector('.pb-toggle-icon');
+            body.style.display = body.style.display === 'none' ? '' : 'none';
+            icon.textContent = body.style.display === 'none' ? '▸' : '▾';
+        }
+        function toggleSection(el) {
+            const body = el.nextElementSibling;
+            const icon = el.querySelector('.pb-section-expand');
+            body.style.display = body.style.display === 'none' ? '' : 'none';
+            icon.textContent = body.style.display === 'none' ? '▸' : '▾';
+        }
+    </script>
+
+    <!-- Quill.js -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        // QUILL EDITORS
+        // ═══════════════════════════════════════════════════════
+        const quillInstances = [];
+        let activeQuill = null;
+
+        document.querySelectorAll('.pb-quill-editor').forEach(el => {
+            const hiddenInput = el.parentElement.parentElement.querySelector('input[name="content_html"]');
+            const quill = new Quill(el, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ header: [1, 2, 3, 4, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        ['blockquote', 'code-block'],
+                        [{ align: [] }],
+                        ['link', 'image'],
+                        [{ color: [] }, { background: [] }],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Write rich content here...'
+            });
+
+            // Set initial content
+            if (hiddenInput.value) {
+                quill.root.innerHTML = hiddenInput.value;
+            }
+
+            // Sync to hidden input before form submit
+            const form = el.closest('form');
+            if (form) {
+                form.addEventListener('submit', () => {
+                    hiddenInput.value = quill.root.innerHTML;
+                });
+            }
+
+            // Track active editor
+            quill.on('selection-change', (range) => {
+                if (range) activeQuill = quill;
+            });
+
+            quillInstances.push(quill);
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // COLLAPSIBLE CARDS & SECTIONS
+        // ═══════════════════════════════════════════════════════
+        function toggleCard(el) {
+            const body = el.nextElementSibling;
+            const icon = el.querySelector('.pb-toggle-icon');
+            body.style.display = body.style.display === 'none' ? '' : 'none';
+            icon.textContent = body.style.display === 'none' ? '▸' : '▾';
+        }
+
+        function toggleSection(el) {
+            const body = el.nextElementSibling;
+            const icon = el.querySelector('.pb-section-expand');
+            body.style.display = body.style.display === 'none' ? '' : 'none';
+            icon.textContent = body.style.display === 'none' ? '▸' : '▾';
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // DRAG & DROP REORDER
+        // ═══════════════════════════════════════════════════════
+        let draggedEl = null;
+        document.querySelectorAll('.pb-section-draggable').forEach(el => {
+            // Only start drag from the handle
+            const handle = el.querySelector('.pb-drag-handle');
+            if (handle) {
+                handle.addEventListener('dragstart', e => {
+                    draggedEl = el;
+                    el.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setDragImage(el, 20, 20);
+                });
+                handle.addEventListener('dragend', () => {
+                    el.classList.remove('dragging');
+                    draggedEl = null;
+                });
+            }
+            el.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (draggedEl && draggedEl !== el) {
+                    const rect = el.getBoundingClientRect();
+                    const mid = rect.top + rect.height / 2;
+                    if (e.clientY < mid) {
+                        el.parentElement.insertBefore(draggedEl, el);
+                    } else {
+                        el.parentElement.insertBefore(draggedEl, el.nextSibling);
+                    }
+                }
+            });
+            el.addEventListener('drop', e => {
+                e.preventDefault();
+                // Save new order
+                const container = el.closest('.pb-card-body');
+                const items = container.querySelectorAll('.pb-section-draggable');
+                const order = Array.from(items).map((item, idx) => ({
+                    id: item.dataset.id,
+                    sort_order: idx
+                }));
+                fetch('/admin/api/reorder-sections', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order })
+                });
+            });
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // PANELS
+        // ═══════════════════════════════════════════════════════
+        function toggleAIPanel() {
+            const panel = document.getElementById('aiPanel');
+            panel.classList.toggle('open');
+            document.getElementById('mediaPanel').classList.remove('open');
+        }
+
+        function toggleMediaPanel() {
+            const panel = document.getElementById('mediaPanel');
+            panel.classList.toggle('open');
+            document.getElementById('aiPanel').classList.remove('open');
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // MEDIA UPLOAD
+        // ═══════════════════════════════════════════════════════
+        let mediaPickerTarget = null;
+
+        function openMediaPicker(btn, fieldName) {
+            mediaPickerTarget = btn.closest('.admin-form-group').querySelector(`input[name="${fieldName}"]`);
+            toggleMediaPanel();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) uploadFile(file);
+        }
+
+        async function uploadFile(file) {
+            if (!file) return;
+            const progress = document.getElementById('uploadProgress');
+            const fill = document.getElementById('progressFill');
+            const status = document.getElementById('uploadStatus');
+            progress.style.display = '';
+            fill.style.width = '30%';
+            status.textContent = `Uploading ${file.name}...`;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            // SEO fields
+            const altText = document.getElementById('uploadAltText');
+            const seoTitle = document.getElementById('uploadSeoTitle');
+            const seoCaption = document.getElementById('uploadSeoCaption');
+            if (altText && altText.value) formData.append('alt_text', altText.value);
+            if (seoTitle && seoTitle.value) formData.append('seo_title', seoTitle.value);
+            if (seoCaption && seoCaption.value) formData.append('seo_caption', seoCaption.value);
+
+            try {
+                fill.style.width = '60%';
+                const res = await fetch('/admin/api/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                fill.style.width = '100%';
+
+                if (data.success) {
+                    status.textContent = '✅ Uploaded!';
+                    // Add to grid
+                    const grid = document.getElementById('mediaGrid');
+                    const isImage = data.media.mime_type.startsWith('image/');
+                    const itemHtml = `
+                    <div class="pb-media-item" data-id="${data.media.id}" data-url="${data.media.url}">
+                        ${isImage ? `<img src="${data.media.url}" alt="${data.media.original_name}">` : '<div class="pb-media-video-thumb">🎬</div>'}
+                        <div class="pb-media-info">
+                            <span class="pb-media-name">${data.media.original_name}</span>
+                            <div class="pb-media-actions">
+                                <button class="pb-media-insert" onclick="insertMedia('${data.media.url}')">Insert</button>
+                                <button class="pb-media-delete" onclick="deleteMedia(${data.media.id}, this)">✕</button>
+                            </div>
+                        </div>
+                    </div>`;
+                    grid.insertAdjacentHTML('afterbegin', itemHtml);
+                } else {
+                    status.textContent = '❌ ' + (data.error || 'Upload failed');
+                }
+            } catch (err) {
+                status.textContent = '❌ Upload error';
+            }
+            // Clear SEO fields after upload
+            ['uploadAltText', 'uploadSeoTitle', 'uploadSeoCaption'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('fileInput').value = '';
+            setTimeout(() => { progress.style.display = 'none'; fill.style.width = '0'; }, 3000);
+        }
+
+        function insertMedia(url) {
+            if (mediaPickerTarget) {
+                mediaPickerTarget.value = url;
+                mediaPickerTarget = null;
+                toggleMediaPanel();
+            } else if (activeQuill) {
+                const range = activeQuill.getSelection(true);
+                activeQuill.insertEmbed(range.index, 'image', url);
+            }
+        }
+
+        async function deleteMedia(id, btn) {
+            if (!confirm('Delete this file?')) return;
+            const res = await fetch(`/admin/api/media/${id}/delete`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) btn.closest('.pb-media-item').remove();
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // AI FEATURES
+        // ═══════════════════════════════════════════════════════
+        let lastAIOutput = '';
+
+        async function aiGenerate() {
+            const prompt = document.getElementById('aiPrompt').value.trim();
+            if (!prompt) return alert('Enter a prompt first');
+            showAILoading(true);
+
+            try {
+                const res = await fetch('/admin/api/ai/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, context: document.querySelector('input[name="title"]')?.value })
+                });
+                const data = await res.json();
+                if (data.error) {
+                    showAIOutput('⚠️ ' + data.error);
+                } else {
+                    showAIOutput(data.content);
+                }
+            } catch {
+                showAIOutput('⚠️ Failed to connect to AI service');
+            }
+            showAILoading(false);
+        }
+
+        async function aiGenerateSEO() {
+            const pageTitle = document.querySelector('input[name="title"]')?.value || '';
+            const pageContent = document.querySelector('textarea[name="hero_subtitle"]')?.value || '';
+            showAILoading(true);
+
+            try {
+                const res = await fetch('/admin/api/ai/seo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pageTitle, pageContent })
+                });
+                const data = await res.json();
+                if (data.error) {
+                    showAIOutput('⚠️ ' + data.error);
+                    return;
+                }
+                const seo = data.seo;
+                const resultsEl = document.getElementById('seoResults');
+                resultsEl.innerHTML = `
+                <div class="pb-seo-score">SEO Score: <strong>${seo.score || '—'}/100</strong></div>
+                <div class="pb-seo-field"><strong>Title:</strong> ${seo.title || '—'}</div>
+                <div class="pb-seo-field"><strong>Meta:</strong> ${seo.meta_description || '—'}</div>
+                <div class="pb-seo-field"><strong>Keywords:</strong> ${(seo.keywords || []).join(', ')}</div>
+                ${(seo.suggestions || []).map(s => `<div class="pb-seo-suggestion">💡 ${s}</div>`).join('')}
+                <button class="admin-btn admin-btn-primary admin-btn-small" style="margin-top:0.5rem;" onclick="applySEO(${JSON.stringify(seo).replace(/"/g, '&quot;')})">Apply SEO</button>
+            `;
+                resultsEl.style.display = '';
+            } catch {
+                showAIOutput('⚠️ SEO generation failed');
+            }
+            showAILoading(false);
+        }
+
+        function applySEO(seo) {
+            if (seo.title) document.querySelector('input[name="title"]').value = seo.title;
+            if (seo.meta_description) document.getElementById('metaDescription').value = seo.meta_description;
+        }
+
+        async function aiRewrite(action) {
+            let text = '';
+            if (activeQuill) {
+                const range = activeQuill.getSelection();
+                if (range && range.length > 0) {
+                    text = activeQuill.getText(range.index, range.length);
+                } else {
+                    text = activeQuill.getText();
+                }
+            }
+            if (!text.trim()) return alert('Select text in an editor first, or have content in the active editor.');
+            showAILoading(true);
+
+            try {
+                const res = await fetch('/admin/api/ai/rewrite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, action })
+                });
+                const data = await res.json();
+                if (data.error) showAIOutput('⚠️ ' + data.error);
+                else showAIOutput(data.content);
+            } catch {
+                showAIOutput('⚠️ Rewrite failed');
+            }
+            showAILoading(false);
+        }
+
+        async function aiWriteForSection(btn) {
+            const form = btn.closest('form');
+            const titleField = form.querySelector('input[name="title"]');
+            const title = titleField ? titleField.value : '';
+            if (!title) return alert('Enter a section title first');
+
+            btn.textContent = '⏳ Generating...';
+            try {
+                const res = await fetch('/admin/api/ai/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: `Write engaging HTML content for a section titled "${title}" on the X DOT AI website.` })
+                });
+                const data = await res.json();
+                if (data.content) {
+                    const quillEl = form.querySelector('.pb-quill-editor');
+                    if (quillEl) {
+                        const quill = quillInstances.find(q => q.root === quillEl);
+                        if (quill) quill.root.innerHTML = data.content;
+                    }
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            } catch {
+                alert('AI generation failed');
+            }
+            btn.textContent = '🤖 AI Write';
+        }
+
+        function showAIOutput(html) {
+            lastAIOutput = html;
+            const section = document.getElementById('aiOutputSection');
+            document.getElementById('aiOutput').innerHTML = html;
+            section.style.display = '';
+            if (!document.getElementById('aiPanel').classList.contains('open')) toggleAIPanel();
+        }
+
+        function showAILoading(loading) {
+            document.querySelectorAll('.pb-ai-btn').forEach(btn => {
+                btn.querySelector('.pb-ai-btn-text').style.display = loading ? 'none' : '';
+                btn.querySelector('.pb-ai-spinner').style.display = loading ? '' : 'none';
+                btn.disabled = loading;
+            });
+        }
+
+        function insertAIOutput() {
+            if (activeQuill && lastAIOutput) {
+                const range = activeQuill.getSelection(true);
+                activeQuill.clipboard.dangerouslyPasteHTML(range.index, lastAIOutput);
+            } else {
+                alert('Click on a rich text editor first, then insert.');
+            }
+        }
+
+        function copyAIOutput() {
+            navigator.clipboard.writeText(lastAIOutput).then(() => {
+                const btn = event.target;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => btn.textContent = '📋 Copy', 2000);
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // UTILITIES
+        // ═══════════════════════════════════════════════════════
+        function updateCharCount(input, max) {
+            const len = input.value.length;
+            const label = input.closest('.admin-form-group').querySelector('.pb-char-count');
+            if (label) {
+                label.textContent = `${len}/${max}`;
+                label.style.color = len > max ? '#ef4444' : len > max * 0.8 ? '#f59e0b' : 'var(--text-muted)';
+            }
+        }
+
+        // Initialize char counts
+        document.querySelectorAll('.pb-char-count[data-max]').forEach(el => {
+            const input = el.closest('.admin-form-group').querySelector('input, textarea');
+            if (input) updateCharCount(input, parseInt(el.dataset.max));
+        });
+
+    // YouTube auto-populate for portfolio
+    <% if (page.slug === 'portfolio') { %>
+            document.querySelectorAll('input[name="youtube_url"]').forEach(input => {
+                input.addEventListener('change', async function () {
+                    const url = this.value.trim();
+                    if (!url) return;
+                    const form = this.closest('form');
+                    const titleField = form.querySelector('input[name="title"]');
+                    this.style.borderColor = '#7c3aed';
+                    try {
+                        const res = await fetch(`/admin/api/youtube-info?url=${encodeURIComponent(url)}`);
+                        const data = await res.json();
+                        if (data.title && titleField && !titleField.value) {
+                            titleField.value = data.title;
+                            titleField.style.borderColor = '#4ade80';
+                            setTimeout(() => titleField.style.borderColor = '', 2000);
+                        }
+                        const extraField = form.querySelector('input[name="extra_json"]');
+                        if (extraField) {
+                            try {
+                                const extra = JSON.parse(extraField.value || '{}');
+                                extra.youtube_url = url;
+                                extraField.value = JSON.stringify(extra);
+                            } catch { extraField.value = JSON.stringify({ youtube_url: url }); }
+                        }
+                    } catch { }
+                    this.style.borderColor = '';
+                });
+            });
+    <% } %>
+
+        // ═══════════════════════════════════════════════════════
+        // LUCIDE ICON PICKER
+        // ═══════════════════════════════════════════════════════
+        const LUCIDE_ICONS = [
+            'activity', 'airplay', 'alert-circle', 'alert-triangle', 'anchor', 'aperture', 'archive', 'arrow-down',
+            'arrow-left', 'arrow-right', 'arrow-up', 'award', 'bar-chart', 'battery', 'bell', 'bluetooth', 'bold',
+            'book', 'bookmark', 'box', 'briefcase', 'calendar', 'camera', 'check', 'check-circle', 'chevron-down',
+            'chevron-left', 'chevron-right', 'chevron-up', 'chrome', 'circle', 'clipboard', 'clock', 'cloud',
+            'code', 'coffee', 'command', 'compass', 'copy', 'cpu', 'credit-card', 'crop', 'crosshair', 'database',
+            'delete', 'disc', 'dollar-sign', 'download', 'droplet', 'edit', 'external-link', 'eye', 'eye-off',
+            'facebook', 'fast-forward', 'feather', 'file', 'file-text', 'film', 'filter', 'flag', 'folder', 'frame',
+            'gift', 'git-branch', 'git-commit', 'git-merge', 'globe', 'grid', 'hard-drive', 'hash', 'headphones',
+            'heart', 'help-circle', 'hexagon', 'home', 'image', 'inbox', 'info', 'instagram', 'italic', 'key',
+            'layers', 'layout', 'life-buoy', 'link', 'list', 'loader', 'lock', 'log-in', 'log-out', 'mail', 'map',
+            'map-pin', 'maximize', 'menu', 'message-circle', 'message-square', 'mic', 'minus', 'monitor', 'moon',
+            'more-horizontal', 'more-vertical', 'move', 'music', 'navigation', 'octagon', 'package', 'paperclip',
+            'pause', 'pen-tool', 'percent', 'phone', 'pie-chart', 'play', 'plus', 'pocket', 'power', 'printer',
+            'radio', 'refresh-cw', 'repeat', 'rewind', 'rotate-cw', 'rss', 'save', 'scissors', 'search', 'send',
+            'server', 'settings', 'share', 'shield', 'shopping-bag', 'shopping-cart', 'shuffle', 'sidebar', 'skip-back',
+            'skip-forward', 'slack', 'slash', 'sliders', 'smartphone', 'smile', 'speaker', 'square', 'star', 'stop-circle',
+            'sun', 'sunrise', 'sunset', 'tablet', 'tag', 'target', 'terminal', 'thermometer', 'thumbs-down', 'thumbs-up',
+            'toggle-left', 'toggle-right', 'tool', 'trash', 'trending-down', 'trending-up', 'triangle', 'truck', 'tv',
+            'twitch', 'twitter', 'type', 'umbrella', 'underline', 'unlock', 'upload', 'user', 'user-check', 'user-minus',
+            'user-plus', 'user-x', 'users', 'video', 'voicemail', 'volume-1', 'volume-2', 'volume-x', 'watch', 'wifi',
+            'wind', 'x', 'x-circle', 'x-square', 'youtube', 'zap', 'zoom-in', 'zoom-out', 'rocket', 'sparkles', 'brain',
+            'crown', 'flame', 'gem', 'graduation-cap', 'hammer', 'headset', 'joystick', 'laptop', 'lightbulb', 'megaphone',
+            'microscope', 'palette', 'party-popper', 'puzzle', 'robot', 'scroll', 'shield-check', 'siren', 'sparkle',
+            'store', 'trophy', 'wand', 'wrench', 'zap-off', 'bot', 'blocks', 'circuit-board', 'clapperboard', 'cog',
+            'component', 'container', 'fingerprint', 'gamepad', 'glasses', 'globe-2', 'hand', 'infinity', 'landmark',
+            'languages', 'leaf', 'line-chart', 'paintbrush', 'scan', 'shapes', 'signal', 'sprout', 'waves'
+        ];
+
+        let iconPickerTarget = null;
+
+        function openIconPicker(btn) {
+            iconPickerTarget = btn.closest('.pb-icon-picker-wrap') || btn.closest('.admin-form-group');
+            const modal = document.getElementById('iconPickerModal');
+            modal.style.display = 'flex';
+            document.getElementById('iconSearch').value = '';
+            renderIcons('');
+        }
+
+        function closeIconPicker() {
+            document.getElementById('iconPickerModal').style.display = 'none';
+            iconPickerTarget = null;
+        }
+
+        function renderIcons(filter) {
+            const grid = document.getElementById('iconGrid');
+            const filtered = filter ? LUCIDE_ICONS.filter(i => i.includes(filter.toLowerCase())) : LUCIDE_ICONS;
+            grid.innerHTML = filtered.map(name =>
+                `<button type="button" class="pb-icon-btn" onclick="selectIcon('${name}')" title="${name}">
+                    <i data-lucide="${name}"></i>
+                    <small>${name}</small>
+                </button>`
+            ).join('');
+            // Initialize Lucide icons in grid
+            if (typeof lucide !== 'undefined') lucide.createIcons({ nodes: grid.querySelectorAll('[data-lucide]') });
+        }
+
+        function filterIcons(val) { renderIcons(val); }
+
+        function selectIcon(name) {
+            if (iconPickerTarget) {
+                // Set the icon name input for lucide
+                const lucideInput = iconPickerTarget.querySelector('input[name="icon_lucide"]')
+                    || iconPickerTarget.querySelector('input[name="icon"]');
+                if (lucideInput) lucideInput.value = name;
+                // Update preview
+                const preview = iconPickerTarget.querySelector('.pb-icon-preview');
+                if (preview) preview.innerHTML = `<i data-lucide="${name}"></i>`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            closeIconPicker();
+        }
+
+        // Icon mode toggle
+        function toggleIconMode(select) {
+            const wrap = select.closest('.pb-icon-picker-wrap') || select.closest('.admin-form-group');
+            const mode = select.value;
+            const emoji = wrap.querySelector('.pb-icon-emoji');
+            const luc = wrap.querySelector('.pb-icon-lucide');
+            const img = wrap.querySelector('.pb-icon-image');
+            if (emoji) emoji.style.display = mode === 'emoji' ? '' : 'none';
+            if (luc) luc.style.display = mode === 'lucide' ? '' : 'none';
+            if (img) img.style.display = mode === 'image' ? '' : 'none';
+        }
+
+        // Sync icon fields before form submit
+        document.querySelectorAll('form.admin-section-form').forEach(form => {
+            form.addEventListener('submit', function () {
+                const typeSelect = form.querySelector('select[name="icon_type"]');
+                if (!typeSelect) return;
+                const mode = typeSelect.value;
+                const iconField = form.querySelector('input[name="icon"]');
+                if (mode === 'lucide') {
+                    const lucideInput = form.querySelector('input[name="icon_lucide"]');
+                    if (lucideInput && iconField) iconField.value = lucideInput.value;
+                } else if (mode === 'image') {
+                    if (iconField) iconField.value = '';
+                }
+            });
+        });
+
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // ═══════════════════════════════════════
+        // PAGE FAQ EDITOR
+        // ═══════════════════════════════════════
+        let pageFaqs = <% - JSON.stringify(pageFaqs) %>;
+
+        function renderPageFaqs() {
+            const list = document.getElementById('pageFaqList');
+            if (!list) return;
+            if (pageFaqs.length === 0) {
+                list.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.8rem;">No FAQs added yet. Click "+ Add FAQ" or use AI to generate.</div>';
+                syncPageFaqJson();
+                return;
+            }
+            list.innerHTML = pageFaqs.map((faq, i) => `
+                <div class="faq-editor-item">
+                    <div class="faq-editor-item-header">
+                        <span class="faq-editor-num">${i + 1}</span>
+                        <button type="button" class="faq-editor-delete" onclick="removePageFaq(${i})" title="Remove">✕</button>
+                    </div>
+                    <div class="admin-form-group" style="margin-bottom:0.5rem;">
+                        <label style="font-size:0.7rem;">Question</label>
+                        <input type="text" value="${(faq.question || '').replace(/"/g, '&quot;')}" placeholder="Enter question..."
+                            onchange="pageFaqs[${i}].question=this.value;syncPageFaqJson()">
+                    </div>
+                    <div class="admin-form-group">
+                        <label style="font-size:0.7rem;">Answer</label>
+                        <textarea rows="2" placeholder="Enter answer..."
+                            onchange="pageFaqs[${i}].answer=this.value;syncPageFaqJson()">${faq.answer || ''}</textarea>
+                    </div>
+                </div>
+            `).join('');
+            syncPageFaqJson();
+        }
+
+        function addPageFaq() {
+            pageFaqs.push({ question: '', answer: '' });
+            renderPageFaqs();
+            // Scroll to new item
+            const list = document.getElementById('pageFaqList');
+            if (list) list.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function removePageFaq(index) {
+            pageFaqs.splice(index, 1);
+            renderPageFaqs();
+        }
+
+        function syncPageFaqJson() {
+            const el = document.getElementById('pageFaqJson');
+            if (el) el.value = JSON.stringify(pageFaqs.filter(f => f.question || f.answer));
+        }
+
+        async function aiGeneratePageFaqs() {
+            const title = document.querySelector('input[name="title"]')?.value || '';
+            const btn = document.getElementById('aiFaqBtn');
+            const status = document.getElementById('pageFaqStatus');
+            if (!title) return alert('Page needs a title first');
+            btn.disabled = true;
+            status.textContent = '⏳ Generating FAQs...';
+
+            // Gather page content from sections
+            let content = title + ' ' + (document.querySelector('textarea[name="meta_description"]')?.value || '');
+            document.querySelectorAll('textarea[name="description"], input[name="title"]').forEach(el => {
+                content += ' ' + el.value;
+            });
+
+            try {
+                const res = await fetch('/admin/api/ai-generate-faqs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, pageType: 'page' })
+                });
+                const data = await res.json();
+                if (data.success && data.faqs) {
+                    pageFaqs = data.faqs;
+                    renderPageFaqs();
+                    status.textContent = `✅ Generated ${data.faqs.length} FAQs!`;
+                } else {
+                    status.textContent = '❌ ' + (data.error || 'Generation failed');
+                }
+            } catch {
+                status.textContent = '❌ Network error';
+            }
+            btn.disabled = false;
+            setTimeout(() => status.textContent = '', 5000);
+        }
+
+        // Initialize FAQ editor
+        renderPageFaqs();
+
+        // Sync FAQ JSON before schema form submit
+        const schemaForm = document.getElementById('schemaFaqForm');
+        if (schemaForm) {
+            schemaForm.addEventListener('submit', () => syncPageFaqJson());
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <a href="/admin" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
+                    class="admin-badge">BLOG</span></a>
+            <nav class="admin-nav">
+                <a href="/admin" class="admin-nav-link">📊 Dashboard</a>
+                <a href="/admin/blog" class="admin-nav-link">📝 All Posts</a>
+                <a href="/admin/blog/new" class="admin-nav-link <%= isNew ? 'active' : '' %>">✨ New Post</a>
+                <% if (!isNew && post) { %>
+                    <a href="/blogs/<%= post.slug %>" target="_blank" class="admin-nav-link">🌐 View Post</a>
+                    <% } %>
+            </nav>
+            <div class="admin-sidebar-footer">
+                <span>Logged in as admin</span>
+                <a href="/admin/logout">Logout →</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <% if (typeof success !=='undefined' || (typeof req !=='undefined' )) { %>
+                <% } %>
+
+                    <form method="POST" action="/admin/blog/<%= isNew ? 'new' : post.slug %>"
+                        enctype="multipart/form-data" id="blogForm">
+                        <div class="admin-header" style="margin-bottom:1rem;">
+                            <h1>
+                                <%= isNew ? '✨ New Blog Post' : '✏️ Edit Post' %>
+                            </h1>
+                            <div style="display:flex;gap:0.5rem;">
+                                <a href="/admin/blog" class="admin-btn admin-btn-secondary">← Back</a>
+                                <button type="submit" name="status" value="draft"
+                                    class="admin-btn admin-btn-secondary">💾 Save Draft</button>
+                                <button type="submit" name="status" value="published"
+                                    class="admin-btn admin-btn-primary">🚀 Publish</button>
+                            </div>
+                        </div>
+
+                        <div class="blog-editor-layout">
+                            <!-- Main Content -->
+                            <div class="blog-editor-main">
+                                <!-- Title -->
+                                <div class="admin-card" style="padding:1.5rem;">
+                                    <input type="text" name="title" id="postTitle" value="<%= post ? post.title : '' %>"
+                                        placeholder="Enter your blog post title..." required class="blog-title-input"
+                                        oninput="generateSlug(this.value)">
+                                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+                                        <span style="color:var(--text-muted);font-size:0.75rem;">🔗</span>
+                                        <input type="text" name="slug" id="postSlug"
+                                            value="<%= post ? post.slug : '' %>" placeholder="auto-generated-slug"
+                                            style="flex:1;font-size:0.8rem;background:transparent;border:1px solid var(--border-subtle);border-radius:6px;padding:0.3rem 0.5rem;color:var(--text-secondary);">
+                                    </div>
+                                </div>
+
+                                <!-- Featured Image -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🖼️ Featured Image</h3>
+                                    <div class="blog-featured-image-area">
+                                        <% if (post && post.featured_image) { %>
+                                            <img src="<%= post.featured_image %>" alt="<%= post.featured_image_alt %>"
+                                                id="featuredPreview" class="blog-featured-preview">
+                                            <% } else { %>
+                                                <div id="featuredPreview" class="blog-featured-placeholder">
+                                                    <span>📷</span>
+                                                    <p>No featured image</p>
+                                                </div>
+                                                <% } %>
+                                                    <div class="blog-featured-controls">
+                                                        <input type="file" name="featured_image_file" id="featuredFile"
+                                                            accept="image/*" class="pb-file-input"
+                                                            onchange="previewFeaturedImage(this)">
+                                                        <input type="hidden" name="featured_image" id="featuredUrl"
+                                                            value="<%= post ? post.featured_image || '' : '' %>">
+                                                        <div class="admin-form-group" style="margin-top:0.5rem;">
+                                                            <label style="font-size:0.75rem;">Alt Text (SEO)</label>
+                                                            <input type="text" name="featured_image_alt"
+                                                                value="<%= post ? post.featured_image_alt || '' : '' %>"
+                                                                placeholder="Describe image for accessibility">
+                                                        </div>
+                                                    </div>
+                                    </div>
+                                </div>
+
+                                <!-- AI Content Generator -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🤖 AI Content Generator</h3>
+                                    <div class="admin-form-row" style="gap:0.5rem;">
+                                        <div class="admin-form-group" style="flex:3;">
+                                            <input type="text" id="aiTopic"
+                                                placeholder="Enter a topic, e.g. 'How AI is Transforming Ad Film Production'">
+                                        </div>
+                                        <div class="admin-form-group" style="flex:1;">
+                                            <select id="aiStyle">
+                                                <option value="professional and insightful">Professional</option>
+                                                <option value="casual and engaging">Casual</option>
+                                                <option value="technical and detailed">Technical</option>
+                                                <option value="storytelling and narrative">Storytelling</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                                        <button type="button" class="admin-btn admin-btn-primary admin-btn-small"
+                                            onclick="aiGenerateBlog()" id="aiGenBtn">
+                                            ✨ Generate Article
+                                        </button>
+                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                            onclick="aiGenerateSeo()" id="aiSeoBtn">
+                                            🔍 AI Optimize SEO
+                                        </button>
+                                        <span id="aiStatus"
+                                            style="font-size:0.75rem;color:var(--text-muted);align-self:center;"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Rich Text Editor -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📝 Content</h3>
+                                    <div id="blogEditor" class="blog-quill-editor">
+                                        <%= post ? post.content_html || '' : '' %>
+                                    </div>
+                                    <input type="hidden" name="content_html" id="contentHtml">
+                                    <input type="hidden" id="initContent"
+                                        value="<%- (post ? (post.content_html || '') : '').replace(/" /g, '&quot;' )
+                                        %>">
+                                </div>
+
+                                <!-- Excerpt -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📋 Excerpt</h3>
+                                    <textarea name="excerpt" id="postExcerpt" rows="3"
+                                        placeholder="A brief summary (auto-generated if left blank)..."
+                                        style="width:100%;"><%= post ? post.excerpt || '' : '' %></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Sidebar -->
+                            <div class="blog-editor-sidebar">
+                                <!-- Publish Settings -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📊 Publish Settings</h3>
+                                    <div class="admin-form-group">
+                                        <label>Status</label>
+                                        <div class="blog-status-indicator">
+                                            <span
+                                                class="blog-status-badge blog-status-<%= post ? post.status : 'draft' %>">
+                                                <%= post ? post.status : 'draft' %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label>Author</label>
+                                        <input type="text" name="author"
+                                            value="<%= post ? post.author || 'Admin' : 'Admin' %>">
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label>Publish Date</label>
+                                        <input type="datetime-local" name="published_at"
+                                            value="<%= post && post.published_at ? new Date(post.published_at).toISOString().slice(0,16) : '' %>">
+                                    </div>
+                                    <div class="admin-form-group" style="display:flex;align-items:center;gap:0.75rem;">
+                                        <label style="margin:0;">⭐ Featured on Home</label>
+                                        <label class="pb-switch">
+                                            <input type="checkbox" name="is_featured" <%=post && post.is_featured
+                                                ? 'checked' : '' %>>
+                                            <span class="pb-switch-slider"></span>
+                                        </label>
+                                    </div>
+                                    <% if (post) { %>
+                                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">
+                                            📖 ~<%= post.reading_time %> min read
+                                        </div>
+                                        <% } %>
+                                </div>
+
+                                <!-- Category & Tags -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🏷️ Category & Tags</h3>
+                                    <div class="admin-form-group">
+                                        <label>Category</label>
+                                        <select name="category">
+                                            <option value="">Select category...</option>
+                                            <% categories.forEach(cat=> { %>
+                                                <option value="<%= cat.name %>" <%=post && post.category===cat.name
+                                                    ? 'selected' : '' %>><%= cat.name %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label>Tags <small>(comma-separated)</small></label>
+                                        <input type="text" name="tags" value="<%= post ? post.tags || '' : '' %>"
+                                            placeholder="ai, machine-learning, content-creation" id="postTags">
+                                    </div>
+                                </div>
+
+                                <!-- FAQ Schema -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <div
+                                        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                                        <h3 style="margin:0;font-size:0.9rem;">❓ FAQ Schema</h3>
+                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                            onclick="addBlogFaq()">+ Add</button>
+                                    </div>
+                                    <div id="blogFaqList" class="faq-editor-list">
+                                        <!-- FAQ items added dynamically -->
+                                    </div>
+                                    <input type="hidden" name="faq_json" id="blogFaqJson">
+                                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;">
+                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                            onclick="aiGenerateBlogFaqs()" id="aiBlogFaqBtn">
+                                            🤖 AI Generate
+                                        </button>
+                                        <span id="blogFaqStatus"
+                                            style="font-size:0.75rem;color:var(--text-muted);"></span>
+                                    </div>
+                                </div>
+
+                                <!-- SEO Panel -->
+                                <div class="admin-card" style="padding:1.25rem;">
+                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🔍 SEO Settings</h3>
+                                    <div class="admin-form-group">
+                                        <label>Meta Title <span class="pb-char-count" data-max="60"
+                                                id="metaTitleCount">0/60</span></label>
+                                        <input type="text" name="meta_title" id="metaTitle"
+                                            value="<%= post ? post.meta_title || '' : '' %>"
+                                            placeholder="SEO title (auto from post title)" maxlength="70"
+                                            oninput="updateCount('metaTitle', 'metaTitleCount', 60)">
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label>Meta Description <span class="pb-char-count" data-max="155"
+                                                id="metaDescCount">0/155</span></label>
+                                        <textarea name="meta_description" id="metaDesc" rows="3"
+                                            placeholder="SEO description (auto from excerpt)" maxlength="165"
+                                            oninput="updateCount('metaDesc', 'metaDescCount', 155)"><%= post ? post.meta_description || '' : '' %></textarea>
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label>OG Image URL</label>
+                                        <input type="text" name="og_image"
+                                            value="<%= post ? post.og_image || '' : '' %>"
+                                            placeholder="Auto from featured image">
+                                    </div>
+
+                                    <!-- SEO Preview -->
+                                    <div class="blog-seo-preview">
+                                        <small style="color:var(--text-muted);">Google Preview</small>
+                                        <div class="blog-seo-preview-box">
+                                            <div class="seo-preview-title" id="seoPreviewTitle">
+                                                <%= post ? (post.meta_title || post.title) : 'Post Title' %>
+                                            </div>
+                                            <div class="seo-preview-url">xdotai.in/blogs/<span id="seoPreviewSlug">
+                                                    <%= post ? post.slug : 'your-slug' %>
+                                                </span></div>
+                                            <div class="seo-preview-desc" id="seoPreviewDesc">
+                                                <%= post ? (post.meta_description || post.excerpt
+                                                    || 'Post description...' ) : 'Post description...' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete -->
+                                <% if (!isNew && post) { %>
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;color:#ef4444;">⚠️ Danger Zone
+                                        </h3>
+                                        <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
+                                            onsubmit="return confirm('Are you sure you want to delete this post? This cannot be undone.')">
+                                            <button type="submit" class="admin-btn admin-btn-small"
+                                                style="width:100%;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">🗑️
+                                                Delete Post</button>
+                                        </form>
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+                    </form>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script>
+        // ═══════════════════════════════════════
+        // QUILL EDITOR
+        // ═══════════════════════════════════════
+        const quill = new Quill('#blogEditor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ header: [2, 3, 4, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'image'],
+                    [{ align: [] }],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Write your blog post content here...'
+        });
+
+        // Set initial content from hidden field
+        const initContent = document.getElementById('initContent');
+        if (initContent && initContent.value) {
+            quill.root.innerHTML = initContent.value;
+        }
+
+        // Sync content before submit
+        document.getElementById('blogForm').addEventListener('submit', function () {
+            document.getElementById('contentHtml').value = quill.root.innerHTML;
+        });
+
+        // ═══════════════════════════════════════
+        // SLUG GENERATION
+        // ═══════════════════════════════════════
+        let slugManual = false;
+        document.getElementById('postSlug').addEventListener('input', () => slugManual = true);
+
+        function generateSlug(title) {
+            if (slugManual && document.getElementById('postSlug').value) return;
+            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            document.getElementById('postSlug').value = slug;
+            document.getElementById('seoPreviewSlug').textContent = slug;
+            document.getElementById('seoPreviewTitle').textContent = title || 'Post Title';
+        }
+
+        // ═══════════════════════════════════════
+        // CHAR COUNT
+        // ═══════════════════════════════════════
+        function updateCount(inputId, countId, max) {
+            const el = document.getElementById(inputId);
+            const count = document.getElementById(countId);
+            const len = el.value.length;
+            count.textContent = `${len}/${max}`;
+            count.style.color = len > max ? '#ef4444' : len > max * 0.8 ? '#f59e0b' : 'var(--text-muted)';
+            // Update SEO preview
+            if (inputId === 'metaTitle') document.getElementById('seoPreviewTitle').textContent = el.value || document.getElementById('postTitle').value || 'Post Title';
+            if (inputId === 'metaDesc') document.getElementById('seoPreviewDesc').textContent = el.value || 'Post description...';
+        }
+        // Init counts
+        updateCount('metaTitle', 'metaTitleCount', 60);
+        updateCount('metaDesc', 'metaDescCount', 155);
+
+        // ═══════════════════════════════════════
+        // FEATURED IMAGE PREVIEW
+        // ═══════════════════════════════════════
+        function previewFeaturedImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('featuredPreview');
+                    if (preview.tagName === 'IMG') {
+                        preview.src = e.target.result;
+                    } else {
+                        preview.outerHTML = `<img src="${e.target.result}" id="featuredPreview" class="blog-featured-preview">`;
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // AI CONTENT GENERATION
+        // ═══════════════════════════════════════
+        async function aiGenerateBlog() {
+            const topic = document.getElementById('aiTopic').value.trim();
+            if (!topic) return alert('Enter a topic first');
+            const style = document.getElementById('aiStyle').value;
+            const btn = document.getElementById('aiGenBtn');
+            const status = document.getElementById('aiStatus');
+            btn.disabled = true;
+            status.textContent = '⏳ Generating article...';
+
+            try {
+                const res = await fetch('/admin/api/blog/ai-generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, style })
+                });
+                const data = await res.json();
+                if (data.success && data.content) {
+                    quill.root.innerHTML = data.content;
+                    status.textContent = '✅ Article generated!';
+                    // Auto-set title if empty
+                    const titleInput = document.getElementById('postTitle');
+                    if (!titleInput.value) {
+                        titleInput.value = topic;
+                        generateSlug(topic);
+                    }
+                } else {
+                    status.textContent = '❌ ' + (data.error || 'Generation failed');
+                }
+            } catch (err) {
+                status.textContent = '❌ Network error';
+            }
+            btn.disabled = false;
+            setTimeout(() => status.textContent = '', 5000);
+        }
+
+        async function aiGenerateSeo() {
+            const title = document.getElementById('postTitle').value;
+            if (!title) return alert('Enter a title first');
+            const content = quill.root.innerHTML;
+            const btn = document.getElementById('aiSeoBtn');
+            const status = document.getElementById('aiStatus');
+            btn.disabled = true;
+            status.textContent = '⏳ Optimizing SEO...';
+
+            try {
+                const res = await fetch('/admin/api/blog/ai-seo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                const data = await res.json();
+                if (data.success && data.seo) {
+                    if (data.seo.meta_title) {
+                        document.getElementById('metaTitle').value = data.seo.meta_title;
+                        updateCount('metaTitle', 'metaTitleCount', 60);
+                    }
+                    if (data.seo.meta_description) {
+                        document.getElementById('metaDesc').value = data.seo.meta_description;
+                        updateCount('metaDesc', 'metaDescCount', 155);
+                    }
+                    if (data.seo.excerpt) document.getElementById('postExcerpt').value = data.seo.excerpt;
+                    if (data.seo.tags) document.getElementById('postTags').value = data.seo.tags;
+                    if (data.seo.slug) {
+                        document.getElementById('postSlug').value = data.seo.slug;
+                        document.getElementById('seoPreviewSlug').textContent = data.seo.slug;
+                    }
+                    status.textContent = '✅ SEO optimized!';
+                } else {
+                    status.textContent = '❌ ' + (data.error || 'SEO optimization failed');
+                }
+            } catch (err) {
+                status.textContent = '❌ Network error';
+            }
+            btn.disabled = false;
+            setTimeout(() => status.textContent = '', 5000);
+        }
+
+        // ═══════════════════════════════════════
+        // BLOG FAQ EDITOR
+        // ═══════════════════════════════════════
+        let blogFaqs = [];
+        <% if (post && post.faq_json) { %>
+            try { blogFaqs = <% - post.faq_json || '[]' %>; } catch (e) { blogFaqs = []; }
+        <% } %>
+
+            function renderBlogFaqs() {
+                const list = document.getElementById('blogFaqList');
+                if (!list) return;
+                if (blogFaqs.length === 0) {
+                    list.innerHTML = '<div style="text-align:center;padding:0.75rem;color:var(--text-muted);font-size:0.75rem;">No FAQs. Click "+ Add" or AI Generate.</div>';
+                    syncBlogFaqJson();
+                    return;
+                }
+                list.innerHTML = blogFaqs.map((faq, i) => `
+                <div class="faq-editor-item">
+                    <div class="faq-editor-item-header">
+                        <span class="faq-editor-num">${i + 1}</span>
+                        <button type="button" class="faq-editor-delete" onclick="removeBlogFaq(${i})">✕</button>
+                    </div>
+                    <div class="admin-form-group" style="margin-bottom:0.4rem;">
+                        <input type="text" value="${(faq.question || '').replace(/"/g, '&quot;')}" placeholder="Question..."
+                            onchange="blogFaqs[${i}].question=this.value;syncBlogFaqJson()" style="font-size:0.8rem;">
+                    </div>
+                    <div class="admin-form-group">
+                        <textarea rows="2" placeholder="Answer..." style="font-size:0.8rem;"
+                            onchange="blogFaqs[${i}].answer=this.value;syncBlogFaqJson()">${faq.answer || ''}</textarea>
+                    </div>
+                </div>
+            `).join('');
+                syncBlogFaqJson();
+            }
+
+        function addBlogFaq() {
+            blogFaqs.push({ question: '', answer: '' });
+            renderBlogFaqs();
+        }
+
+        function removeBlogFaq(index) {
+            blogFaqs.splice(index, 1);
+            renderBlogFaqs();
+        }
+
+        function syncBlogFaqJson() {
+            const el = document.getElementById('blogFaqJson');
+            if (el) el.value = JSON.stringify(blogFaqs.filter(f => f.question || f.answer));
+        }
+
+        async function aiGenerateBlogFaqs() {
+            const title = document.getElementById('postTitle')?.value || '';
+            if (!title) return alert('Enter a title first');
+            const btn = document.getElementById('aiBlogFaqBtn');
+            const status = document.getElementById('blogFaqStatus');
+            btn.disabled = true;
+            status.textContent = '⏳ Generating...';
+
+            const content = quill.root.innerHTML;
+            try {
+                const res = await fetch('/admin/api/ai-generate-faqs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, pageType: 'blog' })
+                });
+                const data = await res.json();
+                if (data.success && data.faqs) {
+                    blogFaqs = data.faqs;
+                    renderBlogFaqs();
+                    status.textContent = `✅ ${data.faqs.length} FAQs!`;
+                } else {
+                    status.textContent = '❌ ' + (data.error || 'Failed');
+                }
+            } catch {
+                status.textContent = '❌ Error';
+            }
+            btn.disabled = false;
+            setTimeout(() => status.textContent = '', 5000);
+        }
+
+        renderBlogFaqs();
+
+        // Sync FAQ JSON on form submit
+        document.getElementById('blogForm').addEventListener('submit', function () {
+            document.getElementById('contentHtml').value = quill.root.innerHTML;
+            syncBlogFaqJson();
+        });
+    </script>
+</body>
+
+</html>

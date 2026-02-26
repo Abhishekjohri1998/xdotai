@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <a href="/" class="admin-logo">
+                    <span class="logo-x">X</span> DOT AI
+                </a>
+                <span class="admin-badge">CMS</span>
+            </div>
+
+            <nav class="admin-nav">
+                <a href="/admin" class="admin-nav-item active">
+                    <span class="admin-nav-icon">📊</span> Dashboard
+                </a>
+                <a href="/admin/blog" class="admin-nav-item">
+                    <span class="admin-nav-icon">📝</span> Blog Manager
+                </a>
+                <a href="/admin/nav-logos" class="admin-nav-item">
+                    <span class="admin-nav-icon">🧭</span> Nav & Logos
+                </a>
+                <a href="/admin/home-manager" class="admin-nav-item">
+                    <span class="admin-nav-icon">🏠</span> Home Manager
+                </a>
+                <div class="admin-nav-separator">Pages</div>
+                <% pages.forEach(p=> { %>
+                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
+                        <span class="admin-nav-icon">📄</span>
+                        <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
+                            <span class="admin-nav-badge">
+                                <%= sectionCounts[p.slug] || 0 %>
+                            </span>
+                    </a>
+                    <% }) %>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <span>Logged in as <strong>
+                        <%= adminUser %>
+                    </strong></span>
+                <a href="/admin/logout" class="admin-logout">Logout →</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Dashboard</h1>
+                <a href="/" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
+                <a href="/admin/page-create" class="admin-btn admin-btn-primary">✨ Create New Page</a>
+            </div>
+
+            <% if (typeof saved !=='undefined' && saved) { %>
+                <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
+                <% } %>
+
+                    <!-- Stats Cards -->
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-number">
+                                <%= pages.length %>
+                            </div>
+                            <div class="admin-stat-label">Total Pages</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-number">
+                                <%= Object.values(sectionCounts).reduce((a,b)=> a+b, 0) %>
+                            </div>
+                            <div class="admin-stat-label">Content Sections</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-number">
+                                <%= settings.stat_projects || '50' %>+
+                            </div>
+                            <div class="admin-stat-label">Projects</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-number">
+                                <%= typeof mediaCount !=='undefined' ? mediaCount : 0 %>
+                            </div>
+                            <div class="admin-stat-label">Media Files</div>
+                        </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-number">
+                                <%= settings.stat_trained || '5000' %>+
+                            </div>
+                            <div class="admin-stat-label">Trained</div>
+                        </div>
+                    </div>
+
+                    <!-- Site Settings -->
+                    <div class="admin-card">
+                        <h2>Site Settings</h2>
+                        <form method="POST" action="/admin/settings" class="admin-settings-form">
+                            <div class="admin-form-row">
+                                <div class="admin-form-group">
+                                    <label>Site Name</label>
+                                    <input type="text" name="site_name" value="<%= settings.site_name || 'X DOT AI' %>">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Tagline</label>
+                                    <input type="text" name="site_tagline"
+                                        value="<%= settings.site_tagline || 'Where X Is Variable' %>">
+                                </div>
+                            </div>
+                            <div class="admin-form-row">
+                                <div class="admin-form-group">
+                                    <label>Projects Count</label>
+                                    <input type="number" name="stat_projects"
+                                        value="<%= settings.stat_projects || '50' %>">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Clients Count</label>
+                                    <input type="number" name="stat_clients"
+                                        value="<%= settings.stat_clients || '30' %>">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Workshops Count</label>
+                                    <input type="number" name="stat_workshops"
+                                        value="<%= settings.stat_workshops || '100' %>">
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>Professionals Trained</label>
+                                    <input type="number" name="stat_trained"
+                                        value="<%= settings.stat_trained || '5000' %>">
+                                </div>
+                            </div>
+                            <div class="admin-form-group" style="margin-top: 1rem;">
+                                <label>🤖 OpenAI API Key <small
+                                        style="font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--text-muted);">(for
+                                        AI content generation & SEO)</small></label>
+                                <input type="password" name="openai_api_key"
+                                    value="<%= settings.openai_api_key || '' %>" placeholder="sk-...">
+                                <small style="color: var(--text-muted); font-size: 0.7rem;">
+                                    Your API key is stored securely and never exposed. Required for AI Assistant
+                                    features in the Page Builder.
+                                </small>
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+
+                    <!-- Branding: Favicon & Logo -->
+                    <div class="admin-card">
+                        <h2>🎨 Branding</h2>
+                        <form method="POST" action="/admin/branding" enctype="multipart/form-data">
+                            <div class="admin-form-row">
+                                <div class="admin-form-group">
+                                    <label>🔷 Favicon <small
+                                            style="font-weight:400; color:var(--text-muted);">(Recommended: 32×32px or
+                                            SVG. Shows in browser tabs)</small></label>
+                                    <% if (settings.favicon_url) { %>
+                                        <div style="margin-bottom:0.5rem;">
+                                            <img src="<%= settings.favicon_url %>" alt="Current favicon"
+                                                style="width:32px; height:32px; border:1px solid var(--border); border-radius:4px; background:#fff; padding:2px;">
+                                            <span
+                                                style="color:var(--text-muted); font-size:0.8rem; margin-left:0.5rem;">Current</span>
+                                        </div>
+                                        <% } %>
+                                            <input type="file" name="favicon"
+                                                accept="image/svg+xml,image/png,image/x-icon,image/ico,.ico,.svg,.png">
+                                            <small style="color:var(--text-muted); font-size:0.7rem;">Accepted: SVG
+                                                (best), PNG (32×32 or 64×64), ICO. SVG scales to any size.</small>
+                                </div>
+                                <div class="admin-form-group">
+                                    <label>🏷️ Site Logo <small
+                                            style="font-weight:400; color:var(--text-muted);">(Recommended: 180×40px PNG
+                                            with transparent bg)</small></label>
+                                    <% if (settings.logo_url) { %>
+                                        <div style="margin-bottom:0.5rem;">
+                                            <img src="<%= settings.logo_url %>" alt="Current logo"
+                                                style="max-height:40px; max-width:180px; border:1px solid var(--border); border-radius:4px; background:#1a1a2e; padding:4px 8px;">
+                                            <span
+                                                style="color:var(--text-muted); font-size:0.8rem; margin-left:0.5rem;">Current</span>
+                                        </div>
+                                        <% } %>
+                                            <input type="file" name="site_logo"
+                                                accept="image/png,image/svg+xml,.png,.svg">
+                                            <small style="color:var(--text-muted); font-size:0.7rem;">Accepted: PNG or
+                                                SVG. Transparent background recommended. Appears in navbar &
+                                                footer.</small>
+                                </div>
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn-primary" style="margin-top:0.5rem;">Upload
+                                Branding</button>
+                        </form>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="admin-card">
+                        <h2>🔒 Change Admin Password</h2>
+                        <form method="POST" action="/admin/change-password">
+                            <% if (typeof pwError !=='undefined' && pwError) { %>
+                                <div class="admin-alert"
+                                    style="background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.3); color:#ef4444; margin-bottom:1rem;">
+                                    <%= pwError %>
+                                </div>
+                                <% } %>
+                                    <% if (typeof pwSuccess !=='undefined' && pwSuccess) { %>
+                                        <div class="admin-alert admin-alert-success" style="margin-bottom:1rem;">✅
+                                            Password changed successfully!</div>
+                                        <% } %>
+                                            <div class="admin-form-row">
+                                                <div class="admin-form-group">
+                                                    <label>Current Password</label>
+                                                    <input type="password" name="current_password" required
+                                                        placeholder="Enter current password">
+                                                </div>
+                                                <div class="admin-form-group">
+                                                    <label>New Password</label>
+                                                    <input type="password" name="new_password" required
+                                                        placeholder="Enter new password" minlength="6">
+                                                </div>
+                                                <div class="admin-form-group">
+                                                    <label>Confirm New Password</label>
+                                                    <input type="password" name="confirm_password" required
+                                                        placeholder="Confirm new password" minlength="6">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="admin-btn admin-btn-primary">Change
+                                                Password</button>
+                        </form>
+                    </div>
+                    <!-- Pages Overview -->
+                    <div class="admin-card">
+                        <h2>Pages</h2>
+                        <div class="admin-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Page</th>
+                                        <th>Slug</th>
+                                        <th>Sections</th>
+                                        <th>Last Updated</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% pages.forEach(p=> { %>
+                                        <tr>
+                                            <td><strong>
+                                                    <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
+                                                </strong></td>
+                                            <td><code>/<%= p.slug === 'home' ? '' : p.slug %></code></td>
+                                            <td><span class="admin-nav-badge">
+                                                    <%= sectionCounts[p.slug] || 0 %>
+                                                </span></td>
+                                            <td>
+                                                <%= p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '—' %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/page/<%= p.slug %>"
+                                                    class="admin-btn admin-btn-small">Edit</a>
+                                                <a href="/<%= p.slug === 'home' ? '' : p.slug %>"
+                                                    class="admin-btn admin-btn-small admin-btn-secondary"
+                                                    target="_blank">View</a>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+        </main>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page Manager — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+                <span class="admin-badge">CMS</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="admin-nav-item"><span class="admin-nav-icon">📊</span> Dashboard</a>
+                <a href="/admin/blog" class="admin-nav-item"><span class="admin-nav-icon">📝</span> Blog Manager</a>
+                <a href="/admin/nav-logos" class="admin-nav-item"><span class="admin-nav-icon">🧭</span> Nav &
+                    Logos</a>
+                <a href="/admin/home-manager" class="admin-nav-item active"><span class="admin-nav-icon">🏠</span> Home
+                    Manager</a>
+                <div class="admin-nav-separator">Pages</div>
+                <% pages.forEach(p=> { %>
+                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
+                        <span class="admin-nav-icon">📄</span>
+                        <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
+                    </a>
+                    <% }) %>
+            </nav>
+            <div class="admin-sidebar-footer">
+                <span>Logged in as <strong>
+                        <%= adminUser %>
+                    </strong></span>
+                <a href="/admin/logout" class="admin-logout">Logout →</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>🏠 Home Page Manager</h1>
+                <div style="display:flex;gap:0.5rem;">
+                    <a href="/admin/page/home" class="admin-btn admin-btn-secondary">⚙️ Page Settings</a>
+                    <a href="/admin/visual-builder/home" class="admin-btn"
+                        style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;">🎨 Visual Builder</a>
+                    <a href="/" target="_blank" class="admin-btn admin-btn-secondary">View Site ↗</a>
+                </div>
+            </div>
+
+            <p style="color:#888;margin:0 0 1rem;">Toggle, reorder, and edit every section on the home page. Drag
+                sections to rearrange their order.</p>
+
+            <% if (saved) { %>
+                <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
+                <% } %>
+
+                    <div id="sectionsContainer">
+                        <% homeSections.forEach((sec, idx)=> { %>
+                            <div class="admin-card home-section-card" data-id="<%= sec.id %>"
+                                style="margin-bottom:0.75rem;border-left:3px solid <%= sec.is_visible ? '#7c3aed' : '#444' %>;opacity:<%= sec.is_visible ? 1 : 0.6 %>;transition:all 0.3s;">
+                                <div style="display:flex;align-items:center;gap:1rem;cursor:grab;" class="drag-handle"
+                                    draggable="true">
+                                    <span style="color:#555;font-size:1.2rem;cursor:grab;"
+                                        title="Drag to reorder">☰</span>
+                                    <div style="flex:1;">
+                                        <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                                            <strong style="font-size:1rem;">
+                                                <%= sec.label %>
+                                            </strong>
+                                            <span
+                                                style="font-size:0.65rem;background:rgba(167,139,250,0.15);color:#a78bfa;padding:0.15rem 0.5rem;border-radius:999px;font-family:monospace;">
+                                                <%= sec.section_key %>
+                                            </span>
+                                            <span style="font-size:0.7rem;color:#555;">⬆ Order: <%= sec.sort_order %>
+                                            </span>
+                                        </div>
+                                        <% if (sec.heading) { %>
+                                            <p style="margin:0.2rem 0 0;font-size:0.8rem;color:#666;"><%- sec.heading %>
+                                            </p>
+                                            <% } %>
+                                    </div>
+                                    <label class="hm-toggle">
+                                        <input type="checkbox" <%=sec.is_visible ? 'checked' : '' %>
+                                        onchange="toggleSection(<%= sec.id %>, this)">
+                                            <span class="hm-toggle-slider"></span>
+                                    </label>
+                                    <button class="admin-btn admin-btn-secondary"
+                                        style="font-size:0.8rem;padding:0.35rem 0.7rem;"
+                                        onclick="this.closest('.home-section-card').querySelector('.section-edit-form').classList.toggle('hm-hidden')">
+                                        ✏️ Edit
+                                    </button>
+                                </div>
+
+                                <!-- Edit form (hidden by default) -->
+                                <div class="section-edit-form hm-hidden"
+                                    style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);">
+                                    <form action="/admin/home-sections/<%= sec.id %>" method="POST">
+
+                                        <% if (sec.section_key==='hero' ) { %>
+                                            <p style="color:#888;font-size:0.8rem;margin:0 0 0.75rem;">Hero title, label
+                                                & subtitle are set in <a href="/admin/page/home"
+                                                    style="color:#a78bfa;">Page Settings</a>. Edit the hero buttons
+                                                below:</p>
+                                            <div
+                                                style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.75rem;">
+                                                <div><label class="admin-form-label">Button 1 Text</label><input
+                                                        type="text" name="cfg_btn1_text"
+                                                        value="<%= sec.config.btn1_text || 'Start a Project' %>"
+                                                        class="admin-form-input"></div>
+                                                <div><label class="admin-form-label">Button 1 URL</label><input
+                                                        type="text" name="cfg_btn1_url"
+                                                        value="<%= sec.config.btn1_url || '/contact' %>"
+                                                        class="admin-form-input"></div>
+                                                <div><label class="admin-form-label">Button 2 Text</label><input
+                                                        type="text" name="cfg_btn2_text"
+                                                        value="<%= sec.config.btn2_text || 'View Our Work' %>"
+                                                        class="admin-form-input"></div>
+                                                <div><label class="admin-form-label">Button 2 URL</label><input
+                                                        type="text" name="cfg_btn2_url"
+                                                        value="<%= sec.config.btn2_url || '/portfolio' %>"
+                                                        class="admin-form-input"></div>
+                                            </div>
+                                            <input type="hidden" name="heading" value=""><input type="hidden"
+                                                name="subtitle" value="">
+
+                                            <% } else if (sec.section_key==='stats' ) { %>
+                                                <p style="color:#888;font-size:0.8rem;margin:0 0 0.75rem;">Edit the stat
+                                                    values and labels shown on the home page.</p>
+                                                <div
+                                                    style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.75rem;">
+                                                    <div>
+                                                        <label class="admin-form-label">Stat 1 Value</label>
+                                                        <input type="text" name="cfg_stat1_value"
+                                                            value="<%= sec.config.stat1_value || settings.stat_projects || '50' %>"
+                                                            class="admin-form-input">
+                                                        <label class="admin-form-label" style="margin-top:0.4rem;">Stat
+                                                            1 Label</label>
+                                                        <input type="text" name="cfg_stat1_label"
+                                                            value="<%= sec.config.stat1_label || 'Projects Completed' %>"
+                                                            class="admin-form-input">
+                                                    </div>
+                                                    <div>
+                                                        <label class="admin-form-label">Stat 2 Value</label>
+                                                        <input type="text" name="cfg_stat2_value"
+                                                            value="<%= sec.config.stat2_value || settings.stat_clients || '25' %>"
+                                                            class="admin-form-input">
+                                                        <label class="admin-form-label" style="margin-top:0.4rem;">Stat
+                                                            2 Label</label>
+                                                        <input type="text" name="cfg_stat2_label"
+                                                            value="<%= sec.config.stat2_label || 'Clients Served' %>"
+                                                            class="admin-form-input">
+                                                    </div>
+                                                    <div>
+                                                        <label class="admin-form-label">Stat 3 Value</label>
+                                                        <input type="text" name="cfg_stat3_value"
+                                                            value="<%= sec.config.stat3_value || settings.stat_workshops || '100' %>"
+                                                            class="admin-form-input">
+                                                        <label class="admin-form-label" style="margin-top:0.4rem;">Stat
+                                                            3 Label</label>
+                                                        <input type="text" name="cfg_stat3_label"
+                                                            value="<%= sec.config.stat3_label || 'Workshops Delivered' %>"
+                                                            class="admin-form-input">
+                                                    </div>
+                                                    <div>
+                                                        <label class="admin-form-label">Stat 4 Value</label>
+                                                        <input type="text" name="cfg_stat4_value"
+                                                            value="<%= sec.config.stat4_value || settings.stat_trained || '5000' %>"
+                                                            class="admin-form-input">
+                                                        <label class="admin-form-label" style="margin-top:0.4rem;">Stat
+                                                            4 Label</label>
+                                                        <input type="text" name="cfg_stat4_label"
+                                                            value="<%= sec.config.stat4_label || 'Professionals Trained' %>"
+                                                            class="admin-form-input">
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="heading" value=""><input type="hidden"
+                                                    name="subtitle" value="">
+
+                                                <% } else if (sec.section_key==='partners' ) { %>
+                                                    <p style="color:#888;font-size:0.8rem;margin:0 0 0.5rem;">Logos
+                                                        managed in <a href="/admin/nav-logos" style="color:#a78bfa;">Nav
+                                                            & Logos</a>.</p>
+                                                    <div><label class="admin-form-label">Header Text</label><input
+                                                            type="text" name="heading" value="<%= sec.heading %>"
+                                                            class="admin-form-input"></div>
+                                                    <input type="hidden" name="subtitle" value="">
+
+                                                    <% } else if (sec.section_key==='cta' ) { %>
+                                                        <div
+                                                            style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                                            <div><label class="admin-form-label">Heading <small
+                                                                        style="color:#666;">(HTML OK for
+                                                                        gradient)</small></label><input type="text"
+                                                                    name="heading" value="<%- sec.heading %>"
+                                                                    class="admin-form-input"></div>
+                                                            <div><label class="admin-form-label">Subtitle</label><input
+                                                                    type="text" name="subtitle"
+                                                                    value="<%= sec.subtitle %>"
+                                                                    class="admin-form-input"></div>
+                                                        </div>
+                                                        <div
+                                                            style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-top:0.5rem;">
+                                                            <div><label class="admin-form-label">Button
+                                                                    Text</label><input type="text" name="cfg_btn_text"
+                                                                    value="<%= sec.config.btn_text || 'Let\'s Talk' %>"
+                                                                    class="admin-form-input"></div>
+                                                            <div><label class="admin-form-label">Email
+                                                                    Placeholder</label><input type="text"
+                                                                    name="cfg_form_placeholder"
+                                                                    value="<%= sec.config.form_placeholder || 'Enter your email' %>"
+                                                                    class="admin-form-input"></div>
+                                                            <div><label class="admin-form-label">Button
+                                                                    URL</label><input type="text" name="cfg_btn_url"
+                                                                    value="<%= sec.config.btn_url || '#' %>"
+                                                                    class="admin-form-input"></div>
+                                                        </div>
+
+                                                        <% } else { %>
+                                                            <div
+                                                                style="display:grid;grid-template-columns:2fr 1fr;gap:0.75rem;">
+                                                                <div><label class="admin-form-label">Section Heading
+                                                                        <small style="color:#666;">(HTML
+                                                                            OK)</small></label><input type="text"
+                                                                        name="heading" value="<%- sec.heading %>"
+                                                                        class="admin-form-input"></div>
+                                                                <div><label class="admin-form-label">Section
+                                                                        Label</label><input type="text" name="cfg_label"
+                                                                        value="<%= sec.config.label || '' %>"
+                                                                        class="admin-form-input"></div>
+                                                            </div>
+                                                            <div style="margin-top:0.5rem;">
+                                                                <label class="admin-form-label">Subtitle</label>
+                                                                <textarea name="subtitle" class="admin-form-input"
+                                                                    rows="2"
+                                                                    style="resize:vertical;"><%= sec.subtitle %></textarea>
+                                                            </div>
+                                                            <% } %>
+
+                                                                <div style="margin-top:0.75rem;">
+                                                                    <button type="submit" class="admin-btn"
+                                                                        style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;">💾
+                                                                        Save Section</button>
+                                                                </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+
+                    <style>
+                        .hm-hidden {
+                            display: none !important;
+                        }
+
+                        .hm-toggle {
+                            position: relative;
+                            width: 42px;
+                            height: 22px;
+                            display: inline-block;
+                            flex-shrink: 0;
+                        }
+
+                        .hm-toggle input {
+                            display: none;
+                        }
+
+                        .hm-toggle-slider {
+                            position: absolute;
+                            inset: 0;
+                            background: #333;
+                            border-radius: 999px;
+                            cursor: pointer;
+                            transition: 0.3s;
+                        }
+
+                        .hm-toggle-slider::before {
+                            content: '';
+                            position: absolute;
+                            width: 16px;
+                            height: 16px;
+                            left: 3px;
+                            bottom: 3px;
+                            background: #fff;
+                            border-radius: 50%;
+                            transition: 0.3s;
+                        }
+
+                        .hm-toggle input:checked+.hm-toggle-slider {
+                            background: #7c3aed;
+                        }
+
+                        .hm-toggle input:checked+.hm-toggle-slider::before {
+                            transform: translateX(20px);
+                        }
+
+                        .home-section-card.dragging {
+                            opacity: 0.4 !important;
+                            transform: scale(0.98);
+                        }
+                    </style>
+
+                    <script>
+                        function toggleSection(id, checkbox) {
+                            fetch('/admin/home-sections/' + id + '/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                                .then(r => r.json()).then(() => {
+                                    const card = checkbox.closest('.home-section-card');
+                                    card.style.opacity = checkbox.checked ? '1' : '0.6';
+                                    card.style.borderLeftColor = checkbox.checked ? '#7c3aed' : '#444';
+                                });
+                        }
+
+                        // Drag & drop reorder
+                        const container = document.getElementById('sectionsContainer');
+                        let dragEl = null;
+
+                        container.querySelectorAll('.drag-handle').forEach(handle => {
+                            const card = handle.closest('.home-section-card');
+
+                            handle.addEventListener('dragstart', e => {
+                                dragEl = card;
+                                card.classList.add('dragging');
+                                e.dataTransfer.effectAllowed = 'move';
+                                e.dataTransfer.setData('text/plain', '');
+                            });
+
+                            card.addEventListener('dragover', e => {
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = 'move';
+                            });
+
+                            card.addEventListener('drop', e => {
+                                e.preventDefault();
+                                if (dragEl && dragEl !== card) {
+                                    const cards = [...container.querySelectorAll('.home-section-card')];
+                                    const fromIdx = cards.indexOf(dragEl);
+                                    const toIdx = cards.indexOf(card);
+                                    if (fromIdx < toIdx) { card.after(dragEl); } else { card.before(dragEl); }
+                                    saveOrder();
+                                }
+                            });
+
+                            handle.addEventListener('dragend', () => {
+                                if (dragEl) dragEl.classList.remove('dragging');
+                                dragEl = null;
+                            });
+                        });
+
+                        function saveOrder() {
+                            const order = [...container.querySelectorAll('.home-section-card')].map(c => parseInt(c.dataset.id));
+                            fetch('/admin/home-sections/reorder', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ order })
+                            });
+                        }
+                    </script>
+
+        </main>
+    </div>
+</body>
+
+</html>

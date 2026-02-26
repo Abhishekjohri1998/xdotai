@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+
+    <!-- Page Hero -->
+    <section class="page-hero" aria-label="Process hero">
+        <div class="container">
+            <span class="section-label">
+                <%= page.hero_label %>
+            </span>
+            <h1 class="page-hero-title"><%- page.hero_title %></h1>
+            <p class="page-hero-subtitle">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+        <div class="glow-orb glow-orb-2" aria-hidden="true"></div>
+    </section>
+
+    <!-- Process Timeline -->
+    <section class="process section" aria-label="Our process">
+        <div class="container">
+            <div class="process-timeline stagger-children">
+                <% if (sections['process-step']) { sections['process-step'].forEach(step=> { %>
+                    <div class="process-step">
+                        <div class="step-number">
+                            <%= step.extra.step || '01' %>
+                        </div>
+                        <h2>
+                            <%= step.title %>
+                        </h2>
+                        <p>
+                            <%= step.description %>
+                        </p>
+                    </div>
+                    <% }) } %>
+            </div>
+        </div>
+        <div class="glow-orb glow-orb-2" aria-hidden="true"></div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner" aria-label="Get in touch">
+        <div class="container">
+            <div class="cta-content reveal-scale">
+                <h2>Ready to <span class="text-gradient">Get Started</span>?</h2>
+                <p>Our three-stage methodology ensures results from day one.</p>
+                <a href="/contact" class="btn btn-primary">Start a Project <span class="btn-icon">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>

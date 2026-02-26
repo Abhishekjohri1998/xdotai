@@ -1,0 +1,350 @@
+<%- include('../partials/header') %>
+
+    <!-- JSON-LD: Organization -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "X DOT AI",
+  "url": "https://xdotai.in/",
+  "description": "<%= page.meta_description %>",
+  "logo": "https://xdotai.in/images/logo.png",
+  "founder": { "@type": "Person", "name": "Da Sachin Sharma" },
+  "sameAs": ["https://twitter.com/xdotai","https://linkedin.com/company/xdotai","https://youtube.com/@xdotai","https://instagram.com/xdotai"]
+}
+</script>
+
+<%
+  var _hsMap = {};
+  if (typeof homeSections !== 'undefined' && homeSections) {
+    homeSections.forEach(function(s) { _hsMap[s.section_key] = s; });
+  }
+  function hs(key) { return _hsMap[key] || null; }
+  function hsOn(key) { var s = hs(key); return !s || s.is_visible; }
+
+  var orderedKeys = [];
+  if (typeof homeSections !== 'undefined' && homeSections && homeSections.length) {
+    homeSections.forEach(function(s) {
+      if (s.is_visible) orderedKeys.push(s.section_key);
+    });
+  } else {
+    orderedKeys = ['hero','stats','partners','services','deliverables','process','portfolio','insights','blog','faq','cta'];
+  }
+%>
+
+<% orderedKeys.forEach(function(secKey, secIdx) { %>
+<% if (secIdx > 0) { %>
+<hr class="section-divider" aria-hidden="true">
+<% } %>
+
+<% if (secKey === 'hero') { %>
+<% var heroSec = hs('hero'); var heroCfg = heroSec && heroSec.config ? heroSec.config : {}; %>
+<section class="hero" id="hero" aria-label="Hero introduction" style="position: relative; overflow: hidden;">
+    <iframe src="https://my.spline.design/particleshand-iOqgajme6nPYmGzySbZvC5ef/" style="position: absolute; inset: 0; width: 100%; height: 100%; border: none; pointer-events: none; z-index: 0;" loading="lazy" title="3D Particle Animation"></iframe><div style="position:absolute;bottom:0;right:0;width:200px;height:60px;background:#0a0a0f;z-index:1;"></div>
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(to top, #0a0a0f 0%, transparent 100%); z-index: 1; pointer-events: none;"></div>
+    <div class="ambient-orb ambient-orb--hero-1" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb--hero-2" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb--hero-3" aria-hidden="true"></div>
+    <div class="hero-content" style="position: relative; z-index: 2;">
+        <div class="hero-label" data-animate="fade-in" style="--delay: 0.2s">
+            <span class="pulse-dot"></span>
+            <%= page.hero_label %>
+        </div>
+        <h1 class="hero-title" data-animate="fade-up" style="--delay: 0.4s">
+            <%- page.hero_title %>
+        </h1>
+        <p class="hero-description" data-animate="fade-up" style="--delay: 0.6s">
+            <%= page.hero_subtitle %>
+        </p>
+        <div class="hero-buttons" data-animate="fade-up" style="--delay: 0.8s">
+            <a href="<%= heroCfg.btn1_url || '/contact' %>" class="btn btn-primary"><%= heroCfg.btn1_text || 'Start a Project' %> <span class="btn-icon">→</span></a>
+            <a href="<%= heroCfg.btn2_url || '/portfolio' %>" class="btn btn-secondary"><%= heroCfg.btn2_text || 'View Our Work' %> <span class="btn-icon">↗</span></a>
+        </div>
+    </div>
+    <div class="hero-scroll-indicator" data-animate="fade-in" style="--delay: 1.2s; position: relative; z-index: 2;" aria-hidden="true">
+        <div class="scroll-mouse"></div>
+        <span>Scroll to explore</span>
+    </div>
+</section>
+
+<% } else if (secKey === 'stats') { %>
+<% var statsSec = hs('stats'); var statsCfg = statsSec && statsSec.config ? statsSec.config : {}; %>
+<section class="stats-bar" aria-label="Key statistics">
+    <div class="container">
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-item" data-animate="fade-up" style="--delay: 0.1s">
+                <div class="stat-number" data-target="<%= statsCfg.stat1_value || settings.stat_projects || '50' %>">0</div>
+                <div class="stat-label"><%= statsCfg.stat1_label || 'Projects Completed' %></div>
+            </div>
+            <div class="stat-item" data-animate="fade-up" style="--delay: 0.2s">
+                <div class="stat-number" data-target="<%= statsCfg.stat2_value || settings.stat_clients || '25' %>">0</div>
+                <div class="stat-label"><%= statsCfg.stat2_label || 'Clients Served' %></div>
+            </div>
+            <div class="stat-item" data-animate="fade-up" style="--delay: 0.3s">
+                <div class="stat-number" data-target="<%= statsCfg.stat3_value || settings.stat_workshops || '100' %>">0</div>
+                <div class="stat-label"><%= statsCfg.stat3_label || 'Workshops Delivered' %></div>
+            </div>
+            <div class="stat-item" data-animate="fade-up" style="--delay: 0.4s">
+                <div class="stat-number" data-target="<%= statsCfg.stat4_value || settings.stat_trained || '5000' %>">0</div>
+                <div class="stat-label"><%= statsCfg.stat4_label || 'Professionals Trained' %></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<% } else if (secKey === 'partners') { %>
+<% var partnerSec = hs('partners'); %>
+<section class="partners" aria-label="Trusted by leading organizations">
+    <div class="partners-header" data-animate="fade-in">
+        <p><%= partnerSec && partnerSec.heading ? partnerSec.heading : 'Trusted by forward-thinking organizations' %></p>
+    </div>
+    <div class="marquee-wrapper">
+        <div class="marquee-track" aria-label="Partner logos">
+            <% if (typeof clientLogos !== 'undefined' && clientLogos.length > 0) { %>
+            <% clientLogos.forEach(function(logo) { %>
+            <div class="partner-logo">
+                <% if (logo.image_url) { %>
+                <img src="<%= logo.image_url %>" alt="<%= logo.name %>" style="max-height:36px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.7;">
+                <% } else { %>
+                <div style="font-weight:700;font-size:0.85rem;color:rgba(255,255,255,0.5);letter-spacing:0.05em;white-space:nowrap;padding:0 1.5rem;">
+                    <% var words = logo.name.split(' '); if (words.length > 1) { %>
+                    <% words.forEach(function(word, wi) { %>
+                    <% if (wi === 0) { %><span style="color:rgba(167,139,250,0.7);"><%= word %></span><% } else { %> <%= word %><% } %>
+                    <% }) %>
+                    <% } else { %>
+                    <%= logo.name.toUpperCase() %>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+            <% }) %>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<% } else if (secKey === 'services') { %>
+<% var svcSec = hs('services'); var svcCfg = svcSec && svcSec.config ? svcSec.config : {}; %>
+<section class="services section" id="services" aria-label="Our services">
+    <div class="ambient-orb ambient-orb--services" aria-hidden="true"></div>
+    <div class="container">
+        <div class="text-center" data-animate="fade-up">
+            <span class="section-label"><%= svcCfg.label || 'What We Do' %></span>
+            <h2 class="section-title"><%- svcSec && svcSec.heading ? svcSec.heading : 'AI-First Creative <span class="text-gradient">Services</span>' %></h2>
+            <p class="section-subtitle"><%= svcSec && svcSec.subtitle ? svcSec.subtitle : 'From training workshops to full-scale AI content production, we bridge the gap between cutting-edge AI technology and creative excellence.' %></p>
+        </div>
+        <div class="services-grid" id="servicesGrid">
+            <% services.forEach(function(s, i) { %>
+            <article class="service-card" data-animate="fade-up" style="--delay: <%= 0.1 + i * 0.1 %>s">
+                <div class="service-icon"><%= s.icon %></div>
+                <h3><%= s.title %></h3>
+                <p><%= s.description %></p>
+                <a href="/services" class="card-link">Learn more <span>→</span></a>
+            </article>
+            <% }) %>
+        </div>
+    </div>
+</section>
+
+<% } else if (secKey === 'deliverables') { %>
+<% var delSec = hs('deliverables'); var delCfg = delSec && delSec.config ? delSec.config : {}; %>
+<section class="section" id="deliverables" aria-label="Our deliverables">
+    <div class="container">
+        <div data-animate="fade-up">
+            <span class="section-label"><%= delCfg.label || 'Deliverables' %></span>
+            <h2 class="section-title"><%- delSec && delSec.heading ? delSec.heading : 'What We <span class="text-gradient">Create</span>' %></h2>
+            <p class="section-subtitle"><%= delSec && delSec.subtitle ? delSec.subtitle : 'Every format, every platform — powered by AI creativity and human vision.' %></p>
+        </div>
+        <div class="deliverables-grid">
+            <% deliverables.forEach(function(d, i) { %>
+            <div class="deliverable-tile" data-animate="scale-up" style="--delay: <%= 0.05 + i * 0.08 %>s; --tile-gradient: linear-gradient(135deg, <%= d.extra.gradient || 'rgba(168,85,247,0.15)' %> 0%, transparent 100%)">
+                <div class="tile-icon"><%= d.icon %></div>
+                <h4><%= d.title %></h4>
+                <p><%= d.description %></p>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</section>
+
+<% } else if (secKey === 'process') { %>
+<% var procSec = hs('process'); var procCfg = procSec && procSec.config ? procSec.config : {}; %>
+<section class="process section" id="process" aria-label="Our process">
+    <div class="container">
+        <div class="text-center" data-animate="fade-up">
+            <span class="section-label"><%= procCfg.label || 'How It Works' %></span>
+            <h2 class="section-title"><%- procSec && procSec.heading ? procSec.heading : 'Our <span class="text-gradient">Process</span>' %></h2>
+            <p class="section-subtitle"><%= procSec && procSec.subtitle ? procSec.subtitle : 'A proven three-stage methodology that blends human creativity with AI precision.' %></p>
+        </div>
+        <div class="process-timeline">
+            <% processSteps.forEach(function(step, i) { %>
+            <div class="process-step" data-animate="fade-up" style="--delay: <%= 0.15 + i * 0.15 %>s">
+                <div class="step-number"><%= step.extra.step || '01' %></div>
+                <h3><%= step.title %></h3>
+                <p><%= step.description %></p>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+    <div class="glow-orb glow-orb-2" aria-hidden="true" data-parallax="0.05"></div>
+</section>
+
+<% } else if (secKey === 'portfolio') { %>
+<% if (portfolio && portfolio.length > 0) { %>
+<% var portSec = hs('portfolio'); var portCfg = portSec && portSec.config ? portSec.config : {}; %>
+<section class="section" id="portfolio" aria-label="Portfolio showcase">
+    <div class="ambient-orb ambient-orb--portfolio" aria-hidden="true"></div>
+    <div class="container">
+        <div class="text-center" data-animate="fade-up">
+            <span class="section-label"><%= portCfg.label || 'Our Work' %></span>
+            <h2 class="section-title"><%- portSec && portSec.heading ? portSec.heading : 'Featured <span class="text-gradient">Projects</span>' %></h2>
+            <p class="section-subtitle"><%= portSec && portSec.subtitle ? portSec.subtitle : "A showcase of AI-powered creative productions." %></p>
+        </div>
+        <div class="portfolio-grid">
+            <% portfolio.forEach(function(p, i) { %>
+            <article class="portfolio-card" data-animate="fade-up" style="--delay: <%= 0.1 + i * 0.1 %>s">
+                <div class="portfolio-thumb" style="background: <%= p.extra.gradient || 'linear-gradient(135deg, #1a0533, #7c3aed)' %>;">
+                    <div class="play-overlay" style="opacity:1;">
+                        <div class="play-btn">▶</div>
+                    </div>
+                </div>
+                <div class="portfolio-info">
+                    <h3><%= p.title %></h3>
+                    <p><%= p.description %></p>
+                    <span class="portfolio-tag"><%= p.tag %></span>
+                </div>
+            </article>
+            <% }) %>
+        </div>
+        <div class="text-center" style="margin-top:2rem;">
+            <a href="/portfolio" class="btn btn-secondary">View All Projects <span class="btn-icon">→</span></a>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<% } else if (secKey === 'insights') { %>
+<% var insSec = hs('insights'); var insCfg = insSec && insSec.config ? insSec.config : {}; %>
+<section class="section" id="insights" style="background: var(--bg-secondary);" aria-label="AI insights and articles">
+    <div class="container">
+        <div class="text-center" data-animate="fade-up">
+            <span class="section-label"><%= insCfg.label || 'AI Insights' %></span>
+            <h2 class="section-title"><%- insSec && insSec.heading ? insSec.heading : 'Latest <span class="text-gradient">Thinking</span>' %></h2>
+            <p class="section-subtitle"><%= insSec && insSec.subtitle ? insSec.subtitle : 'Research, perspectives, and practical guides on harnessing generative AI for creative work.' %></p>
+        </div>
+        <div class="insights-grid">
+            <% insights.forEach(function(item, idx) { %>
+            <article class="insight-card" data-animate="fade-up" style="--delay: <%= 0.1 + idx * 0.1 %>s">
+                <div class="insight-image" <% if (item.extra.gradient) { %>style="background: <%= item.extra.gradient %>;"<% } %>>
+                    <div class="img-overlay"><%= item.icon %></div>
+                </div>
+                <div class="insight-body">
+                    <div class="insight-meta">
+                        <span class="insight-tag"><%= item.tag %></span>
+                        <span><%= item.extra.date || '' %></span>
+                    </div>
+                    <h3><%= item.title %></h3>
+                    <p><%= item.description %></p>
+                    <a href="/insights" class="insight-link">Read more <span>→</span></a>
+                </div>
+            </article>
+            <% }) %>
+        </div>
+        <div class="text-center" style="margin-top:2rem;">
+            <a href="/insights" class="btn btn-secondary">All Insights <span class="btn-icon">→</span></a>
+        </div>
+    </div>
+</section>
+
+<% } else if (secKey === 'blog') { %>
+<% if (typeof featuredBlogs !== 'undefined' && featuredBlogs && featuredBlogs.length > 0) { %>
+<% var blogSec = hs('blog'); var blogCfg = blogSec && blogSec.config ? blogSec.config : {}; %>
+<section class="section" id="blog" aria-label="Featured blog posts">
+    <div class="container">
+        <div class="text-center" data-animate="fade-up">
+            <span class="section-label"><%= blogCfg.label || 'Blog' %></span>
+            <h2 class="section-title"><%- blogSec && blogSec.heading ? blogSec.heading : 'Featured from our <span class="text-gradient">Blog</span>' %></h2>
+            <p class="section-subtitle"><%= blogSec && blogSec.subtitle ? blogSec.subtitle : 'Expert insights, tutorials, and industry updates on generative AI and creative production.' %></p>
+        </div>
+        <div class="blog-grid" style="max-width:1000px;margin:0 auto;">
+            <% featuredBlogs.forEach(function(bp, idx) { %>
+            <article class="blog-card" data-animate="fade-up" style="--delay: <%= 0.1 + idx * 0.12 %>s">
+                <a href="/blogs/<%= bp.slug %>" class="blog-card-link">
+                    <div class="blog-card-image">
+                        <% if (bp.featured_image) { %>
+                        <img src="<%= bp.featured_image %>" alt="<%= bp.featured_image_alt || bp.title %>" loading="lazy">
+                        <% } else { %>
+                        <div class="blog-card-placeholder"><span>📝</span></div>
+                        <% } %>
+                        <% if (bp.category) { %>
+                        <span class="blog-card-category"><%= bp.category %></span>
+                        <% } %>
+                    </div>
+                    <div class="blog-card-body">
+                        <div class="blog-card-meta">
+                            <time><%= new Date(bp.published_at).toLocaleDateString('en-US', {month:'short',day:'numeric'}) %></time>
+                            <span>•</span>
+                            <span><%= bp.reading_time %> min read</span>
+                        </div>
+                        <h3 class="blog-card-title"><%= bp.title %></h3>
+                        <p class="blog-card-excerpt"><%= bp.excerpt %></p>
+                        <div class="blog-card-footer">
+                            <span class="blog-card-author"><%= bp.author %></span>
+                            <span class="blog-card-arrow">→</span>
+                        </div>
+                    </div>
+                </a>
+            </article>
+            <% }) %>
+        </div>
+        <div class="text-center" style="margin-top:2rem;">
+            <a href="/blogs" class="btn btn-secondary">View All Posts <span class="btn-icon">→</span></a>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<% } else if (secKey === 'faq') { %>
+<% var faqSec = hs('faq'); var faqCfg = faqSec && faqSec.config ? faqSec.config : {}; %>
+<section class="faq section" id="faq" aria-label="Frequently asked questions">
+    <div class="container">
+        <div class="text-center" data-animate="fade-up">
+            <span class="section-label"><%= faqCfg.label || 'FAQ' %></span>
+            <h2 class="section-title"><%- faqSec && faqSec.heading ? faqSec.heading : 'Common <span class="text-gradient">Questions</span>' %></h2>
+            <p class="section-subtitle"><%= faqSec && faqSec.subtitle ? faqSec.subtitle : 'Everything you need to know about working with an AI creative agency.' %></p>
+        </div>
+        <div class="faq-list" data-animate="fade-up" style="--delay: 0.2s" id="faqList">
+            <% faqs.forEach(function(f) { %>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">
+                    <%= f.title %>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer" role="region">
+                    <div class="faq-answer-content"><%= f.description %></div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</section>
+
+<% } else if (secKey === 'cta') { %>
+<% var ctaSec = hs('cta'); var ctaCfg = ctaSec && ctaSec.config ? ctaSec.config : {}; %>
+<section class="cta-banner" id="contact" aria-label="Get in touch">
+    <div class="container">
+        <div class="cta-content" data-animate="scale-up">
+            <h2><%- ctaSec && ctaSec.heading ? ctaSec.heading : 'Ready to <span class="text-gradient">Supercharge</span> Your Creativity?' %></h2>
+            <p><%= ctaSec && ctaSec.subtitle ? ctaSec.subtitle : 'Join the brands and teams already leveraging AI to create breakthrough creative content.' %></p>
+            <form class="cta-form" id="ctaForm" aria-label="Newsletter signup" data-beehiiv="https://xdotai.beehiiv.com/create">
+                <input type="email" placeholder="<%= ctaCfg.form_placeholder || 'Enter your email' %>" aria-label="Email address" required>
+                <button type="submit" class="btn btn-primary"><%= ctaCfg.btn_text || "Let's Talk" %> <span class="btn-icon">→</span></button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<% } %>
+<% }) %>
+
+<%- include('../partials/footer') %>

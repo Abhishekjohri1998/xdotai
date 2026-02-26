@@ -1,0 +1,28 @@
+{
+  "name": "xdotai-website",
+  "version": "1.0.0",
+  "description": "X DOT AI — AI Creative Agency Website with CMS",
+  "private": true,
+  "workspaces": [
+    "apps/website",
+    "apps/admin",
+    "apps/backend",
+    "packages/database",
+    "packages/shared"
+  ],
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build": "node create-deploy.js",
+    "zip": "node create-zip.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "mongoose": "^9.2.1",
+    "multer": "^2.0.2",
+    "nodemailer": "^8.0.1"
+  }
+}

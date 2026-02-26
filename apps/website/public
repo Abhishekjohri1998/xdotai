@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta Tags -->
+  <title>X DOT AI — AI Creative Agency | AI-Powered Content, Films & Training</title>
+  <meta name="description"
+    content="X DOT AI is a leading AI creative agency delivering AI-powered ad films, music videos, content production, and hands-on AI training workshops for brands, agencies, and teams.">
+  <meta name="keywords"
+    content="AI creative agency, AI content production, AI training, generative AI, AI ad films, AI music videos, AI workshops, AI consulting, X DOT AI">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Da Sachin Sharma">
+  <link rel="canonical" href="https://xdotai.in/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="X DOT AI — AI Creative Agency | AI-Powered Content, Films & Training">
+  <meta property="og:description"
+    content="Supercharge your brand with AI-powered creative content, ad films, music videos, and expert AI training workshops.">
+  <meta property="og:url" content="https://xdotai.in/">
+  <meta property="og:site_name" content="X DOT AI">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="X DOT AI — AI Creative Agency">
+  <meta name="twitter:description"
+    content="AI-powered content production, ad films, music videos, and training workshops.">
+
+  <!-- Preconnect & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- JSON-LD: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "X DOT AI",
+    "url": "https://xdotai.in/",
+    "description": "AI Creative Agency specializing in AI-powered content production, ad films, music videos, and AI training workshops.",
+    "founder": {
+      "@type": "Person",
+      "name": "Da Sachin Sharma"
+    },
+    "sameAs": [
+      "https://twitter.com/xdotai",
+      "https://linkedin.com/company/xdotai",
+      "https://youtube.com/@xdotai",
+      "https://instagram.com/xdotai"
+    ],
+    "serviceType": ["AI Content Production", "AI Training", "AI Consulting", "AI Research"]
+  }
+  </script>
+
+  <!-- JSON-LD: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "X DOT AI",
+    "url": "https://xdotai.in/",
+    "description": "AI Creative Agency — AI-Powered Content, Films & Training"
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is generative AI and how does X DOT AI use it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Generative AI refers to artificial intelligence systems that can create new content — including images, videos, music, and text — from learned patterns. X DOT AI leverages leading generative AI tools to produce ad films, music videos, and branded content at a fraction of the traditional cost and timeline."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who are X DOT AI's training workshops designed for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our AI training workshops are designed for corporate teams, creative agencies, marketing professionals, and educational institutions. We offer customized programs ranging from beginner-level AI literacy to advanced prompt engineering and AI content production workflows."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does it take to produce an AI-generated ad film?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An AI-generated ad film can typically be produced in 5–10 working days, compared to 4–8 weeks for traditional production. This includes concept development, AI generation, editing, sound design, and final delivery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What industries does X DOT AI serve?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "X DOT AI serves a wide range of industries including technology, entertainment, music, fashion, FMCG, education, and healthcare. Our AI-powered approach adapts to any sector that needs creative content or AI upskilling."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can AI replace human creativity in content production?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AI doesn't replace human creativity — it amplifies it. At X DOT AI, our human-led creative direction guides the AI tools. Think of AI as a powerful collaborator that handles execution speed and variation, while the strategic vision, emotional storytelling, and brand understanding remain human-driven."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- JSON-LD: Service -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "AI Creative Production",
+    "provider": {
+      "@type": "Organization",
+      "name": "X DOT AI"
+    },
+    "areaServed": "Worldwide",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "AI Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "AI Training Workshops",
+            "description": "Hands-on AI training for teams, covering generative AI tools, prompt engineering, and AI-powered content workflows."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "AI Ad Films & Music Videos",
+            "description": "End-to-end production of ad films and music videos using generative AI, from concept to final delivery."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "AI Consulting",
+            "description": "Strategic AI consulting to integrate generative AI into existing creative and business workflows."
+          }
+        }
+      ]
+    }
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- Page Loader -->
+  <div class="page-loader" id="pageLoader" aria-hidden="true">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- Skip Link (Accessibility) -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ============================================
+       NAVIGATION
+       ============================================ -->
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <div class="container">
+        <a href="#" class="nav-logo" aria-label="X DOT AI Home">
+          <span class="logo-x">X</span> DOT AI
+        </a>
+
+        <div class="nav-links" id="navLinks" role="menubar">
+          <a href="#services" role="menuitem">Services</a>
+          <a href="#process" role="menuitem">Process</a>
+          <a href="#portfolio" role="menuitem">Portfolio</a>
+          <a href="#insights" role="menuitem">Insights</a>
+          <a href="#faq" role="menuitem">FAQ</a>
+          <a href="#contact" class="btn btn-primary nav-cta" role="menuitem">Get In Touch <span
+              class="btn-icon">→</span></a>
+        </div>
+
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div class="nav-overlay" id="navOverlay"></div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ============================================
+         HERO
+         ============================================ -->
+    <section class="hero" id="hero" aria-label="Hero introduction">
+      <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+      <div class="hero-content">
+        <div class="hero-label">
+          <span class="pulse-dot"></span>
+          AI Creative Agency
+        </div>
+
+        <h1 class="hero-title">
+          We Build<br>
+          <span class="typewriter-text" id="typewriterText">AI-Powered Films</span><span class="typewriter-cursor"
+            aria-hidden="true"></span>
+        </h1>
+
+        <p class="hero-description">
+          We empower brands, agencies, and teams to scale creativity using AI — delivering generative AI content, ad
+          films, music videos, and hands-on training workshops.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#contact" class="btn btn-primary">
+            Start a Project <span class="btn-icon">→</span>
+          </a>
+          <a href="#portfolio" class="btn btn-secondary">
+            View Our Work <span class="btn-icon">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-scroll-indicator" aria-hidden="true">
+        <div class="scroll-mouse"></div>
+        <span>Scroll to explore</span>
+      </div>
+    </section>
+
+    <!-- ============================================
+         STATS BAR
+         ============================================ -->
+    <section class="stats-bar" aria-label="Key statistics">
+      <div class="container">
+        <div class="stats-grid reveal" id="statsGrid">
+          <div class="stat-item">
+            <div class="stat-number" data-target="50">0</div>
+            <div class="stat-label">Projects Delivered</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-target="30">0</div>
+            <div class="stat-label">Clients Worldwide</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-target="100">0</div>
+            <div class="stat-label">Workshops Conducted</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-target="5000">0</div>
+            <div class="stat-label">Professionals Trained</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         PARTNERS / TRUSTED BY
+         ============================================ -->
+    <section class="partners" aria-label="Trusted by leading organizations">
+      <div class="partners-header">
+        <p>Trusted by forward-thinking organizations</p>
+      </div>
+
+      <div class="marquee-wrapper">
+        <div class="marquee-track" aria-label="Partner logos">
+          <!-- First set -->
+          <div class="partner-logo">IIT ROPAR</div>
+          <div class="partner-logo">SAREGAMA</div>
+          <div class="partner-logo">EPAM SYSTEMS</div>
+          <div class="partner-logo">ACWO</div>
+          <div class="partner-logo">BIGTRUNK</div>
+          <div class="partner-logo">GOOGLE</div>
+          <div class="partner-logo">ADOBE</div>
+          <div class="partner-logo">NVIDIA</div>
+          <!-- Duplicate for seamless loop -->
+          <div class="partner-logo">IIT ROPAR</div>
+          <div class="partner-logo">SAREGAMA</div>
+          <div class="partner-logo">EPAM SYSTEMS</div>
+          <div class="partner-logo">ACWO</div>
+          <div class="partner-logo">BIGTRUNK</div>
+          <div class="partner-logo">GOOGLE</div>
+          <div class="partner-logo">ADOBE</div>
+          <div class="partner-logo">NVIDIA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         SERVICES
+         ============================================ -->
+    <section class="services section" id="services" aria-label="Our services">
+      <div class="container">
+        <div class="text-center reveal">
+          <span class="section-label">What We Do</span>
+          <h2 class="section-title">AI-First Creative <span class="text-gradient">Services</span></h2>
+          <p class="section-subtitle">From training workshops to full-scale AI content production, we bridge the gap
+            between cutting-edge AI technology and creative excellence.</p>
+        </div>
+
+        <div class="services-grid stagger-children" id="servicesGrid">
+          <article class="service-card">
+            <div class="service-icon">🎓</div>
+            <h3>AI Trainings</h3>
+            <p>Hands-on workshops for corporate teams, agencies, and educators covering generative AI tools, prompt
+              engineering, and AI-powered content workflows.</p>
+            <div class="card-link">Learn more <span>→</span></div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">🎬</div>
+            <h3>AI Films</h3>
+            <p>End-to-end production of ad films and music videos using cutting-edge generative AI — from concept
+              ideation to post-production and delivery.</p>
+            <div class="card-link">Learn more <span>→</span></div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">🔬</div>
+            <h3>AI Research</h3>
+            <p>Bridging the gap between AI technology and practical industry applications through research publications,
+              insights reports, and thought leadership.</p>
+            <div class="card-link">Learn more <span>→</span></div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">💡</div>
+            <h3>AI Consulting</h3>
+            <p>Strategic advisory to help organizations integrate generative AI into existing creative workflows, build
+              AI capabilities, and future-proof operations.</p>
+            <div class="card-link">Learn more <span>→</span></div>
+          </article>
+        </div>
+      </div>
+
+      <div class="glow-orb glow-orb-1" aria-hidden="true"></div>
+    </section>
+
+    <!-- ============================================
+         DELIVERABLES
+         ============================================ -->
+    <section class="section" id="deliverables" aria-label="Our deliverables">
+      <div class="container">
+        <div class="reveal">
+          <span class="section-label">Deliverables</span>
+          <h2 class="section-title">What We <span class="text-gradient">Create</span></h2>
+          <p class="section-subtitle">Every format, every platform — powered by AI creativity and human vision.</p>
+        </div>
+
+        <div class="deliverables-grid stagger-children">
+          <div class="deliverable-tile"
+            style="--tile-gradient: linear-gradient(135deg, rgba(239,68,68,0.15) 0%, transparent 100%)">
+            <div class="tile-icon">🎥</div>
+            <h4>Ad Films</h4>
+            <p>TV & digital commercials</p>
+          </div>
+          <div class="deliverable-tile"
+            style="--tile-gradient: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, transparent 100%)">
+            <div class="tile-icon">🎵</div>
+            <h4>Music Videos</h4>
+            <p>AI-generated visual storytelling</p>
+          </div>
+          <div class="deliverable-tile"
+            style="--tile-gradient: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, transparent 100%)">
+            <div class="tile-icon">📱</div>
+            <h4>Social Content</h4>
+            <p>Reels, shorts & stories</p>
+          </div>
+          <div class="deliverable-tile"
+            style="--tile-gradient: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, transparent 100%)">
+            <div class="tile-icon">📦</div>
+            <h4>Product Videos</h4>
+            <p>E-commerce & launches</p>
+          </div>
+          <div class="deliverable-tile"
+            style="--tile-gradient: linear-gradient(135deg, rgba(168,85,247,0.15) 0%, transparent 100%)">
+            <div class="tile-icon">🖼️</div>
+            <h4>Brand Imagery</h4>
+            <p>AI-generated visuals & assets</p>
+          </div>
+          <div class="deliverable-tile"
+            style="--tile-gradient: linear-gradient(135deg, rgba(236,72,153,0.15) 0%, transparent 100%)">
+            <div class="tile-icon">✍️</div>
+            <h4>SEO Content</h4>
+            <p>AI-optimized meta & copy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         PROCESS / HOW IT WORKS
+         ============================================ -->
+    <section class="process section" id="process" aria-label="Our process">
+      <div class="container">
+        <div class="text-center reveal">
+          <span class="section-label">How It Works</span>
+          <h2 class="section-title">Our <span class="text-gradient">Process</span></h2>
+          <p class="section-subtitle">A proven three-stage methodology that blends human creativity with AI precision.
+          </p>
+        </div>
+
+        <div class="process-timeline stagger-children">
+          <div class="process-step">
+            <div class="step-number">01</div>
+            <h3>Empathize & Define</h3>
+            <p>We deep-dive into your brand, audience, and objectives. Understanding the "why" ensures every
+              AI-generated asset resonates authentically.</p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-number">02</div>
+            <h3>Ideate & Create</h3>
+            <p>Our creative team crafts concepts and leverages generative AI tools to produce high-quality content —
+              from storyboards to final deliverables.</p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-number">03</div>
+            <h3>Test & Evolve</h3>
+            <p>We refine outputs through feedback loops, A/B testing, and performance analysis — ensuring continuous
+              improvement and maximum impact.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glow-orb glow-orb-2" aria-hidden="true"></div>
+    </section>
+
+    <!-- ============================================
+         PORTFOLIO
+         ============================================ -->
+    <section class="section" id="portfolio" aria-label="Portfolio showcase">
+      <div class="container">
+        <div class="text-center reveal">
+          <span class="section-label">Our Work</span>
+          <h2 class="section-title">Featured <span class="text-gradient">Projects</span></h2>
+          <p class="section-subtitle">A showcase of AI-powered creative productions that push the boundaries of what's
+            possible.</p>
+        </div>
+
+        <div class="portfolio-grid stagger-children">
+          <article class="portfolio-card">
+            <div class="portfolio-thumb"
+              style="background: linear-gradient(135deg, #1a0533 0%, #7c3aed 50%, #c084fc 100%);">
+              <div class="play-overlay" style="opacity:1;">
+                <div class="play-btn">▶</div>
+              </div>
+            </div>
+            <div class="portfolio-info">
+              <h3>Gen Z Anthem</h3>
+              <p>AI-generated music video for Saregama featuring dynamic visual storytelling</p>
+              <span class="portfolio-tag">Music Video</span>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="portfolio-thumb"
+              style="background: linear-gradient(135deg, #0f172a 0%, #3b82f6 50%, #60a5fa 100%);">
+              <div class="play-overlay" style="opacity:1;">
+                <div class="play-btn">▶</div>
+              </div>
+            </div>
+            <div class="portfolio-info">
+              <h3>ACWO — Born in AI</h3>
+              <p>Full AI-produced brand film showcasing product innovation</p>
+              <span class="portfolio-tag">Ad Film</span>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="portfolio-thumb"
+              style="background: linear-gradient(135deg, #1c1917 0%, #ea580c 50%, #fb923c 100%);">
+              <div class="play-overlay" style="opacity:1;">
+                <div class="play-btn">▶</div>
+              </div>
+            </div>
+            <div class="portfolio-info">
+              <h3>AI Fashion Forward</h3>
+              <p>AI-generated fashion campaign imagery and motion content</p>
+              <span class="portfolio-tag">Brand Content</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         INSIGHTS / BLOG
+         ============================================ -->
+    <section class="section" id="insights" style="background: var(--bg-secondary);"
+      aria-label="AI insights and articles">
+      <div class="container">
+        <div class="text-center reveal">
+          <span class="section-label">AI Insights</span>
+          <h2 class="section-title">Latest <span class="text-gradient">Thinking</span></h2>
+          <p class="section-subtitle">Research, perspectives, and practical guides on harnessing generative AI for
+            creative work.</p>
+        </div>
+
+        <div class="insights-grid stagger-children">
+          <article class="insight-card">
+            <div class="insight-image">
+              <div class="img-overlay">🤖</div>
+            </div>
+            <div class="insight-body">
+              <div class="insight-meta">
+                <span class="insight-tag">AI Weekly</span>
+                <span>Feb 15, 2026</span>
+              </div>
+              <h3>The State of AI Video Generation in 2026</h3>
+              <p>From Sora to Veo 3 — how the latest AI video models are transforming commercial content production and
+                what it means for creative teams.</p>
+              <a href="#" class="insight-link">Read more <span>→</span></a>
+            </div>
+          </article>
+
+          <article class="insight-card">
+            <div class="insight-image" style="background: linear-gradient(135deg, var(--bg-secondary), #16a34a);">
+              <div class="img-overlay">💡</div>
+            </div>
+            <div class="insight-body">
+              <div class="insight-meta">
+                <span class="insight-tag">Guide</span>
+                <span>Feb 8, 2026</span>
+              </div>
+              <h3>Prompt Engineering for Visual Content</h3>
+              <p>A practical framework for crafting effective prompts that produce consistent, brand-aligned AI imagery
+                and video content.</p>
+              <a href="#" class="insight-link">Read more <span>→</span></a>
+            </div>
+          </article>
+
+          <article class="insight-card">
+            <div class="insight-image" style="background: linear-gradient(135deg, var(--bg-secondary), #ea580c);">
+              <div class="img-overlay">📊</div>
+            </div>
+            <div class="insight-body">
+              <div class="insight-meta">
+                <span class="insight-tag">Research</span>
+                <span>Jan 28, 2026</span>
+              </div>
+              <h3>AI ROI: Measuring Creative Impact</h3>
+              <p>How to quantify the business value of AI-powered creative production — from cost savings to campaign
+                performance metrics.</p>
+              <a href="#" class="insight-link">Read more <span>→</span></a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         FAQ
+         ============================================ -->
+    <section class="faq section" id="faq" aria-label="Frequently asked questions">
+      <div class="container">
+        <div class="text-center reveal">
+          <span class="section-label">FAQ</span>
+          <h2 class="section-title">Common <span class="text-gradient">Questions</span></h2>
+          <p class="section-subtitle">Everything you need to know about working with an AI creative agency.</p>
+        </div>
+
+        <div class="faq-list reveal" id="faqList">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              What is generative AI and how does X DOT AI use it?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-content">
+                Generative AI refers to artificial intelligence systems that can create new content — including images,
+                videos, music, and text — from learned patterns. X DOT AI leverages leading generative AI tools to
+                produce ad films, music videos, and branded content at a fraction of the traditional cost and timeline,
+                while maintaining creative excellence through human-led direction.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Who are X DOT AI's training workshops designed for?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-content">
+                Our AI training workshops are designed for corporate teams, creative agencies, marketing professionals,
+                and educational institutions. We offer customized programs ranging from beginner-level AI literacy to
+                advanced prompt engineering and AI content production workflows. Each workshop is tailored to your
+                team's specific technology readiness and goals.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              How long does it take to produce an AI-generated ad film?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-content">
+                An AI-generated ad film can typically be produced in 5–10 working days, compared to 4–8 weeks for
+                traditional production. This includes concept development, AI generation, editing, sound design, and
+                final delivery. Complex projects with multiple revisions may take longer, but the overall timeline is
+                significantly faster than conventional methods.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              What industries does X DOT AI serve?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-content">
+                X DOT AI serves a wide range of industries including technology, entertainment, music, fashion, FMCG,
+                education, and healthcare. Our AI-powered approach adapts to any sector that needs creative content or
+                AI upskilling — from startups looking for cost-effective content to enterprises seeking to transform
+                their creative pipelines.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Can AI replace human creativity in content production?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-content">
+                AI doesn't replace human creativity — it amplifies it. At X DOT AI, our human-led creative direction
+                guides the AI tools. Think of AI as a powerful collaborator that handles execution speed and variation,
+                while the strategic vision, emotional storytelling, and brand understanding remain human-driven. The
+                result is the best of both worlds.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         CTA BANNER
+         ============================================ -->
+    <section class="cta-banner" id="contact" aria-label="Get in touch">
+      <div class="container">
+        <div class="cta-content reveal-scale">
+          <h2>Ready to <span class="text-gradient">Supercharge</span> Your Creativity?</h2>
+          <p>Join the brands and teams already leveraging AI to create breakthrough creative content.</p>
+          <form class="cta-form" id="ctaForm" aria-label="Newsletter signup">
+            <input type="email" placeholder="Enter your email" aria-label="Email address" required>
+            <button type="submit" class="btn btn-primary">Let's Talk <span class="btn-icon">→</span></button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo" aria-label="X DOT AI Home">
+            <span class="logo-x">X</span> DOT AI
+          </a>
+          <p>An AI Creative Agency empowering brands, agencies, and teams to scale creativity using generative AI.</p>
+          <div class="social-links" aria-label="Social media links">
+            <a href="#" class="social-link" aria-label="Twitter" title="Twitter">𝕏</a>
+            <a href="#" class="social-link" aria-label="LinkedIn" title="LinkedIn">in</a>
+            <a href="#" class="social-link" aria-label="YouTube" title="YouTube">▶</a>
+            <a href="#" class="social-link" aria-label="Instagram" title="Instagram">📷</a>
+          </div>
+        </div>
+
+        <nav class="footer-column" aria-label="Services">
+          <h4>Services</h4>
+          <a href="#services">AI Trainings</a>
+          <a href="#services">AI Films</a>
+          <a href="#services">AI Research</a>
+          <a href="#services">AI Consulting</a>
+        </nav>
+
+        <nav class="footer-column" aria-label="Company">
+          <h4>Company</h4>
+          <a href="#">About Da Sachin</a>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#insights">Publications</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <nav class="footer-column" aria-label="Resources">
+          <h4>Resources</h4>
+          <a href="#insights">AI Weekly</a>
+          <a href="#faq">FAQ</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 X DOT AI. All rights reserved.</p>
+        <p class="footer-tagline">Where <span class="dynamic-word" id="dynamicWord">X</span> Is Variable</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+
+</html>

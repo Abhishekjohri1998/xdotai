@@ -1,0 +1,269 @@
+<%- include('../partials/header') %>
+
+    <% var portfolioItems=sections['portfolio'] || []; // Helper: extract YouTube ID from any URL format var
+        getYouTubeId=function(url) { if (!url) return '' ; var
+        m=url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/); return m ? m[1] : '' ;
+        }; %>
+
+        <!-- JSON-LD Structured Data: ItemList + VideoObject -->
+        <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "<%= page.title %>",
+        "description": "<%= page.meta_description %>",
+        "url": "https://xdotai.in/portfolio",
+        "publisher": {
+            "@type": "Organization",
+            "name": "X DOT AI",
+            "url": "https://xdotai.in"
+        },
+        "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://xdotai.in/" },
+                { "@type": "ListItem", "position": 2, "name": "Portfolio", "item": "https://xdotai.in/portfolio" }
+            ]
+        },
+        "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": <%= portfolioItems.length %>,
+            "itemListElement": [
+                <% portfolioItems.forEach((p, idx) => {
+                    const vid = getYouTubeId((p.extra && p.extra.youtube_url) || '');
+                %>
+                {
+                    "@type": "ListItem",
+                    "position": <%= idx + 1 %>,
+                    "item": {
+                        "@type": "VideoObject",
+                        "name": "<%= p.title.replace(/"/g, '\\"') %>",
+                        "description": "<%= p.description.replace(/"/g, '\\"') %>",
+                        <% if (vid) { %>
+                        "thumbnailUrl": "https://img.youtube.com/vi/<%= vid %>/maxresdefault.jpg",
+                        "contentUrl": "https://www.youtube.com/watch?v=<%= vid %>",
+                        "embedUrl": "https://www.youtube.com/embed/<%= vid %>",
+                        <% } %>
+                        "uploadDate": "<%= new Date().toISOString().split('T')[0] %>",
+                        "publisher": { "@type": "Organization", "name": "X DOT AI" }
+                    }
+                }<%= idx < portfolioItems.length - 1 ? ',' : '' %>
+                <% }) %>
+            ]
+        }
+    }
+    </script>
+
+        <!-- Page Hero -->
+        <section class="page-hero" aria-label="Portfolio hero">
+            <div class="container">
+                <span class="section-label">
+                    <%= page.hero_label %>
+                </span>
+                <h1 class="page-hero-title"><%- page.hero_title %></h1>
+                <p class="page-hero-subtitle">
+                    <%= page.hero_subtitle %>
+                </p>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section class="section portfolio-section" aria-label="Portfolio showcase" itemscope
+            itemtype="https://schema.org/CollectionPage">
+            <div class="container">
+
+                <!-- Category Filter Bar -->
+                <nav class="portfolio-filters reveal" role="navigation" aria-label="Filter projects by category">
+                    <button class="portfolio-filter-btn active" data-filter="all" role="tab" aria-selected="true"
+                        aria-controls="portfolioGrid">All Projects</button>
+                    <% categories.forEach(cat=> { %>
+                        <button class="portfolio-filter-btn" data-filter="<%= cat.slug %>" role="tab"
+                            aria-selected="false" aria-controls="portfolioGrid">
+                            <%= cat.name %>
+                        </button>
+                        <% }) %>
+                </nav>
+
+                <!-- Filter Description -->
+                <div class="portfolio-filter-desc reveal" id="filterDesc">
+                    <p>
+                        <%= page.hero_subtitle %>
+                    </p>
+                </div>
+
+                <!-- Portfolio Grid -->
+                <div class="portfolio-grid stagger-children" id="portfolioGrid" role="tabpanel">
+                    <% portfolioItems.forEach(p=> {
+                        const youtubeId = getYouTubeId((p.extra && p.extra.youtube_url) || '');
+                        const thumbUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : '';
+                        const watchUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
+                        %>
+                        <article class="portfolio-card"
+                            data-category="<%= (p.tag || '').toLowerCase().replace(/\s+/g, '-') %>" itemscope
+                            itemtype="https://schema.org/VideoObject">
+                            <figure class="portfolio-video-wrap">
+                                <% if (youtubeId) { %>
+                                    <!-- Facade Player: thumbnail + play button, iframe loads on click -->
+                                    <div class="portfolio-facade" data-youtube-id="<%= youtubeId %>" role="button"
+                                        tabindex="0" aria-label="Play video: <%= p.title %>"
+                                        title="Click to play: <%= p.title %>">
+                                        <img class="portfolio-thumb-img"
+                                            src="https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg" srcset="https://img.youtube.com/vi/<%= youtubeId %>/mqdefault.jpg 320w,
+                                                 https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg 480w,
+                                                 https://img.youtube.com/vi/<%= youtubeId %>/maxresdefault.jpg 1280w"
+                                            sizes="(max-width: 768px) 100vw, 50vw"
+                                            alt="<%= p.title %> — <%= p.tag || 'Video' %> by X DOT AI" loading="lazy"
+                                            width="480" height="360">
+                                        <div class="facade-play-btn" aria-hidden="true">
+                                            <svg viewBox="0 0 68 48" width="68" height="48">
+                                                <path class="facade-play-bg"
+                                                    d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"
+                                                    fill="#f00" />
+                                                <path d="M45 24L27 14v20" fill="#fff" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Noscript fallback: direct YouTube link -->
+                                    <noscript>
+                                        <a href="<%= watchUrl %>" target="_blank" rel="noopener noreferrer">
+                                            <img src="https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg"
+                                                alt="Watch <%= p.title %> on YouTube" width="480" height="360">
+                                        </a>
+                                    </noscript>
+
+                                    <!-- Hidden SEO meta -->
+                                    <meta itemprop="thumbnailUrl" content="<%= thumbUrl %>">
+                                    <meta itemprop="contentUrl" content="<%= watchUrl %>">
+                                    <meta itemprop="embedUrl" content="https://www.youtube.com/embed/<%= youtubeId %>">
+                                    <% } else { %>
+                                        <div class="portfolio-placeholder"
+                                            style="background: <%= (p.extra && p.extra.gradient) || 'linear-gradient(135deg, #1a0533, #7c3aed)' %>;">
+                                            <div class="facade-play-btn" aria-hidden="true">
+                                                <svg viewBox="0 0 68 48" width="68" height="48">
+                                                    <path class="facade-play-bg"
+                                                        d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"
+                                                        fill="#f00" />
+                                                    <path d="M45 24L27 14v20" fill="#fff" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <% } %>
+                            </figure>
+
+                            <div class="portfolio-info">
+                                <h2 itemprop="name">
+                                    <%= p.title %>
+                                </h2>
+                                <p itemprop="description">
+                                    <%= p.description %>
+                                </p>
+                                <% if (p.tag) { %>
+                                    <span class="portfolio-tag">
+                                        <%= p.tag %>
+                                    </span>
+                                    <% } %>
+                                        <meta itemprop="uploadDate"
+                                            content="<%= new Date().toISOString().split('T')[0] %>">
+                            </div>
+                        </article>
+                        <% }) %>
+                </div>
+
+                <% if (portfolioItems.length===0) { %>
+                    <div class="portfolio-empty reveal">
+                        <p>Portfolio items coming soon. Check back later!</p>
+                    </div>
+                    <% } %>
+            </div>
+        </section>
+
+        <!-- CTA Banner -->
+        <section class="cta-banner" aria-label="Get in touch">
+            <div class="container">
+                <div class="cta-content reveal-scale">
+                    <h2>Have a <span class="text-gradient">Project</span> in Mind?</h2>
+                    <p>Let us bring your creative vision to life with the power of AI.</p>
+                    <a href="/contact" class="btn btn-primary">Let's Talk <span class="btn-icon">→</span></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Facade Player Script: click-to-play + filter descriptions -->
+        <script>
+            (function () {
+                // ── Tab descriptions (from DB) ──
+                const filterDescs = <%- categoryDescsJson %>;
+                const descEl = document.getElementById('filterDesc');
+
+                // ── Facade → iframe swap ──
+                document.querySelectorAll('.portfolio-facade').forEach(facade => {
+                    function activatePlayer() {
+                        const id = facade.dataset.youtubeId;
+                        const iframe = document.createElement('iframe');
+                        iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+                        iframe.title = facade.getAttribute('aria-label') || 'YouTube video';
+                        iframe.frameBorder = '0';
+                        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                        iframe.allowFullscreen = true;
+                        iframe.style.position = 'absolute';
+                        iframe.style.inset = '0';
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+
+                        const wrap = facade.parentElement;
+                        wrap.innerHTML = '';
+                        wrap.appendChild(iframe);
+                        wrap.classList.add('portfolio-video-active');
+                    }
+
+                    facade.addEventListener('click', activatePlayer);
+                    facade.addEventListener('keydown', e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            activatePlayer();
+                        }
+                    });
+                });
+
+                // ── Category filters ──
+                const filterBtns = document.querySelectorAll('.portfolio-filter-btn');
+                const cards = document.querySelectorAll('.portfolio-card');
+
+                filterBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        filterBtns.forEach(b => {
+                            b.classList.remove('active');
+                            b.setAttribute('aria-selected', 'false');
+                        });
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-selected', 'true');
+
+                        const filter = btn.dataset.filter;
+
+                        // Update description
+                        if (descEl) {
+                            const desc = filterDescs[filter] || filterDescs['all'];
+                            descEl.innerHTML = '<p>' + desc + '</p>';
+                        }
+
+                        cards.forEach(card => {
+                            const match = filter === 'all' || card.dataset.category === filter;
+                            if (match) {
+                                card.style.display = '';
+                                requestAnimationFrame(() => {
+                                    card.style.opacity = '1';
+                                    card.style.transform = 'translateY(0)';
+                                });
+                            } else {
+                                card.style.opacity = '0';
+                                card.style.transform = 'translateY(20px)';
+                                setTimeout(() => { card.style.display = 'none'; }, 300);
+                            }
+                        });
+                    });
+                });
+            })();
+        </script>
+
+        <%- include('../partials/footer') %>

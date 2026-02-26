@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation & Logos — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+                <span class="admin-badge">CMS</span>
+            </div>
+            <nav class="admin-nav">
+                <a href="/admin" class="admin-nav-item"><span class="admin-nav-icon">📊</span> Dashboard</a>
+                <a href="/admin/blog" class="admin-nav-item"><span class="admin-nav-icon">📝</span> Blog Manager</a>
+                <a href="/admin/nav-logos" class="admin-nav-item active"><span class="admin-nav-icon">🧭</span> Nav &
+                    Logos</a>
+                <a href="/admin/home-manager" class="admin-nav-item"><span class="admin-nav-icon">🏠</span> Home
+                    Manager</a>
+                <div class="admin-nav-separator">Pages</div>
+                <% pages.forEach(p=> { %>
+                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
+                        <span class="admin-nav-icon">📄</span>
+                        <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
+                    </a>
+                    <% }) %>
+            </nav>
+            <div class="admin-sidebar-footer">
+                <span>Logged in as <strong>
+                        <%= adminUser %>
+                    </strong></span>
+                <a href="/admin/logout" class="admin-logout">Logout →</a>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>🧭 Navigation & 🏢 Client Logos</h1>
+                <a href="/" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
+            </div>
+
+            <% if (saved) { %>
+                <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
+                <% } %>
+
+                    <!-- NAVIGATION MANAGEMENT -->
+                    <div class="admin-card">
+                        <h2 style="margin-bottom:0.5rem;">🧭 Navigation Links</h2>
+                        <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.85rem;">
+                            Manage the main navigation. Top-level items appear in the navbar. Items with a parent become
+                            dropdown children.
+                        </p>
+
+                        <div class="admin-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order</th>
+                                        <th>Label</th>
+                                        <th>URL</th>
+                                        <th>Parent</th>
+                                        <th>Visible</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% navLinks.forEach(n=> { %>
+                                        <tr style="<%= n.parent_id ? 'opacity:0.75;' : '' %>">
+                                            <td>
+                                                <form method="POST" action="/admin/nav-links/<%= n.id %>"
+                                                    style="display:inline;">
+                                                    <input type="hidden" name="label" value="<%= n.label %>">
+                                                    <input type="hidden" name="url" value="<%= n.url %>">
+                                                    <input type="hidden" name="parent_id"
+                                                        value="<%= n.parent_id || '' %>">
+                                                    <input type="hidden" name="is_visible" value="<%= n.is_visible %>">
+                                                    <input type="number" name="sort_order" value="<%= n.sort_order %>"
+                                                        style="width:60px;" onchange="this.form.submit()">
+                                                </form>
+                                            </td>
+                                            <td><strong>
+                                                    <%= n.parent_id ? '↳ ' : '' %>
+                                                        <%= n.label %>
+                                                </strong></td>
+                                            <td><code><%= n.url %></code></td>
+                                            <td>
+                                                <%= n.parent_id ? (topLinks.find(t=> t.id === n.parent_id) || {}).label
+                                                    || '—' : '—' %>
+                                            </td>
+                                            <td>
+                                                <form method="POST" action="/admin/nav-links/<%= n.id %>/toggle"
+                                                    style="display:inline;">
+                                                    <button type="submit" class="admin-btn admin-btn-small"
+                                                        style="min-width:40px;">
+                                                        <%= n.is_visible ? '✅' : '❌' %>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <button class="admin-btn admin-btn-small edit-nav-btn"
+                                                    data-id="<%= n.id %>" data-label="<%= n.label %>"
+                                                    data-url="<%= n.url %>" data-parent="<%= n.parent_id || '' %>"
+                                                    data-order="<%= n.sort_order %>">Edit</button>
+                                                <form method="POST" action="/admin/nav-links/<%= n.id %>/delete"
+                                                    style="display:inline;">
+                                                    <button type="submit"
+                                                        class="admin-btn admin-btn-small admin-btn-danger"
+                                                        onclick="return confirm('Delete this nav link?')">🗑</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Add / Edit Nav Link -->
+                        <div class="admin-card" style="margin-top:1rem; background:var(--bg-tertiary);" id="navForm">
+                            <h3 id="navFormTitle">Add Navigation Link</h3>
+                            <form method="POST" action="/admin/nav-links/add" id="navLinkForm">
+                                <input type="hidden" name="edit_id" id="navEditId" value="">
+                                <div class="admin-form-row">
+                                    <div class="admin-form-group" style="flex:2">
+                                        <label>Label</label>
+                                        <input type="text" name="label" id="navLabel" required
+                                            placeholder="e.g. About Us">
+                                    </div>
+                                    <div class="admin-form-group" style="flex:2">
+                                        <label>URL</label>
+                                        <input type="text" name="url" id="navUrl" required
+                                            placeholder="/about-da-sachin">
+                                    </div>
+                                    <div class="admin-form-group" style="flex:1">
+                                        <label>Parent (Dropdown)</label>
+                                        <select name="parent_id" id="navParent">
+                                            <option value="">None (Top-level)</option>
+                                            <% topLinks.forEach(t=> { %>
+                                                <option value="<%= t.id %>">
+                                                    <%= t.label %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                    <div class="admin-form-group" style="flex:0 0 80px">
+                                        <label>Order</label>
+                                        <input type="number" name="sort_order" id="navOrder" value="0">
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:0.5rem;">
+                                    <button type="submit" class="admin-btn admin-btn-primary">Save Link</button>
+                                    <button type="button" class="admin-btn admin-btn-secondary" onclick="resetNavForm()"
+                                        style="display:none;" id="navCancelBtn">Cancel Edit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- CLIENT LOGOS MANAGEMENT -->
+                    <div class="admin-card">
+                        <h2 style="margin-bottom:0.5rem;">🏢 Client / Partner Logos</h2>
+                        <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.85rem;">
+                            Manage client logos shown on the home page. Upload images or use text-based logos. Toggle
+                            active/inactive.
+                        </p>
+
+                        <div
+                            style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+                            <% clientLogos.forEach(logo=> { %>
+                                <div class="admin-card"
+                                    style="background:var(--bg-tertiary); padding:1rem; text-align:center; opacity:<%= logo.is_active ? 1 : 0.5 %>;">
+                                    <% if (logo.image_url) { %>
+                                        <img src="<%= logo.image_url %>" alt="<%= logo.name %>"
+                                            style="max-height:60px; max-width:100%; margin-bottom:0.5rem; filter:brightness(0) invert(1); object-fit:contain;">
+                                        <% } else { %>
+                                            <div
+                                                style="font-size:1.2rem; font-weight:700; color:var(--text-primary); padding:1rem 0; letter-spacing:0.05em;">
+                                                <%= logo.name %>
+                                            </div>
+                                            <% } %>
+                                                <div
+                                                    style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem;">
+                                                    <%= logo.name %>
+                                                </div>
+                                                <div style="display:flex; gap:0.5rem; justify-content:center;">
+                                                    <form method="POST"
+                                                        action="/admin/client-logos/<%= logo.id %>/toggle"
+                                                        style="display:inline;">
+                                                        <button type="submit" class="admin-btn admin-btn-small">
+                                                            <%= logo.is_active ? '✅ Active' : '❌ Hidden' %>
+                                                        </button>
+                                                    </form>
+                                                    <button class="admin-btn admin-btn-small edit-logo-btn"
+                                                        data-id="<%= logo.id %>" data-name="<%= logo.name %>"
+                                                        data-image="<%= logo.image_url %>"
+                                                        data-website="<%= logo.website_url %>"
+                                                        data-order="<%= logo.sort_order %>">Edit</button>
+                                                    <form method="POST"
+                                                        action="/admin/client-logos/<%= logo.id %>/delete"
+                                                        style="display:inline;">
+                                                        <button type="submit"
+                                                            class="admin-btn admin-btn-small admin-btn-danger"
+                                                            onclick="return confirm('Delete this logo?')">🗑</button>
+                                                    </form>
+                                                </div>
+                                </div>
+                                <% }) %>
+                        </div>
+
+                        <!-- Add / Edit Logo -->
+                        <div class="admin-card" style="background:var(--bg-tertiary);" id="logoForm">
+                            <h3 id="logoFormTitle">Add Client Logo</h3>
+                            <form method="POST" action="/admin/client-logos/add" id="logoFormEl"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="edit_id" id="logoEditId" value="">
+                                <div class="admin-form-row">
+                                    <div class="admin-form-group" style="flex:2">
+                                        <label>Client Name</label>
+                                        <input type="text" name="name" id="logoName" required placeholder="e.g. Google">
+                                    </div>
+                                    <div class="admin-form-group" style="flex:2">
+                                        <label>Logo Image</label>
+                                        <input type="file" name="logo_image" accept="image/*">
+                                        <small style="color:var(--text-muted);">Upload PNG/SVG (transparent bg
+                                            recommended). Leave empty for text-based logo.</small>
+                                    </div>
+                                    <div class="admin-form-group" style="flex:2">
+                                        <label>Or Image URL</label>
+                                        <input type="text" name="image_url" id="logoImageUrl" placeholder="https://...">
+                                    </div>
+                                </div>
+                                <div class="admin-form-row">
+                                    <div class="admin-form-group" style="flex:2">
+                                        <label>Website URL (optional)</label>
+                                        <input type="text" name="website_url" id="logoWebsiteUrl"
+                                            placeholder="https://client-site.com">
+                                    </div>
+                                    <div class="admin-form-group" style="flex:0 0 80px">
+                                        <label>Order</label>
+                                        <input type="number" name="sort_order" id="logoOrder" value="0">
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:0.5rem;">
+                                    <button type="submit" class="admin-btn admin-btn-primary">Save Logo</button>
+                                    <button type="button" class="admin-btn admin-btn-secondary"
+                                        onclick="resetLogoForm()" style="display:none;" id="logoCancelBtn">Cancel
+                                        Edit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+        </main>
+    </div>
+
+    <script>
+        // ── Nav Edit (via data attributes) ──
+        document.querySelectorAll('.edit-nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('navEditId').value = btn.dataset.id;
+                document.getElementById('navLabel').value = btn.dataset.label;
+                document.getElementById('navUrl').value = btn.dataset.url;
+                document.getElementById('navParent').value = btn.dataset.parent;
+                document.getElementById('navOrder').value = btn.dataset.order;
+                document.getElementById('navFormTitle').textContent = 'Edit Navigation Link';
+                document.getElementById('navLinkForm').action = '/admin/nav-links/' + btn.dataset.id;
+                document.getElementById('navCancelBtn').style.display = '';
+                document.getElementById('navForm').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function resetNavForm() {
+            document.getElementById('navEditId').value = '';
+            document.getElementById('navLabel').value = '';
+            document.getElementById('navUrl').value = '';
+            document.getElementById('navParent').value = '';
+            document.getElementById('navOrder').value = '0';
+            document.getElementById('navFormTitle').textContent = 'Add Navigation Link';
+            document.getElementById('navLinkForm').action = '/admin/nav-links/add';
+            document.getElementById('navCancelBtn').style.display = 'none';
+        }
+
+        // ── Logo Edit (via data attributes) ──
+        document.querySelectorAll('.edit-logo-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('logoEditId').value = btn.dataset.id;
+                document.getElementById('logoName').value = btn.dataset.name;
+                document.getElementById('logoImageUrl').value = btn.dataset.image;
+                document.getElementById('logoWebsiteUrl').value = btn.dataset.website;
+                document.getElementById('logoOrder').value = btn.dataset.order;
+                document.getElementById('logoFormTitle').textContent = 'Edit Client Logo';
+                document.getElementById('logoFormEl').action = '/admin/client-logos/' + btn.dataset.id;
+                document.getElementById('logoCancelBtn').style.display = '';
+                document.getElementById('logoForm').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function resetLogoForm() {
+            document.getElementById('logoEditId').value = '';
+            document.getElementById('logoName').value = '';
+            document.getElementById('logoImageUrl').value = '';
+            document.getElementById('logoWebsiteUrl').value = '';
+            document.getElementById('logoOrder').value = '0';
+            document.getElementById('logoFormTitle').textContent = 'Add Client Logo';
+            document.getElementById('logoFormEl').action = '/admin/client-logos/add';
+            document.getElementById('logoCancelBtn').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

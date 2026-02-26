@@ -1,0 +1,111 @@
+<%- include('../partials/header', { page }) %>
+
+    <!-- Hero Section -->
+    <section class="page-hero" aria-label="About Da Sachin Sharma">
+        <div class="container">
+            <div class="hero-badge">
+                <%= page.nav_label %>
+            </div>
+            <h1 class="hero-title"><%- page.hero_title %></h1>
+            <p class="hero-subtitle">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <% const founder=(sections['about-founder'] || [])[0]; %>
+        <% if (founder) { %>
+            <section class="section" aria-label="About the Founder">
+                <div class="container">
+                    <div class="about-founder-card glass-card">
+                        <div class="about-founder-avatar">
+                            <span class="founder-icon">
+                                <%= founder.icon %>
+                            </span>
+                        </div>
+                        <div class="about-founder-content">
+                            <span class="founder-role">
+                                <%= founder.subtitle %>
+                            </span>
+                            <h2>
+                                <%= founder.title %>
+                            </h2>
+                            <p>
+                                <%= founder.description %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <% } %>
+
+                <!-- Achievements -->
+                <% const achievements=(sections['about-achievement'] || []); %>
+                    <% if (achievements.length) { %>
+                        <section class="section section-alt" aria-label="Key Achievements">
+                            <div class="container">
+                                <h2 class="section-title">Key <span class="text-gradient">Achievements</span></h2>
+                                <div class="achievements-grid">
+                                    <% achievements.forEach(ach=> { %>
+                                        <div class="achievement-card glass-card">
+                                            <span class="achievement-icon">
+                                                <%= ach.icon %>
+                                            </span>
+                                            <h3>
+                                                <%= ach.title %>
+                                            </h3>
+                                            <p>
+                                                <%= ach.description %>
+                                            </p>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                            </div>
+                        </section>
+                        <% } %>
+
+                            <!-- Values -->
+                            <% const values=(sections['about-value'] || []); %>
+                                <% if (values.length) { %>
+                                    <section class="section" aria-label="Our Values">
+                                        <div class="container">
+                                            <h2 class="section-title">Our <span class="text-gradient">Values</span></h2>
+                                            <div class="values-grid">
+                                                <% values.forEach(v=> { %>
+                                                    <div class="value-card glass-card">
+                                                        <span class="value-icon">
+                                                            <%= v.icon %>
+                                                        </span>
+                                                        <h3>
+                                                            <%= v.title %>
+                                                        </h3>
+                                                        <p>
+                                                            <%= v.description %>
+                                                        </p>
+                                                    </div>
+                                                    <% }) %>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <% } %>
+
+                                        <!-- CTA -->
+                                        <section class="section section-alt" aria-label="Connect with Da Sachin">
+                                            <div class="container">
+                                                <div class="cta-banner glass-card">
+                                                    <h2>Ready to work with <span class="text-gradient">Da Sachin?</span>
+                                                    </h2>
+                                                    <p>Whether it's AI consulting, creative direction, or corporate
+                                                        training — let's explore what AI can do for you.</p>
+                                                    <div class="cta-buttons">
+                                                        <a href="/contact" class="btn btn-primary btn-lg">Get In
+                                                            Touch</a>
+                                                        <a href="/portfolio" class="btn btn-outline btn-lg">View
+                                                            Portfolio</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <%- include('../partials/footer') %>

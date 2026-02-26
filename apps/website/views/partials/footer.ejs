@@ -1,0 +1,60 @@
+<%- include('./block-renderer', { pageBlocks: typeof pageBlocks !=='undefined' ? pageBlocks : [], recentPosts: typeof
+    recentPosts !=='undefined' ? recentPosts : [] }) %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="nav-logo" aria-label="X DOT AI Home">
+                        <span class="logo-x">X</span> DOT AI
+                    </a>
+                    <p>An AI Creative Agency empowering brands, agencies, and teams to scale creativity using generative
+                        AI.
+                    </p>
+                    <div class="social-links" aria-label="Social media links">
+                        <a href="https://x.com/dasachins" target="_blank" rel="noopener noreferrer" class="social-link"
+                            aria-label="X (Twitter)" title="X (Twitter)">𝕏</a>
+                        <a href="https://www.youtube.com/channel/UCwq6q3E3uV0Whqvy6A7YG2w" target="_blank"
+                            rel="noopener noreferrer" class="social-link" aria-label="YouTube" title="YouTube">▶</a>
+                        <a href="https://www.instagram.com/xdotai.in" target="_blank" rel="noopener noreferrer"
+                            class="social-link" aria-label="Instagram" title="Instagram">📷</a>
+                    </div>
+                </div>
+
+                <nav class="footer-column" aria-label="Services">
+                    <h4>Services</h4>
+                    <a href="/trainings">AI Trainings</a>
+                    <a href="/services">AI Films</a>
+                    <a href="/services">AI Research</a>
+                    <a href="/services">AI Consulting</a>
+                </nav>
+
+                <nav class="footer-column" aria-label="Company">
+                    <h4>Company</h4>
+                    <a href="/about-da-sachin">About Da Sachin</a>
+                    <a href="/portfolio">Portfolio</a>
+                    <a href="/publications">Publications</a>
+                    <a href="/contact">Contact</a>
+                </nav>
+
+                <nav class="footer-column" aria-label="Resources">
+                    <h4>Resources</h4>
+                    <a href="/insights">AI Weekly</a>
+                    <a href="/faq">FAQ</a>
+                    <a href="/blogs">Blog</a>
+                </nav>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 X DOT AI. All rights reserved.</p>
+                <p class="footer-tagline">Where <span class="dynamic-word" id="dynamicWord">X</span> Is Variable</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+    </body>
+
+    </html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body class="admin-login-page">
+
+    <div class="admin-login-container">
+        <div class="admin-login-card">
+            <div class="admin-login-logo">
+                <span class="logo-x">X</span> DOT AI
+            </div>
+            <h1>Admin Panel</h1>
+            <p class="admin-login-subtitle">Sign in to manage your website content</p>
+
+            <% if (error) { %>
+                <div class="admin-alert admin-alert-error">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form method="POST" action="/admin/login" class="admin-login-form">
+                        <div class="admin-form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Enter username" required
+                                autofocus>
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="admin-btn admin-btn-primary">
+                            Sign In <span>→</span>
+                        </button>
+                    </form>
+
+                    <a href="/" class="admin-back-link">← Back to website</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

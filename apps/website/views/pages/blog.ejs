@@ -1,0 +1,118 @@
+<%- include('../partials/header') %>
+
+    <!-- Page Hero -->
+    <section class="page-hero" aria-label="Blog hero">
+        <div class="container">
+            <span class="section-label">
+                <%= page.hero_label %>
+            </span>
+            <h1 class="page-hero-title"><%- page.hero_title %></h1>
+            <p class="page-hero-subtitle">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="blog-filter-section">
+        <div class="container">
+            <div class="blog-category-pills">
+                <a href="/blogs" class="blog-pill <%= !currentCategory ? 'active' : '' %>">All Posts</a>
+                <% categories.forEach(cat=> { %>
+                    <a href="/blogs?category=<%= encodeURIComponent(cat.name) %>"
+                        class="blog-pill <%= currentCategory === cat.name ? 'active' : '' %>">
+                        <%= cat.name %>
+                    </a>
+                    <% }) %>
+            </div>
+            <p class="blog-results-count">
+                <%= totalPosts %> post<%= totalPosts !==1 ? 's' : '' %> found
+            </p>
+        </div>
+    </section>
+
+    <!-- Blog Grid -->
+    <section class="section" style="background: var(--bg-secondary);" aria-label="Blog posts">
+        <div class="container">
+            <% if (posts.length===0) { %>
+                <div style="text-align:center;padding:4rem 2rem;">
+                    <p style="font-size:3rem;margin-bottom:1rem;">📝</p>
+                    <h2 style="color:var(--text-primary);margin-bottom:0.5rem;">No posts yet</h2>
+                    <p style="color:var(--text-secondary);">Check back soon for the latest insights and tutorials.</p>
+                </div>
+                <% } else { %>
+                    <div class="blog-grid stagger-children">
+                        <% posts.forEach(post=> { %>
+                            <article class="blog-card" itemscope itemtype="https://schema.org/BlogPosting">
+                                <a href="/blogs/<%= post.slug %>" class="blog-card-link">
+                                    <div class="blog-card-image">
+                                        <% if (post.featured_image) { %>
+                                            <img src="<%= post.featured_image %>"
+                                                alt="<%= post.featured_image_alt || post.title %>" loading="lazy"
+                                                itemprop="image">
+                                            <% } else { %>
+                                                <div class="blog-card-placeholder">
+                                                    <span>📝</span>
+                                                </div>
+                                                <% } %>
+                                                    <% if (post.category) { %>
+                                                        <span class="blog-card-category">
+                                                            <%= post.category %>
+                                                        </span>
+                                                        <% } %>
+                                    </div>
+                                    <div class="blog-card-body">
+                                        <div class="blog-card-meta">
+                                            <time datetime="<%= post.published_at %>" itemprop="datePublished">
+                                                <%= new Date(post.published_at).toLocaleDateString('en-US',
+                                                    {month:'short',day:'numeric',year:'numeric'}) %>
+                                            </time>
+                                            <span>•</span>
+                                            <span>
+                                                <%= post.reading_time %> min read
+                                            </span>
+                                        </div>
+                                        <h2 class="blog-card-title" itemprop="headline">
+                                            <%= post.title %>
+                                        </h2>
+                                        <p class="blog-card-excerpt" itemprop="description">
+                                            <%= post.excerpt || '' %>
+                                        </p>
+                                        <div class="blog-card-footer">
+                                            <span class="blog-card-author" itemprop="author">
+                                                <%= post.author %>
+                                            </span>
+                                            <span class="blog-card-arrow">→</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </article>
+                            <% }) %>
+                    </div>
+
+                    <!-- Pagination -->
+                    <% if (totalPages> 1) { %>
+                        <nav class="blog-pagination" aria-label="Blog pagination">
+                            <% if (currentPage> 1) { %>
+                                <a href="/blogs?page=<%= currentPage - 1 %><%= currentCategory ? '&category=' + encodeURIComponent(currentCategory) : '' %>"
+                                    class="blog-page-btn">← Previous</a>
+                                <% } %>
+                                    <div class="blog-page-numbers">
+                                        <% for (let i=1; i <=totalPages; i++) { %>
+                                            <a href="/blogs?page=<%= i %><%= currentCategory ? '&category=' + encodeURIComponent(currentCategory) : '' %>"
+                                                class="blog-page-num <%= i === currentPage ? 'active' : '' %>">
+                                                <%= i %>
+                                            </a>
+                                            <% } %>
+                                    </div>
+                                    <% if (currentPage < totalPages) { %>
+                                        <a href="/blogs?page=<%= currentPage + 1 %><%= currentCategory ? '&category=' + encodeURIComponent(currentCategory) : '' %>"
+                                            class="blog-page-btn">Next →</a>
+                                        <% } %>
+                        </nav>
+                        <% } %>
+                            <% } %>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>

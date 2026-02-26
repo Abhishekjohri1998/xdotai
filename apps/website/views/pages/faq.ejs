@@ -1,0 +1,68 @@
+<%- include('../partials/header') %>
+
+    <!-- JSON-LD: FAQPage -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    <% if (sections['faq']) { sections['faq'].forEach((f, idx) => { %>
+    {
+      "@type": "Question",
+      "name": "<%= f.title.replace(/"/g, '\\"') %>",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "<%= f.description.replace(/"/g, '\\"') %>"
+      }
+    }<%= idx < sections['faq'].length - 1 ? ',' : '' %>
+    <% }) } %>
+  ]
+}
+</script>
+
+    <!-- Page Hero -->
+    <section class="page-hero" aria-label="FAQ hero">
+        <div class="container">
+            <span class="section-label">
+                <%= page.hero_label %>
+            </span>
+            <h1 class="page-hero-title"><%- page.hero_title %></h1>
+            <p class="page-hero-subtitle">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq section" aria-label="Frequently asked questions">
+        <div class="container">
+            <div class="faq-list reveal" id="faqList">
+                <% if (sections['faq']) { sections['faq'].forEach(f=> { %>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <%= f.title %>
+                                <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer" role="region">
+                            <div class="faq-answer-content">
+                                <%= f.description %>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner" aria-label="Get in touch">
+        <div class="container">
+            <div class="cta-content reveal-scale">
+                <h2>Still Have <span class="text-gradient">Questions</span>?</h2>
+                <p>We're here to help. Reach out to our team for personalized answers.</p>
+                <a href="/contact" class="btn btn-primary">Contact Us <span class="btn-icon">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>

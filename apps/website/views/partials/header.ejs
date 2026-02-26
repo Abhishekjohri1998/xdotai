@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>
+        <%= page.title %>
+    </title>
+    <meta name="description" content="<%= page.meta_description %>">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Da Sachin Sharma">
+    <link rel="canonical" href="https://xdotai.in<%= currentPath === '/' ? '/' : currentPath %>">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="<%= typeof favicon_url !== 'undefined' && favicon_url ? favicon_url : '/favicon.svg' %>">
+    <link rel="apple-touch-icon"
+        href="<%= typeof favicon_url !== 'undefined' && favicon_url ? favicon_url : '/favicon.svg' %>">
+
+    <!-- Open Graph -->
+
+    <!-- Schema.org JSON-LD -->
+    <% if (page.schema_type) { %>
+        <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "<%= page.schema_type || 'WebPage' %>",
+        "name": "<%= page.title %>",
+        "description": "<%= page.meta_description %>",
+        "url": "https://xdotai.in<%= currentPath === '/' ? '/' : currentPath %>"
+    }
+    </script>
+        <% } %>
+
+            <% let headerFaqs=[]; try { headerFaqs=JSON.parse(page.faq_json || '[]' ); } catch(e) { headerFaqs=[]; } if
+                (headerFaqs.length> 0) { %>
+                <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            <% headerFaqs.forEach((faq, i) => { %>
+            {
+                "@type": "Question",
+                "name": "<%= (faq.question || '').replace(/"/g, '\\"') %>",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "<%= (faq.answer || '').replace(/"/g, '\\"') %>"
+                }
+            }<%= i < headerFaqs.length - 1 ? ',' : '' %>
+            <% }) %>
+        ]
+    }
+    </script>
+                <% } %>
+                    <% if (typeof ogVideo !=='undefined' && ogVideo) { %>
+                        <meta property="og:type" content="video.other">
+                        <meta property="og:title" content="<%= page.title %>">
+                        <meta property="og:description" content="<%= page.meta_description %>">
+                        <meta property="og:url" content="https://xdotai.in<%= currentPath %>">
+                        <meta property="og:site_name" content="X DOT AI">
+                        <meta property="og:image" content="<%= ogVideo.thumbnail %>">
+                        <meta property="og:image:width" content="1280">
+                        <meta property="og:image:height" content="720">
+                        <meta property="og:video" content="<%= ogVideo.embedUrl %>">
+                        <meta property="og:video:secure_url" content="<%= ogVideo.embedUrl %>">
+                        <meta property="og:video:type" content="text/html">
+                        <meta property="og:video:width" content="1280">
+                        <meta property="og:video:height" content="720">
+                        <% } else { %>
+                            <meta property="og:type" content="website">
+                            <meta property="og:title" content="<%= page.title %>">
+                            <meta property="og:description" content="<%= page.meta_description %>">
+                            <meta property="og:url"
+                                content="https://xdotai.in<%= currentPath === '/' ? '/' : currentPath %>">
+                            <meta property="og:site_name" content="X DOT AI">
+                            <meta property="og:image"
+                                content="<%= (page.og_image) || 'https://xdotai.in/images/og-default.jpg' %>">
+                            <meta property="og:image:width" content="1200">
+                            <meta property="og:image:height" content="630">
+                            <% } %>
+
+                                <!-- Twitter Card -->
+                                <% if (typeof ogVideo !=='undefined' && ogVideo) { %>
+                                    <meta name="twitter:card" content="player">
+                                    <meta name="twitter:site" content="@dasachins">
+                                    <meta name="twitter:creator" content="@dasachins">
+                                    <meta name="twitter:title" content="<%= page.title %>">
+                                    <meta name="twitter:description" content="<%= page.meta_description %>">
+                                    <meta name="twitter:player" content="<%= ogVideo.embedUrl %>">
+                                    <meta name="twitter:player:width" content="1280">
+                                    <meta name="twitter:player:height" content="720">
+                                    <meta name="twitter:image" content="<%= ogVideo.thumbnail %>">
+                                    <% } else { %>
+                                        <meta name="twitter:card" content="summary_large_image">
+                                        <meta name="twitter:site" content="@dasachins">
+                                        <meta name="twitter:creator" content="@dasachins">
+                                        <meta name="twitter:title" content="<%= page.title %>">
+                                        <meta name="twitter:description" content="<%= page.meta_description %>">
+                                        <meta name="twitter:image"
+                                            content="<%= (page.og_image) || 'https://xdotai.in/images/og-default.jpg' %>">
+                                        <% } %>
+
+                                            <!-- Fonts -->
+                                            <link rel="preconnect" href="https://fonts.googleapis.com">
+                                            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                                            <link
+                                                href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+                                                rel="stylesheet">
+
+                                            <!-- Stylesheet -->
+                                            <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader" aria-hidden="true">
+        <div class="loader-brand">
+            <span class="loader-logo-x">X</span>
+            <span class="loader-logo-text">DOT AI</span>
+        </div>
+    </div>
+
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+            <div class="container">
+                <a href="/" class="nav-logo" aria-label="X DOT AI Home">
+                    <% if (typeof logo_url !=='undefined' && logo_url) { %>
+                        <img src="<%= logo_url %>" alt="X DOT AI" style="max-height:32px; object-fit:contain;">
+                        <% } else { %>
+                            <span class="logo-x">X</span> DOT AI
+                            <% } %>
+                </a>
+
+                <div class="nav-links" id="navLinks" role="menubar">
+                    <% if (typeof navTree !=='undefined' && navTree.length> 0) { %>
+                        <% navTree.forEach(item=> { %>
+                            <% if (item.children && item.children.length> 0) { %>
+                                <div class="nav-dropdown" role="menuitem">
+                                    <a href="<%= item.url %>"
+                                        class="nav-dropdown-toggle <%= [item.url, ...item.children.map(c => c.url)].includes(currentPath) ? 'active' : '' %>">
+                                        <%= item.label %>
+                                            <span class="dropdown-arrow">▾</span>
+                                    </a>
+                                    <div class="nav-dropdown-menu">
+                                        <% item.children.forEach(child=> { %>
+                                            <a href="<%= child.url %>">
+                                                <%= child.label %>
+                                            </a>
+                                            <% }) %>
+                                    </div>
+                                </div>
+                                <% } else { %>
+                                    <a href="<%= item.url %>" role="menuitem"
+                                        class="<%= currentPath === item.url ? 'active' : '' %>" <%=item.open_new_tab
+                                        ? 'target="_blank" rel="noopener noreferrer"' : '' %>><%= item.label %></a>
+                                    <% } %>
+                                        <% }) %>
+                                            <% } %>
+                                                <a href="/admin/login" class="btn btn-outline nav-cta"
+                                                    role="menuitem">Login</a>
+                </div>
+
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <div class="nav-overlay" id="navOverlay"></div>
+        </nav>
+    </header>
+
+    <main id="main-content">

@@ -1,0 +1,65 @@
+<%- include('../partials/header') %>
+
+    <!-- Page Hero -->
+    <section class="page-hero" aria-label="Insights hero">
+        <div class="container">
+            <span class="section-label">
+                <%= page.hero_label %>
+            </span>
+            <h1 class="page-hero-title"><%- page.hero_title %></h1>
+            <p class="page-hero-subtitle">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+    </section>
+
+    <!-- Insights Grid -->
+    <section class="section" style="background: var(--bg-secondary);" aria-label="AI insights and articles">
+        <div class="container">
+            <div class="insights-grid stagger-children">
+                <% if (sections['insight']) { sections['insight'].forEach(i=> { %>
+                    <article class="insight-card">
+                        <div class="insight-image" <% if (i.extra.gradient) { %>style="background: <%= i.extra.gradient
+                                %>;"<% } %>>
+                                    <div class="img-overlay">
+                                        <%= i.icon %>
+                                    </div>
+                        </div>
+                        <div class="insight-body">
+                            <div class="insight-meta">
+                                <span class="insight-tag">
+                                    <%= i.tag %>
+                                </span>
+                                <span>
+                                    <%= i.extra.date || '' %>
+                                </span>
+                            </div>
+                            <h2>
+                                <%= i.title %>
+                            </h2>
+                            <p>
+                                <%= i.description %>
+                            </p>
+                            <a href="#" class="insight-link">Read more <span>→</span></a>
+                        </div>
+                    </article>
+                    <% }) } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner" aria-label="Subscribe">
+        <div class="container">
+            <div class="cta-content reveal-scale">
+                <h2>Stay <span class="text-gradient">Updated</span></h2>
+                <p>Get our weekly AI insights delivered straight to your inbox.</p>
+                <form class="cta-form" id="ctaForm" aria-label="Newsletter signup">
+                    <input type="email" placeholder="Enter your email" aria-label="Email address" required>
+                    <button type="submit" class="btn btn-primary">Subscribe <span class="btn-icon">→</span></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>

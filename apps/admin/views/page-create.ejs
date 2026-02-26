@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+</head>
+
+<body>
+    <div class="admin-login-page">
+        <div class="admin-login-container" style="max-width: 560px;">
+            <div class="admin-login-card" style="text-align: left;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <span class="admin-login-logo"><span class="logo-x">X</span> DOT AI</span>
+                    <h1>Create New Page</h1>
+                    <p class="admin-login-subtitle">Add a new page to your website</p>
+                </div>
+
+                <% if (error) { %>
+                    <div class="admin-alert admin-alert-error">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <form method="POST" action="/admin/page-create">
+                            <div class="admin-form-group">
+                                <label>Page Slug (URL path)</label>
+                                <input type="text" name="slug" required placeholder="e.g. case-studies"
+                                    pattern="[a-z0-9-]+" title="Lowercase letters, numbers, and hyphens only"
+                                    oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '-')">
+                                <small style="color: var(--text-muted); font-size: 0.75rem;">
+                                    Your page will be at: xdotai.in/<span id="slugPreview">your-slug</span>
+                                </small>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Page Title (SEO)</label>
+                                <input type="text" name="title" required placeholder="My New Page — X DOT AI">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Meta Description</label>
+                                <textarea name="meta_description" rows="2"
+                                    placeholder="A brief description for search engines..."></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Hero Title</label>
+                                <input type="text" name="hero_title"
+                                    placeholder='My Page <span class="text-gradient">Title</span>'>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Hero Subtitle</label>
+                                <textarea name="hero_subtitle" rows="2"
+                                    placeholder="A compelling subtitle for the hero section..."></textarea>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Template</label>
+                                <select name="template">
+                                    <option value="default">Default</option>
+                                    <option value="blog">Blog</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn-primary"
+                                style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                                ✨ Create Page
+                            </button>
+                        </form>
+                        <a href="/admin" class="admin-back-link" style="display: block; text-align: center;">← Back to
+                            Dashboard</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelector('input[name="slug"]').addEventListener('input', function () {
+            document.getElementById('slugPreview').textContent = this.value || 'your-slug';
+        });
+    </script>
+</body>
+
+</html>

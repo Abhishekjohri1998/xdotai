@@ -1,0 +1,9 @@
+{
+    "name": "@xdotai/database",
+    "version": "1.0.0",
+    "main": "db.js",
+    "dependencies": {
+        "mongoose": "^9.2.1",
+        "bcryptjs": "^2.4.3"
+    }
+}
