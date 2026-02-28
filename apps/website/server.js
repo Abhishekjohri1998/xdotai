@@ -47,9 +47,32 @@ app.use(async (req, res, next) => {
 
 // ─── Routes ──────────────────────────────────────────────
 const pageRoutes = require('./routes/pages');
+const adminApp = require('../admin/server');
+const backendApp = require('../backend/server');
+
+console.log('Mounting Admin App at /admin');
+console.log('Mounting Backend App at /backend');
+
+
+// Mount Admin and Backend
+app.use('/admin', adminApp);
+app.use('/backend', backendApp);
+
+// Public pages
 app.use('/', pageRoutes);
 
+// ─── Diagnostic Route ───
+app.get('/debug-admin', (req, res) => {
+    res.json({
+        message: 'Admin mount point diagnostic',
+        admin_mounted: !!adminApp,
+        mount_path: adminApp.mountpath || 'not mounted',
+        website_port: PORT
+    });
+});
+
 // ─── 404 Handler ─────────────────────────────────────────
+
 app.use((req, res) => {
     res.status(404).render('pages/404', {
         page: { title: 'Page Not Found — X DOT AI', meta_description: 'The page you are looking for does not exist.' },

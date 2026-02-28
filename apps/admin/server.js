@@ -15,12 +15,15 @@ app.use(express.static(path.join(__dirname, '../../packages/shared/public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'xdotai-secret-key-change-in-production',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }
-}));
+// Only use local session if running standalone
+if (require.main === module) {
+    app.use(session({
+        secret: process.env.SESSION_SECRET || 'xdotai-secret-key-change-in-production',
+        resave: false,
+        saveUninitialized: false,
+        cookie: { maxAge: 24 * 60 * 60 * 1000 }
+    }));
+}
 
 // Minimal middleware for admin locals
 app.use((req, res, next) => {
@@ -28,6 +31,7 @@ app.use((req, res, next) => {
     res.locals.currentPath = req.path;
     next();
 });
+
 
 // ─── Routes ──────────────────────────────────────────────
 const adminRoutes = require('./routes/admin');

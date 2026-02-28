@@ -11,8 +11,8 @@
     "packages/shared"
   ],
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
+    "start": "node apps/website/server.js",
+    "dev": "node --watch apps/website/server.js",
     "build": "node create-deploy.js",
     "zip": "node create-zip.js"
   },
