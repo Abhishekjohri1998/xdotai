@@ -188,14 +188,16 @@ router.post('/page/:slug/delete', requireAuth, async (req, res) => {
         await Section.deleteMany({ page_id: page._id });
         await Page.findByIdAndDelete(page._id);
     }
-    res.redirect('./?saved=1');
+    res.redirect('/admin/?saved=1');
+
 });
 
 
 // ─── Duplicate Page ──────────────────────────────────────
 router.post('/page/:slug/duplicate', requireAuth, async (req, res) => {
     const page = await Page.findOne({ slug: req.params.slug }).lean();
-    if (!page) return res.redirect('./');
+    if (!page) return res.redirect('/admin/');
+
 
     const newSlug = `${page.slug}-copy-${Date.now()}`;
     const maxPage = await Page.findOne().sort({ nav_order: -1 }).lean();
@@ -223,7 +225,8 @@ router.post('/section/:id', requireAuth, async (req, res) => {
     const { title, description, content_html, image_url, video_url, icon, icon_type, icon_image_url, tag, sort_order, youtube_url } = req.body;
     let { extra_json } = req.body;
     const section = await Section.findById(req.params.id).lean();
-    if (!section) return res.redirect('./');
+    if (!section) return res.redirect('/admin/');
+
 
     const page = await Page.findById(section.page_id).lean();
 
@@ -246,7 +249,8 @@ router.post('/section/:id', requireAuth, async (req, res) => {
 // ─── Add Section ─────────────────────────────────────────
 router.post('/page/:slug/add-section', requireAuth, async (req, res) => {
     const page = await Page.findOne({ slug: req.params.slug });
-    if (!page) return res.redirect('./');
+    if (!page) return res.redirect('/admin/');
+
 
     const { type, title, description, content_html, image_url, video_url, icon, icon_type, icon_image_url, tag, sort_order, youtube_url } = req.body;
     let { extra_json } = req.body;
@@ -260,7 +264,8 @@ router.post('/page/:slug/add-section', requireAuth, async (req, res) => {
 // ─── Delete Section ──────────────────────────────────────
 router.post('/section/:id/delete', requireAuth, async (req, res) => {
     const section = await Section.findById(req.params.id).lean();
-    if (!section) return res.redirect('./');
+    if (!section) return res.redirect('/admin/');
+
 
     const page = await Page.findById(section.page_id).lean();
     await Section.findByIdAndDelete(req.params.id);
@@ -389,7 +394,8 @@ router.post('/api/media/:id/delete', requireAuth, async (req, res) => {
 
 router.post('/page/:slug/hero-banner', requireAuth, upload.single('banner_image'), async (req, res) => {
     const page = await Page.findOne({ slug: req.params.slug });
-    if (!page) return res.redirect('/admin');
+    if (!page) return res.redirect('/admin/');
+
     let imageUrl = req.body.image_url || '';
     if (req.file) {
         await Media.create({ filename: req.file.filename, original_name: req.file.originalname, mime_type: req.file.mimetype, size: req.file.size, alt_text: req.body.alt_text || '', seo_title: req.body.seo_title || '' });
@@ -404,7 +410,8 @@ router.post('/page/:slug/hero-banner', requireAuth, upload.single('banner_image'
 
 router.post('/hero-banner/:id', requireAuth, upload.single('banner_image'), async (req, res) => {
     const banner = await HeroBanner.findById(req.params.id).lean();
-    if (!banner) return res.redirect('/admin');
+    if (!banner) return res.redirect('/admin/');
+
     const page = await Page.findById(banner.page_id).lean();
     let imageUrl = req.body.image_url || banner.image_url;
     if (req.file) {
@@ -417,7 +424,8 @@ router.post('/hero-banner/:id', requireAuth, upload.single('banner_image'), asyn
 
 router.post('/hero-banner/:id/delete', requireAuth, async (req, res) => {
     const banner = await HeroBanner.findById(req.params.id).lean();
-    if (!banner) return res.redirect('/admin');
+    if (!banner) return res.redirect('/admin/');
+
     const page = await Page.findById(banner.page_id).lean();
     await HeroBanner.findByIdAndDelete(req.params.id);
     res.redirect(`/admin/page/${page.slug}?saved=1`);

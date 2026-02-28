@@ -31,14 +31,16 @@
                     </div>
                     <% } %>
 
-                        <form method="POST" action="/page-create">
+                        <form method="POST" action="./page-create">
+
                             <div class="admin-form-group">
                                 <label>Page Slug (URL path)</label>
                                 <input type="text" name="slug" required placeholder="e.g. case-studies"
                                     pattern="[a-z0-9-]+" title="Lowercase letters, numbers, and hyphens only"
                                     oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '-')">
                                 <small style="color: var(--text-muted); font-size: 0.75rem;">
-                                    Your page will be at: xdotai.in/<span id="slugPreview">your-slug</span>
+                                    Your page will be at: localhost:3000/<span id="slugPreview">your-slug</span>
+
                                 </small>
                             </div>
                             <div class="admin-form-group">
