@@ -29,25 +29,29 @@
             </div>
 
             <nav class="admin-nav">
-                <a href="./" class="admin-nav-item active">
+                <a href="/admin/" class="admin-nav-item active">
 
                     <span class="admin-nav-icon">📊</span> Dashboard
                 </a>
-                <a href="./blog" class="admin-nav-item">
+
+                <a href="/admin/blog" class="admin-nav-item">
 
                     <span class="admin-nav-icon">📝</span> Blog Manager
                 </a>
-                <a href="./nav-logos" class="admin-nav-item">
+
+                <a href="/admin/nav-logos" class="admin-nav-item">
 
                     <span class="admin-nav-icon">🧭</span> Nav & Logos
                 </a>
-                <a href="./home-manager" class="admin-nav-item">
+
+                <a href="/admin/home-manager" class="admin-nav-item">
 
                     <span class="admin-nav-icon">🏠</span> Home Manager
                 </a>
+
                 <div class="admin-nav-separator">Pages</div>
                 <% pages.forEach(p=> { %>
-                    <a href="./page/<%= p.slug %>" class="admin-nav-item">
+                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
 
                         <span class="admin-nav-icon">📄</span>
                         <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
@@ -55,6 +59,7 @@
                                 <%= sectionCounts[p.slug] || 0 %>
                             </span>
                     </a>
+
                     <% }) %>
             </nav>
 
@@ -62,7 +67,8 @@
                 <span>Logged in as <strong>
                         <%= adminUser %>
                     </strong></span>
-                <a href="./logout" class="admin-logout">Logout →</a>
+                <a href="/admin/logout" class="admin-logout">Logout →</a>
+
 
             </div>
         </aside>
@@ -73,7 +79,8 @@
                 <h1>Dashboard</h1>
                 <a href="/" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
 
-                <a href="./page-create" class="admin-btn admin-btn-primary">✨ Create New Page</a>
+                <a href="/admin/page-create" class="admin-btn admin-btn-primary">✨ Create New Page</a>
+
 
             </div>
 
@@ -118,7 +125,8 @@
                     <!-- Site Settings -->
                     <div class="admin-card">
                         <h2>Site Settings</h2>
-                        <form method="POST" action="./settings" class="admin-settings-form">
+                        <form method="POST" action="/admin/settings" class="admin-settings-form">
+
 
                             <div class="admin-form-row">
                                 <div class="admin-form-group">
@@ -171,7 +179,8 @@
                     <!-- Branding: Favicon & Logo -->
                     <div class="admin-card">
                         <h2>🎨 Branding</h2>
-                        <form method="POST" action="./branding" enctype="multipart/form-data">
+                        <form method="POST" action="/admin/branding" enctype="multipart/form-data">
+
 
                             <div class="admin-form-row">
                                 <div class="admin-form-group">
@@ -218,7 +227,8 @@
                     <!-- Change Password -->
                     <div class="admin-card">
                         <h2>🔒 Change Admin Password</h2>
-                        <form method="POST" action="./change-password">
+                        <form method="POST" action="/admin/change-password">
+
 
                             <% if (typeof pwError !=='undefined' && pwError) { %>
                                 <div class="admin-alert"

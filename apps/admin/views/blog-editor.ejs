@@ -19,14 +19,17 @@
 <body>
     <div class="admin-layout">
         <aside class="admin-sidebar">
-            <a href="./" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
+            <a href="/admin/" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
                     class="admin-badge">BLOG</span></a>
             <nav class="admin-nav">
-                <a href="./" class="admin-nav-link">📊 Dashboard</a>
+                <a href="/admin/" class="admin-nav-link">📊 Dashboard</a>
 
-                <a href="./blog" class="admin-nav-link">📝 All Posts</a>
 
-                <a href="./blog/new" class="admin-nav-link <%= isNew ? 'active' : '' %>">✨ New Post</a>
+                <a href="/admin/blog" class="admin-nav-link">📝 All Posts</a>
+
+
+                <a href="/admin/blog/new" class="admin-nav-link <%= isNew ? 'active' : '' %>">✨ New Post</a>
+
 
                 <% if (!isNew && post) { %>
                     <a href="/blogs/<%= post.slug %>" target="_blank" class="admin-nav-link">🌐 View Post</a>
@@ -35,7 +38,8 @@
             </nav>
             <div class="admin-sidebar-footer">
                 <span>Logged in as admin</span>
-                <a href="./logout">Logout →</a>
+                <a href="/admin/logout">Logout →</a>
+
 
             </div>
         </aside>
@@ -44,14 +48,15 @@
             <% if (typeof success !=='undefined' || (typeof req !=='undefined' )) { %>
                 <% } %>
 
-                    <form method="POST" action="./blog/<%= isNew ? 'new' : post.slug %>" enctype="multipart/form-data"
-                        id="blogForm">
+                    <form method="POST" action="/admin/blog/<%= isNew ? 'new' : post.slug %>"
+                        enctype="multipart/form-data" id="blogForm">
                         <div class="admin-header" style="margin-bottom:1rem;">
                             <h1>
                                 <%= isNew ? '✨ New Blog Post' : '✏️ Edit Post' %>
                             </h1>
                             <div style="display:flex;gap:0.5rem;">
-                                <a href="./blog" class="admin-btn admin-btn-secondary">← Back</a>
+                                <a href="/admin/blog" class="admin-btn admin-btn-secondary">← Back</a>
+
 
                                 <button type="submit" name="status" value="draft"
                                     class="admin-btn admin-btn-secondary">💾 Save Draft</button>
@@ -229,6 +234,13 @@
                                         <!-- FAQ items added dynamically -->
                                     </div>
                                     <input type="hidden" name="faq_json" id="blogFaqJson">
+                                    <script id="blog-faqs-data" type="application/json">
+                                        <%- JSON.stringify(
+                                            (post && post.faq_json) ? 
+                                            (typeof post.faq_json === 'string' ? JSON.parse(post.faq_json) : post.faq_json) : 
+                                            []
+                                        ) %>
+                                    </script>
                                     <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;">
                                         <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
                                             onclick="aiGenerateBlogFaqs()" id="aiBlogFaqBtn">
@@ -271,7 +283,7 @@
                                             <div class="seo-preview-title" id="seoPreviewTitle">
                                                 <%= post ? (post.meta_title || post.title) : 'Post Title' %>
                                             </div>
-                                            <div class="seo-preview-url">xdotai.in/blogs/<span id="seoPreviewSlug">
+                                            <div class="seo-preview-url">/blogs/<span id="seoPreviewSlug">
                                                     <%= post ? post.slug : 'your-slug' %>
                                                 </span></div>
                                             <div class="seo-preview-desc" id="seoPreviewDesc">
@@ -287,7 +299,7 @@
                                     <div class="admin-card" style="padding:1.25rem;">
                                         <h3 style="margin:0 0 0.75rem;font-size:0.9rem;color:#ef4444;">⚠️ Danger Zone
                                         </h3>
-                                        <form method="POST" action="./blog/<%= post.slug %>/delete"
+                                        <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
                                             onsubmit="return confirm('Are you sure you want to delete this post? This cannot be undone.')">
                                             <button type="submit" class="admin-btn admin-btn-small"
                                                 style="width:100%;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">🗑️
@@ -466,19 +478,22 @@
         // BLOG FAQ EDITOR
         // ═══════════════════════════════════════
         let blogFaqs = [];
-        <% if (post && post.faq_json) { %>
-            try { blogFaqs = <% - post.faq_json || '[]' %>; } catch (e) { blogFaqs = []; }
-        <% } %>
+        try {
+            const faqData = document.getElementById('blog-faqs-data');
+            if (faqData) blogFaqs = JSON.parse(faqData.textContent);
+        } catch (e) {
+            console.error('Error parsing FAQs:', e);
+        }
 
-            function renderBlogFaqs() {
-                const list = document.getElementById('blogFaqList');
-                if (!list) return;
-                if (blogFaqs.length === 0) {
-                    list.innerHTML = '<div style="text-align:center;padding:0.75rem;color:var(--text-muted);font-size:0.75rem;">No FAQs. Click "+ Add" or AI Generate.</div>';
-                    syncBlogFaqJson();
-                    return;
-                }
-                list.innerHTML = blogFaqs.map((faq, i) => `
+        function renderBlogFaqs() {
+            const list = document.getElementById('blogFaqList');
+            if (!list) return;
+            if (blogFaqs.length === 0) {
+                list.innerHTML = '<div style="text-align:center;padding:0.75rem;color:var(--text-muted);font-size:0.75rem;">No FAQs. Click "+ Add" or AI Generate.</div>';
+                syncBlogFaqJson();
+                return;
+            }
+            list.innerHTML = blogFaqs.map((faq, i) => `
                 <div class="faq-editor-item">
                     <div class="faq-editor-item-header">
                         <span class="faq-editor-num">${i + 1}</span>
@@ -494,8 +509,8 @@
                     </div>
                 </div>
             `).join('');
-                syncBlogFaqJson();
-            }
+            syncBlogFaqJson();
+        }
 
         function addBlogFaq() {
             blogFaqs.push({ question: '', answer: '' });

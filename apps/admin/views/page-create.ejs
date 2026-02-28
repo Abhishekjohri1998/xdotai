@@ -20,7 +20,9 @@
         <div class="admin-login-container" style="max-width: 560px;">
             <div class="admin-login-card" style="text-align: left;">
                 <div style="text-align: center; margin-bottom: 1.5rem;">
-                    <span class="admin-login-logo"><span class="logo-x">X</span> DOT AI</span>
+                    <a href="/admin/" style="text-decoration:none;"><span class="admin-login-logo"><span
+                                class="logo-x">X</span> DOT AI</span></a>
+
                     <h1>Create New Page</h1>
                     <p class="admin-login-subtitle">Add a new page to your website</p>
                 </div>
@@ -31,7 +33,8 @@
                     </div>
                     <% } %>
 
-                        <form method="POST" action="./page-create">
+                        <form method="POST" action="/admin/page-create">
+
 
                             <div class="admin-form-group">
                                 <label>Page Slug (URL path)</label>
@@ -75,8 +78,9 @@
                                 ✨ Create Page
                             </button>
                         </form>
-                        <a href="/" class="admin-back-link" style="display: block; text-align: center;">← Back to
+                        <a href="/admin/" class="admin-back-link" style="display: block; text-align: center;">← Back to
                             Dashboard</a>
+
             </div>
         </div>
     </div>

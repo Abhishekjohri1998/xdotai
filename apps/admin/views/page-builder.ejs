@@ -22,22 +22,24 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <a href="/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+                <a href="/admin/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+
 
                 <span class="admin-badge">PAGE BUILDER</span>
             </div>
             <nav class="admin-nav">
-                <a href="/" class="admin-nav-item">
-                    <span class="admin-nav-icon">📊</span> Dashboard
-                </a>
+                <span class="admin-nav-icon">📊</span> Dashboard
+
                 <div class="admin-nav-separator">Pages</div>
                 <% allPages.forEach(p=> { %>
-                    <a href="/page/<%= p.slug %>" class="admin-nav-item <%= p.slug === page.slug ? 'active' : '' %>">
+                    <a href="/admin/page/<%= p.slug %>"
+                        class="admin-nav-item <%= p.slug === page.slug ? 'active' : '' %>">
+
                         <span class="admin-nav-icon">📄</span>
                         <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
                     </a>
                     <% }) %>
-                        <a href="/page-create" class="admin-nav-item"
+                        <a href="/admin/page-create" class="admin-nav-item"
                             style="color: var(--accent-secondary); margin-top: 0.5rem;">
                             <span class="admin-nav-icon">➕</span> Create New Page
                         </a>
@@ -46,7 +48,8 @@
                 <span>Logged in as <strong>
                         <%= typeof settings !=='undefined' ? 'admin' : 'admin' %>
                     </strong></span>
-                <a href="/logout" class="admin-logout">Logout →</a>
+                <a href="/admin/logout" class="admin-logout">Logout →</a>
+
             </div>
         </aside>
 
@@ -59,7 +62,8 @@
                     <span class="pb-page-slug">/<%= page.slug==='home' ? '' : page.slug %></span>
                 </div>
                 <div class="pb-header-actions">
-                    <a href="/visual-builder/<%= page.slug %>" class="admin-btn admin-btn-primary">🎨 Visual
+                    <a href="/admin/visual-builder/<%= page.slug %>" class="admin-btn admin-btn-primary">🎨 Visual
+
                         Builder</a>
                     <a href="/<%= page.slug === 'home' ? '' : (page.slug === 'about' ? 'about-da-sachin' : page.slug) %>"
                         class="admin-btn admin-btn-secondary" target="_blank">View Page ↗</a>
@@ -79,7 +83,8 @@
                             <span class="pb-toggle-icon">▾</span>
                         </h2>
                         <div class="pb-card-body">
-                            <form method="POST" action="./page/<%= page.slug %>">
+                            <form method="POST" action="/admin/page/<%= page.slug %>">
+
 
                                 <div class="admin-form-row">
                                     <div class="admin-form-group" style="flex:3">
@@ -150,7 +155,8 @@
                             <span class="pb-toggle-icon">▸</span>
                         </h2>
                         <div class="pb-card-body" style="display:none;">
-                            <form method="POST" action="./page/<%= page.slug %>" id="schemaFaqForm">
+                            <form method="POST" action="/admin/page/<%= page.slug %>" id="schemaFaqForm">
+
 
                                 <!-- Hidden fields to carry page settings -->
                                 <input type="hidden" name="title" value="<%= page.title %>">
@@ -195,6 +201,8 @@
 
                                 <input type="hidden" name="schema_json" value="<%= page.schema_json || '' %>">
                                 <input type="hidden" name="faq_json" id="pageFaqJson" value="">
+                                <script id="page-faqs-data"
+                                    type="application/json"><%- JSON.stringify(pageFaqs) %></script>
 
                                 <div style="margin-top:1rem;">
                                     <div
@@ -238,8 +246,8 @@
                                                         : '🔴 Inactive' %></small>
                                         </div>
                                     </div>
-                                    <form method="POST" action="./hero-banner/<%= b.id %>" enctype="multipart/form-data"
-                                        class="admin-section-form">
+                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>"
+                                        enctype="multipart/form-data" class="admin-section-form">
                                         <div class="admin-form-row">
                                             <div class="admin-form-group" style="flex:2">
                                                 <label>Overlay Title</label>
@@ -308,7 +316,7 @@
                                                 class="admin-btn admin-btn-primary admin-btn-small">Save Banner</button>
                                         </div>
                                     </form>
-                                    <form method="POST" action="./hero-banner/<%= b.id %>/delete"
+                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>/delete"
                                         class="admin-delete-form" onsubmit="return confirm('Delete this banner?')">
                                         <button type="submit"
                                             class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
@@ -319,7 +327,7 @@
                                     <details class="admin-add-section">
                                         <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add Hero Banner
                                         </summary>
-                                        <form method="POST" action="./page/<%= page.slug %>/hero-banner"
+                                        <form method="POST" action="/admin/page/<%= page.slug %>/hero-banner"
                                             enctype="multipart/form-data" class="admin-section-form"
                                             style="margin-top:1rem;">
                                             <div class="admin-form-row">
@@ -387,7 +395,7 @@
                             <div class="pb-card-body">
                                 <% portfolioCategories.forEach(cat=> { %>
                                     <div class="admin-section-item">
-                                        <form method="POST" action="./category/<%= cat.id %>"
+                                        <form method="POST" action="/admin/category/<%= cat.id %>"
                                             class="admin-section-form">
                                             <div class="admin-form-row">
                                                 <div class="admin-form-group" style="flex:2">
@@ -409,7 +417,7 @@
                                                     class="admin-btn admin-btn-primary admin-btn-small">Save</button>
                                             </div>
                                         </form>
-                                        <form method="POST" action="./category/<%= cat.id %>/delete"
+                                        <form method="POST" action="/admin/category/<%= cat.id %>/delete"
                                             class="admin-delete-form" onsubmit="return confirm('Delete category?')">
                                             <button type="submit"
                                                 class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
@@ -419,7 +427,7 @@
                                         <details class="admin-add-section">
                                             <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add
                                                 Category</summary>
-                                            <form method="POST" action="./category" class="admin-section-form"
+                                            <form method="POST" action="/admin/category" class="admin-section-form"
                                                 style="margin-top:1rem;">
                                                 <div class="admin-form-row">
                                                     <div class="admin-form-group" style="flex:2">
@@ -467,7 +475,7 @@
                                                         <span class="pb-section-expand">▾</span>
                                                     </div>
                                                     <div class="pb-section-body" style="display:none;">
-                                                        <form method="POST" action="./section/<%= s.id %>"
+                                                        <form method="POST" action="/admin/section/<%= s.id %>"
                                                             class="admin-section-form pb-section-form">
 
                                                             <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
@@ -556,15 +564,17 @@
                                                                                         ? 'selected' : '' %>>Image
                                                                                     </option>
                                                                                 </select>
-                                                                                <div class="pb-icon-emoji"
-                                                                                    style="<%= (s.icon_type || 'emoji') !== 'emoji' ? 'display:none' : '' %>">
+                                                                                <div class="pb-icon-emoji" <%-
+                                                                                    (s.icon_type || 'emoji' ) !=='emoji'
+                                                                                    ? 'style="display:none"' : '' %>>
                                                                                     <input type="text" name="icon"
                                                                                         value="<%= s.icon %>"
                                                                                         placeholder="🔧"
                                                                                         style="width:60px;">
                                                                                 </div>
-                                                                                <div class="pb-icon-lucide"
-                                                                                    style="<%= s.icon_type !== 'lucide' ? 'display:none' : '' %>">
+                                                                                <div class="pb-icon-lucide" <%-
+                                                                                    s.icon_type !=='lucide'
+                                                                                    ? 'style="display:none"' : '' %>>
                                                                                     <input type="text"
                                                                                         name="icon_lucide"
                                                                                         value="<%= s.icon_type === 'lucide' ? s.icon : '' %>"
@@ -575,8 +585,9 @@
                                                                                         onclick="openIconPicker(this)">🎨
                                                                                         Pick</button>
                                                                                 </div>
-                                                                                <div class="pb-icon-image"
-                                                                                    style="<%= s.icon_type !== 'image' ? 'display:none' : '' %>">
+                                                                                <div class="pb-icon-image" <%-
+                                                                                    s.icon_type !=='image'
+                                                                                    ? 'style="display:none"' : '' %>>
                                                                                     <input type="text"
                                                                                         name="icon_image_url"
                                                                                         value="<%= s.icon_image_url || '' %>"
@@ -674,7 +685,7 @@
                                                                                 Section</button>
                                                                         </div>
                                                         </form>
-                                                        <form method="POST" action="./section/<%= s.id %>/delete"
+                                                        <form method="POST" action="/admin/section/<%= s.id %>/delete"
                                                             class="admin-delete-form"
                                                             onsubmit="return confirm('Delete this section?')">
                                                             <button type="submit"
@@ -689,7 +700,8 @@
                                                         <summary class="admin-btn admin-btn-secondary admin-btn-small">+
                                                             Add <%= type.replace(/-/g, ' ' ) %>
                                                         </summary>
-                                                        <form method="POST" action="./page/<%= page.slug %>/add-section"
+                                                        <form method="POST"
+                                                            action="/admin/page/<%= page.slug %>/add-section"
                                                             class="admin-section-form" style="margin-top:1rem;">
                                                             <input type="hidden" name="type" value="<%= type %>">
                                                             <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
@@ -980,8 +992,8 @@
                                             <div class="pb-media-actions">
                                                 <button class="pb-media-insert"
                                                     onclick="insertMedia('/uploads/<%= m.filename %>')">Insert</button>
-                                                <button class="pb-media-delete"
-                                                    onclick="deleteMedia(<%= m.id %>, this)">✕</button>
+                                                <button class="pb-media-delete" data-id="<%= m.id %>"
+                                                    onclick="deleteMedia(this.dataset.id, this)">✕</button>
                                             </div>
                                         </div>
                         </div>
@@ -1415,8 +1427,7 @@
             if (input) updateCharCount(input, parseInt(el.dataset.max));
         });
 
-    // YouTube auto-populate for portfolio
-    <% if (page.slug === 'portfolio') { %>
+        if ("<%= page.slug %>" === 'portfolio') {
             document.querySelectorAll('input[name="youtube_url"]').forEach(input => {
                 input.addEventListener('change', async function () {
                     const url = this.value.trim();
@@ -1444,7 +1455,7 @@
                     this.style.borderColor = '';
                 });
             });
-    <% } %>
+        }
 
         // ═══════════════════════════════════════════════════════
         // LUCIDE ICON PICKER
@@ -1498,9 +1509,9 @@
             const filtered = filter ? LUCIDE_ICONS.filter(i => i.includes(filter.toLowerCase())) : LUCIDE_ICONS;
             grid.innerHTML = filtered.map(name =>
                 `<button type="button" class="pb-icon-btn" onclick="selectIcon('${name}')" title="${name}">
-                    <i data-lucide="${name}"></i>
-                    <small>${name}</small>
-                </button>`
+            <i data-lucide="${name}"></i>
+            <small>${name}</small>
+        </button>`
             ).join('');
             // Initialize Lucide icons in grid
             if (typeof lucide !== 'undefined') lucide.createIcons({ nodes: grid.querySelectorAll('[data-lucide]') });
@@ -1558,34 +1569,42 @@
         // ═══════════════════════════════════════
         // PAGE FAQ EDITOR
         // ═══════════════════════════════════════
-        let pageFaqs = <% - JSON.stringify(pageFaqs) %>;
+        let pageFaqs = [];
+        try {
+            const faqData = document.getElementById('page-faqs-data');
+            if (faqData) pageFaqs = JSON.parse(faqData.textContent);
+        } catch (e) {
+            console.error('Error parsing FAQs:', e);
+        }
 
         function renderPageFaqs() {
             const list = document.getElementById('pageFaqList');
             if (!list) return;
             if (pageFaqs.length === 0) {
-                list.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.8rem;">No FAQs added yet. Click "+ Add FAQ" or use AI to generate.</div>';
+                list.innerHTML = `<div style="text-align:center;padding:1rem;color:var(--text-muted);font-size:0.8rem;">No FAQs added yet. Click "+ Add FAQ" or use AI to generate.</div>`;
                 syncPageFaqJson();
                 return;
             }
             list.innerHTML = pageFaqs.map((faq, i) => `
-                <div class="faq-editor-item">
-                    <div class="faq-editor-item-header">
-                        <span class="faq-editor-num">${i + 1}</span>
-                        <button type="button" class="faq-editor-delete" onclick="removePageFaq(${i})" title="Remove">✕</button>
+                    <div class="faq-editor-item">
+                        <div class="faq-editor-item-header">
+                            <span class="faq-editor-num">${i + 1}</span>
+                            <button type="button" class="faq-editor-delete" onclick="removePageFaq(${i})"
+                                title="Remove">✕</button>
+                        </div>
+                        <div class="admin-form-group" style="margin-bottom:0.5rem;">
+                            <label style="font-size:0.7rem;">Question</label>
+                            <input type="text" value="${(faq.question || '').replace(/" /g, '&quot;')}"
+                                placeholder="Enter question..."
+                                onchange="pageFaqs[${i}].question=this.value;syncPageFaqJson()">
+                        </div>
+                        <div class="admin-form-group">
+                            <label style="font-size:0.7rem;">Answer</label>
+                            <textarea rows="2" placeholder="Enter answer..."
+                                onchange="pageFaqs[${i}].answer=this.value;syncPageFaqJson()">${faq.answer || ''}</textarea>
+                        </div>
                     </div>
-                    <div class="admin-form-group" style="margin-bottom:0.5rem;">
-                        <label style="font-size:0.7rem;">Question</label>
-                        <input type="text" value="${(faq.question || '').replace(/"/g, '&quot;')}" placeholder="Enter question..."
-                            onchange="pageFaqs[${i}].question=this.value;syncPageFaqJson()">
-                    </div>
-                    <div class="admin-form-group">
-                        <label style="font-size:0.7rem;">Answer</label>
-                        <textarea rows="2" placeholder="Enter answer..."
-                            onchange="pageFaqs[${i}].answer=this.value;syncPageFaqJson()">${faq.answer || ''}</textarea>
-                    </div>
-                </div>
-            `).join('');
+                    `).join('');
             syncPageFaqJson();
         }
 
@@ -1616,7 +1635,8 @@
             status.textContent = '⏳ Generating FAQs...';
 
             // Gather page content from sections
-            let content = title + ' ' + (document.querySelector('textarea[name="meta_description"]')?.value || '');
+            let content = title + ' ' + (document.querySelector('textarea[name="meta_description"]')?.value ||
+                '');
             document.querySelectorAll('textarea[name="description"], input[name="title"]').forEach(el => {
                 content += ' ' + el.value;
             });
