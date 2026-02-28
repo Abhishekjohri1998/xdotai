@@ -4,3 +4,4 @@ database/*.db
 *.log
 uploads/
 tmp/
+dist/
