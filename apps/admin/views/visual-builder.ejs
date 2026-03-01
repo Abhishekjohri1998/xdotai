@@ -11,1606 +11,254 @@
         rel="stylesheet">
     <link rel="stylesheet" href="/admin.css">
     <style>
-        /* ═══════════════════════════════════════ */
-        /* VISUAL BUILDER LAYOUT                   */
-        /* ═══════════════════════════════════════ */
         .vb-layout {
             display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow: hidden;
             background: var(--bg-primary, #0a0a1a);
         }
 
-        /* ── Left: Block Palette ── */
-        .vb-palette {
-            width: 240px;
-            flex-shrink: 0;
-            background: var(--bg-secondary, #111127);
-            border-right: 1px solid var(--border, #1e1e3a);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .vb-palette-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .vb-palette-header h2 {
-            margin: 0;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .vb-palette-logo {
-            font-weight: 800;
-            color: #a78bfa;
-            font-size: 1rem;
-        }
-
-        .vb-palette-category {
-            padding: 0.5rem 1rem 0.25rem;
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted, #666);
-            font-weight: 700;
-        }
-
-        .vb-block-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.6rem 1rem;
-            cursor: grab;
-            border-radius: 0.5rem;
-            margin: 0.125rem 0.5rem;
-            transition: background 0.15s, transform 0.15s;
-            color: var(--text-secondary, #ccc);
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .vb-block-item:hover {
-            background: rgba(167, 139, 250, 0.1);
-            color: #fff;
-        }
-
-        .vb-block-item:active {
-            cursor: grabbing;
-            transform: scale(0.97);
-        }
-
-        .vb-block-item .vb-block-icon {
-            font-size: 1.1rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        .vb-block-item[draggable="true"] {
-            user-select: none;
-        }
-
-        /* ── Center: Canvas ── */
-        .vb-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
         .vb-toolbar {
-            height: 52px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
+            height: 60px;
+            background: var(--bg-secondary, #111127);
+            border-bottom: 1px solid var(--border, #1e1e3a);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
             flex-shrink: 0;
+            z-index: 10;
         }
 
         .vb-toolbar-group {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .vb-toolbar-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            color: #ccc;
-            padding: 0.4rem 0.75rem;
-            border-radius: 0.4rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.15s;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .vb-toolbar-btn:hover {
-            background: rgba(167, 139, 250, 0.15);
-            color: #fff;
-            border-color: #7c3aed;
-        }
-
-        .vb-toolbar-btn.active {
-            background: #7c3aed;
-            color: #fff;
-            border-color: #7c3aed;
-        }
-
-        .vb-toolbar-btn.primary {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
-            color: #fff;
-            border: none;
-            font-weight: 600;
-        }
-
-        .vb-toolbar-btn.primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            gap: 1rem;
         }
 
         .vb-toolbar-title {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .vb-toolbar-title strong {
             color: #fff;
-        }
-
-        .vb-save-status {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-left: 0.5rem;
-        }
-
-        .vb-canvas-wrap {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            background: linear-gradient(135deg, #080818 0%, #0d0d25 100%);
-        }
-
-        .vb-canvas {
-            width: 100%;
-            max-width: 900px;
-            min-height: 400px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 2px dashed rgba(167, 139, 250, 0.15);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: border-color 0.3s;
-        }
-
-        .vb-canvas.drag-over {
-            border-color: #7c3aed;
-            background: rgba(167, 139, 250, 0.05);
-        }
-
-        .vb-canvas-empty {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            color: var(--text-muted);
-            text-align: center;
-        }
-
-        .vb-canvas-empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.4;
-        }
-
-        .vb-canvas-empty h3 {
-            margin: 0 0 0.5rem;
-            color: #666;
-            font-size: 1rem;
-        }
-
-        .vb-canvas-empty p {
-            font-size: 0.8rem;
-            color: #555;
-        }
-
-        /* ── Canvas Blocks ── */
-        .vb-block {
-            position: relative;
-            border: 2px solid transparent;
-            border-radius: 0.75rem;
-            margin: 0.5rem 0;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            min-height: 40px;
-        }
-
-        .vb-block:hover {
-            border-color: rgba(167, 139, 250, 0.3);
-        }
-
-        .vb-block.selected {
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
-        }
-
-        .vb-block-controls {
-            position: absolute;
-            top: -12px;
-            right: 8px;
-            display: none;
-            gap: 4px;
-            z-index: 10;
-        }
-
-        .vb-block.selected .vb-block-controls,
-        .vb-block:hover .vb-block-controls {
-            display: flex;
-        }
-
-        .vb-block-ctrl-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #1e1e3a;
-            border: 1px solid #333;
-            color: #ccc;
-            font-size: 0.65rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-        }
-
-        .vb-block-ctrl-btn:hover {
-            background: #7c3aed;
-            color: #fff;
-            border-color: #7c3aed;
-        }
-
-        .vb-block-ctrl-btn.delete:hover {
-            background: #ef4444;
-            border-color: #ef4444;
-        }
-
-        .vb-block-drag-handle {
-            position: absolute;
-            left: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 32px;
-            background: #1e1e3a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            cursor: grab;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6rem;
-            color: #888;
-        }
-
-        .vb-block:hover .vb-block-drag-handle,
-        .vb-block.selected .vb-block-drag-handle {
-            display: flex;
-        }
-
-        .vb-drop-indicator {
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #7c3aed, transparent);
-            border-radius: 2px;
-            margin: 2px 0;
-            opacity: 0;
-            transition: opacity 0.15s;
-        }
-
-        .vb-drop-indicator.active {
-            opacity: 1;
-        }
-
-        /* ── Block Content Styles ── */
-        .vb-block-content {
-            padding: 0.75rem;
-        }
-
-        .vb-block-content h1,
-        .vb-block-content h2,
-        .vb-block-content h3,
-        .vb-block-content h4,
-        .vb-block-content h5,
-        .vb-block-content h6 {
-            color: #fff;
-            margin: 0;
-            font-family: 'Outfit', sans-serif;
-            outline: none;
-        }
-
-        .vb-block-content h1 {
-            font-size: 2.2rem;
-        }
-
-        .vb-block-content h2 {
-            font-size: 1.6rem;
-        }
-
-        .vb-block-content h3 {
-            font-size: 1.3rem;
-        }
-
-        .vb-block-content p {
-            color: #ccc;
-            margin: 0;
-            line-height: 1.7;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .vb-block-content [contenteditable]:focus {
-            background: rgba(167, 139, 250, 0.05);
-            border-radius: 4px;
-        }
-
-        .vb-block-content img {
-            max-width: 100%;
-            border-radius: 0.5rem;
-        }
-
-        .vb-block-placeholder {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px dashed rgba(255, 255, 255, 0.1);
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            text-align: center;
-            color: #555;
-            font-size: 0.8rem;
-        }
-
-        .vb-spacer {
-            background: rgba(167, 139, 250, 0.05);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #555;
-            font-size: 0.7rem;
-        }
-
-        .vb-divider {
-            padding: 1rem 0;
-        }
-
-        .vb-divider hr {
-            border: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .vb-btn-preview {
-            display: inline-block;
-            padding: 0.6rem 1.5rem;
-            border-radius: 0.5rem;
             font-weight: 600;
-            font-size: 0.85rem;
-            text-decoration: none;
-            cursor: default;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .vb-btn-primary {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
-            color: #fff;
-        }
-
-        .vb-btn-secondary {
-            background: transparent;
-            border: 2px solid #7c3aed;
+        .vb-toolbar-title span {
             color: #a78bfa;
         }
 
-        .vb-btn-outline {
+        . डिवाइस-toggles {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .device-btn {
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc;
-        }
-
-        .vb-cta-preview {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(168, 85, 247, 0.1));
-            border: 1px solid rgba(167, 139, 250, 0.2);
-            border-radius: 1rem;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .vb-cta-preview h2 {
-            color: #fff;
-            font-size: 1.5rem;
-            margin: 0 0 0.5rem;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .vb-cta-preview p {
-            color: #aaa;
-            margin: 0 0 1rem;
-            font-size: 0.9rem;
-        }
-
-        .vb-gallery-grid {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .vb-gallery-grid img {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-        }
-
-        .vb-subscribe-preview {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(59, 130, 246, 0.1));
-            border: 1px solid rgba(167, 139, 250, 0.15);
-            border-radius: 1rem;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .vb-subscribe-preview h3 {
-            color: #fff;
-            margin: 0 0 0.5rem;
-        }
-
-        .vb-subscribe-preview p {
-            color: #aaa;
-            font-size: 0.85rem;
-            margin: 0 0 1rem;
-        }
-
-        .vb-subscribe-row {
-            display: flex;
-            gap: 0.5rem;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .vb-subscribe-row input {
-            flex: 1;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            font-size: 0.85rem;
-        }
-
-        .vb-video-preview {
-            position: relative;
-            padding-bottom: 56.25%;
-            background: #000;
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
-
-        .vb-video-preview iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             border: none;
-        }
-
-        .vb-accordion-item {
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 0.5rem;
-            margin: 0.25rem 0;
-        }
-
-        .vb-accordion-q {
-            padding: 0.75rem 1rem;
-            color: #ddd;
-            font-weight: 600;
-            font-size: 0.85rem;
+            color: #888;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .vb-accordion-a {
-            padding: 0 1rem 0.75rem;
-            color: #999;
-            font-size: 0.8rem;
-            display: none;
-        }
-
-        .vb-clients-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            padding: 1rem;
-        }
-
-        .vb-client-logo {
-            width: 100%;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px dashed rgba(255, 255, 255, 0.1);
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #555;
-            font-size: 0.7rem;
-        }
-
-        .vb-testimonial-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin: 0.5rem 0;
-        }
-
-        .vb-testimonial-card blockquote {
-            color: #ccc;
-            font-style: italic;
-            margin: 0 0 0.75rem;
             font-size: 0.85rem;
-            line-height: 1.6;
-        }
-
-        .vb-testimonial-card cite {
-            color: #888;
-            font-size: 0.75rem;
-            font-style: normal;
-        }
-
-        .vb-columns-grid {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .vb-column {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px dashed rgba(255, 255, 255, 0.08);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            min-height: 80px;
-        }
-
-        .vb-blog-feed-preview {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .vb-blog-feed-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
-
-        .vb-blog-feed-card h4 {
-            color: #ddd;
-            font-size: 0.8rem;
-            margin: 0 0 0.5rem;
-        }
-
-        .vb-blog-feed-card p {
-            color: #777;
-            font-size: 0.7rem;
-            margin: 0;
-        }
-
-        .vb-custom-html {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #7c3aed;
-        }
-
-        /* ── Right: Properties Panel ── */
-        .vb-props {
-            width: 280px;
-            flex-shrink: 0;
-            background: var(--bg-secondary);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .vb-props-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #fff;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .vb-props-empty {
-            padding: 2rem;
-            text-align: center;
-            color: #555;
-            font-size: 0.8rem;
-        }
-
-        .vb-props-body {
-            padding: 1rem;
-        }
-
-        .vb-prop-group {
-            margin-bottom: 1rem;
-        }
-
-        .vb-prop-label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.35rem;
-            display: block;
-        }
-
-        .vb-prop-input {
-            width: 100%;
-            padding: 0.45rem 0.65rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: 0.4rem;
-            color: #fff;
-            font-size: 0.8rem;
-            transition: border-color 0.2s;
-        }
-
-        .vb-prop-input:focus {
-            border-color: #7c3aed;
-            outline: none;
-        }
-
-        .vb-prop-select {
-            width: 100%;
-            padding: 0.45rem 0.65rem;
-            background: #1a1a32;
-            border: 1px solid var(--border);
-            border-radius: 0.4rem;
-            color: #fff;
-            font-size: 0.8rem;
-        }
-
-        .vb-prop-textarea {
-            min-height: 80px;
-            resize: vertical;
-            font-family: inherit;
-        }
-
-        .vb-prop-range-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .vb-prop-range {
-            flex: 1;
-            accent-color: #7c3aed;
-        }
-
-        .vb-prop-range-val {
-            font-size: 0.75rem;
-            color: #888;
-            min-width: 30px;
-            text-align: right;
-        }
-
-        /* ── Device Preview ── */
-        .vb-canvas.device-tablet {
-            max-width: 768px;
-        }
-
-        .vb-canvas.device-mobile {
-            max-width: 375px;
-        }
-
-        /* ── Drag ghost ── */
-        .vb-drag-ghost {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.8;
-            background: rgba(124, 58, 237, 0.2);
-            border: 1px solid #7c3aed;
-            border-radius: 0.5rem;
-            padding: 0.4rem 0.75rem;
-            color: #fff;
-            font-size: 0.75rem;
-            font-weight: 600;
-            white-space: nowrap;
-            backdrop-filter: blur(8px);
-        }
-
-        /* ── Upload Components ── */
-        .vb-upload-area {
-            display: flex;
-            flex-direction: column;
             gap: 0.4rem;
         }
 
-        .vb-upload-preview {
-            width: 100%;
-            max-height: 150px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border);
-            margin-bottom: 0.4rem;
+        .device-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .vb-upload-row {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            margin: 0.2rem 0;
-        }
-
-        .vb-upload-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 0.4rem;
-            border: 1px solid var(--border);
-            background: rgba(124, 58, 237, 0.15);
-            color: #a78bfa;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            transition: all 0.15s;
-            flex-shrink: 0;
-        }
-
-        .vb-upload-btn:hover {
+        .device-btn.active {
+            color: #fff;
             background: #7c3aed;
-            color: #fff;
-            border-color: #7c3aed;
         }
 
-        .vb-upload-del {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.2);
-        }
-
-        .vb-upload-del:hover {
-            background: #ef4444;
-            color: #fff;
-        }
-
-        .vb-upload-thumb {
-            width: 32px;
-            height: 32px;
-            border-radius: 0.3rem;
-            object-fit: cover;
-            flex-shrink: 0;
+        .page-selector {
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
-        }
-
-        /* ── Grid Presets ── */
-        .vb-grid-presets {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.35rem;
-        }
-
-        .vb-grid-preset {
-            padding: 0.4rem 0.3rem;
-            border-radius: 0.4rem;
-            font-size: 0.65rem;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            color: #ccc;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: all 0.15s;
-            text-align: center;
+            outline: none;
         }
 
-        .vb-grid-preset:hover {
-            background: rgba(124, 58, 237, 0.2);
-            color: #fff;
+        .page-selector:focus {
             border-color: #7c3aed;
         }
 
-        /* ── Column Style Variants ── */
-        .vb-column-cards {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        .btn-close {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
         }
 
-        .vb-column-bordered {
-            border: 1px solid rgba(167, 139, 250, 0.2);
-            border-radius: 0.5rem;
-            padding: 1rem;
+        .btn-close:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-color: #fff;
         }
 
-        .vb-column-glass {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        .vb-workspace {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(135deg, #080818 0%, #0d0d25 100%);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .vb-canvas-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .vb-iframe {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Device Sizes */
+        .vb-canvas-container.desktop .vb-iframe {
+            width: 100%;
+            max-width: 1440px;
+        }
+
+        .vb-canvas-container.tablet .vb-iframe {
+            width: 768px;
+        }
+
+        .vb-canvas-container.mobile .vb-iframe {
+            width: 375px;
+        }
+
+        /* Pulse Animation for saving */
+        @keyframes pulseBorder {
+            0% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(124, 58, 237, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+            }
+        }
+
+        .saving {
+            animation: pulseBorder 1.5s infinite;
         }
     </style>
 </head>
 
 <body>
     <div class="vb-layout">
-        <!-- LEFT: Block Palette -->
-        <aside class="vb-palette">
-            <div class="vb-palette-header">
-                <span class="vb-palette-logo">X</span>
-                <h2>Block Palette</h2>
-            </div>
-            <div class="vb-palette-category">Layout</div>
-            <div class="vb-block-item" draggable="true" data-block-type="heading"><span
-                    class="vb-block-icon">𝗛</span>Heading</div>
-            <div class="vb-block-item" draggable="true" data-block-type="text"><span class="vb-block-icon">¶</span>Text
-                Block</div>
-            <div class="vb-block-item" draggable="true" data-block-type="columns"><span
-                    class="vb-block-icon">▥</span>Columns</div>
-            <div class="vb-block-item" draggable="true" data-block-type="spacer"><span
-                    class="vb-block-icon">↕</span>Spacer</div>
-            <div class="vb-block-item" draggable="true" data-block-type="divider"><span
-                    class="vb-block-icon">—</span>Divider</div>
-
-            <div class="vb-palette-category">Media</div>
-            <div class="vb-block-item" draggable="true" data-block-type="image"><span
-                    class="vb-block-icon">🖼</span>Image</div>
-            <div class="vb-block-item" draggable="true" data-block-type="gallery"><span
-                    class="vb-block-icon">🎨</span>Gallery</div>
-            <div class="vb-block-item" draggable="true" data-block-type="video"><span
-                    class="vb-block-icon">▶</span>Video</div>
-
-            <div class="vb-palette-category">Interactive</div>
-            <div class="vb-block-item" draggable="true" data-block-type="button"><span
-                    class="vb-block-icon">🔘</span>Button</div>
-            <div class="vb-block-item" draggable="true" data-block-type="cta"><span class="vb-block-icon">📢</span>Call
-                to Action</div>
-            <div class="vb-block-item" draggable="true" data-block-type="subscribe"><span
-                    class="vb-block-icon">📧</span>Subscribe</div>
-            <div class="vb-block-item" draggable="true" data-block-type="accordion"><span
-                    class="vb-block-icon">❓</span>Accordion / FAQ</div>
-
-            <div class="vb-palette-category">Content</div>
-            <div class="vb-block-item" draggable="true" data-block-type="testimonials"><span
-                    class="vb-block-icon">💬</span>Testimonials</div>
-            <div class="vb-block-item" draggable="true" data-block-type="clients"><span
-                    class="vb-block-icon">🏢</span>Clients / Logos</div>
-            <div class="vb-block-item" draggable="true" data-block-type="blog-feed"><span
-                    class="vb-block-icon">📝</span>Blog Feed</div>
-            <div class="vb-block-item" draggable="true" data-block-type="custom-html"><span
-                    class="vb-block-icon">&lt;/&gt;</span>Custom HTML</div>
-        </aside>
-
-        <!-- CENTER: Canvas -->
-        <div class="vb-center">
-            <div class="vb-toolbar">
-                <div class="vb-toolbar-group">
-                    <a href="/page/<%= page.slug %>" class="vb-toolbar-btn">← Back</a>
-                    <span class="vb-toolbar-title">Editing: <strong>
-                            <%= page.title %>
-                        </strong></span>
-                    <span class="vb-save-status" id="saveStatus"></span>
+        <!-- Top Toolbar -->
+        <header class="vb-toolbar">
+            <div class="vb-toolbar-group">
+                <div class="vb-toolbar-title">
+                    <span>X DOT AI</span> Visual Builder
                 </div>
-                <div class="vb-toolbar-group">
-                    <button class="vb-toolbar-btn" onclick="undo()" title="Undo">↩ Undo</button>
-                    <button class="vb-toolbar-btn" onclick="redo()" title="Redo">↪ Redo</button>
-                    <button class="vb-toolbar-btn" onclick="setDevice('desktop')" id="devDesktop"
-                        title="Desktop">🖥</button>
-                    <button class="vb-toolbar-btn" onclick="setDevice('tablet')" id="devTablet"
-                        title="Tablet">📱</button>
-                    <button class="vb-toolbar-btn" onclick="setDevice('mobile')" id="devMobile"
-                        title="Mobile">📲</button>
-                    <a href="/<%= page.slug === 'home' ? '' : page.slug %>" target="_blank" class="vb-toolbar-btn">👁
-                        Preview</a>
-                    <button class="vb-toolbar-btn primary" onclick="saveBlocks()" id="saveBtn">💾 Save</button>
-                </div>
-            </div>
-            <div class="vb-canvas-wrap">
-                <div class="vb-canvas" id="canvas">
-                    <!-- Blocks render here -->
-                </div>
-            </div>
-        </div>
 
-        <!-- RIGHT: Properties Panel -->
-        <aside class="vb-props" id="propsPanel">
-            <div class="vb-props-header">⚙ Properties</div>
-            <div class="vb-props-empty" id="propsEmpty">
-                Click a block to edit its properties
+                <select class="page-selector" id="pageSelector" onchange="changePage(this.value)">
+                    <option value="home" <%=page.slug==='home' ? 'selected' : '' %>>Home</option>
+                    <option value="about-da-sachin" <%=page.slug==='about-da-sachin' ? 'selected' : '' %>>About</option>
+                    <option value="services" <%=page.slug==='services' ? 'selected' : '' %>>Services</option>
+                    <option value="portfolio" <%=page.slug==='portfolio' ? 'selected' : '' %>>Portfolio</option>
+                    <option value="insights" <%=page.slug==='insights' ? 'selected' : '' %>>Insights</option>
+                    <!-- Add more pages as needed -->
+                </select>
             </div>
-            <div class="vb-props-body" id="propsBody" style="display:none;">
-                <!-- Dynamic props form -->
+
+            <div class="vb-toolbar-group device-toggles">
+                <button class="device-btn active" onclick="setDevice('desktop')" id="btn-desktop" title="Desktop View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </button>
+                <button class="device-btn" onclick="setDevice('tablet')" id="btn-tablet" title="Tablet View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                </button>
+                <button class="device-btn" onclick="setDevice('mobile')" id="btn-mobile" title="Mobile View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                </button>
             </div>
-        </aside>
+
+            <div class="vb-toolbar-group">
+                <a href="/admin" class="btn-close">Exit Builder</a>
+            </div>
+        </header>
+
+        <!-- Workspace Canvas -->
+        <main class="vb-workspace">
+            <div class="vb-canvas-container desktop" id="canvasContainer">
+                <!-- The iframe points to the public website page. 
+                     Since the admin is logged in (session cookie), the website server 
+                     will inject the inline-editor.ejs scripts automatically. -->
+                <iframe src="<%= page.slug === 'home' ? '/' : '/' + page.slug %>" class="vb-iframe" id="previewIframe"
+                    title="Live Preview">
+                </iframe>
+            </div>
+        </main>
     </div>
 
-    <script type="application/json" id="vb-initial-blocks"><%- page.page_blocks || '[]' %></script>
     <script>
-        // ═══════════════════════════════════════════════
-        // VISUAL BUILDER ENGINE
-        // ═══════════════════════════════════════════════
-        const PAGE_SLUG = '<%= page.slug %>';
-        let blocks = [];
-        try { blocks = JSON.parse(document.getElementById('vb-initial-blocks').textContent || '[]'); } catch (e) { }
-        let selectedBlockId = null;
-        let undoStack = [];
-        let redoStack = [];
-        let saveTimeout = null;
+        function setDevice(device) {
+            const container = document.getElementById('canvasContainer');
 
-        // ── Block Defaults ──
-        const BLOCK_DEFAULTS = {
-            heading: { text: 'Your Heading', level: 2, alignment: 'left' },
-            text: { html: '<p>Type your text here...</p>' },
-            image: { src: '', alt: '', caption: '', width: '100%' },
-            gallery: { images: [], columns: 3 },
-            video: { url: '' },
-            button: { text: 'Click Here', url: '#', style: 'primary' },
-            cta: { title: 'Ready to Get Started?', subtitle: 'Join us today', buttonText: 'Get Started', buttonUrl: '/contact' },
-            spacer: { height: 60 },
-            divider: { style: 'solid' },
-            columns: { columns: [{ html: '' }, { html: '' }], widths: '1fr 1fr', gap: '1.5rem', style: 'none' },
-            testimonials: { items: [{ quote: 'Great service!', author: 'Client Name', role: 'CEO' }] },
-            subscribe: { title: 'Stay Updated', subtitle: 'Get the latest news', buttonText: 'Subscribe' },
-            'blog-feed': { count: 3, category: '' },
-            clients: { logos: [{ name: 'Client 1', src: '' }, { name: 'Client 2', src: '' }, { name: 'Client 3', src: '' }, { name: 'Client 4', src: '' }] },
-            accordion: { items: [{ question: 'What is this?', answer: 'This is an FAQ item.' }] },
-            'custom-html': { html: '<div>Custom HTML here</div>' }
-        };
+            // Update classes
+            container.className = 'vb-canvas-container ' + device;
 
-        // ── ID Generator ──
-        function genId() { return 'b_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 5); }
-
-        // ── Undo/Redo ──
-        function pushUndo() {
-            undoStack.push(JSON.stringify(blocks));
-            if (undoStack.length > 50) undoStack.shift();
-            redoStack = [];
-        }
-        function undo() {
-            if (!undoStack.length) return;
-            redoStack.push(JSON.stringify(blocks));
-            blocks = JSON.parse(undoStack.pop());
-            renderCanvas();
-        }
-        function redo() {
-            if (!redoStack.length) return;
-            undoStack.push(JSON.stringify(blocks));
-            blocks = JSON.parse(redoStack.pop());
-            renderCanvas();
+            // Update buttons
+            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + device).classList.add('active');
         }
 
-        // ── Save ──
-        async function saveBlocks() {
-            const btn = document.getElementById('saveBtn');
-            const status = document.getElementById('saveStatus');
-            btn.textContent = '⏳ Saving...';
-            status.textContent = '';
-            try {
-                const res = await fetch('/api/save-blocks', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ slug: PAGE_SLUG, blocks })
-                });
-                const data = await res.json();
-                btn.textContent = '✅ Saved!';
-                status.textContent = 'Last saved: ' + new Date().toLocaleTimeString();
-                setTimeout(() => { btn.textContent = '💾 Save'; }, 2000);
-            } catch {
-                btn.textContent = '❌ Error';
-                setTimeout(() => { btn.textContent = '💾 Save'; }, 2000);
-            }
-        }
+        function changePage(slug) {
+            // Update iframe src
+            const iframe = document.getElementById('previewIframe');
+            iframe.src = slug === 'home' ? '/' : '/' + slug;
 
-        function autoSave() {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(saveBlocks, 3000);
+            // Optionally update URL without reloading so sharing links works
+            window.history.replaceState({}, '', '/admin/visual-builder/' + slug);
         }
-
-        // ── Device Preview ──
-        function setDevice(mode) {
-            const canvas = document.getElementById('canvas');
-            canvas.classList.remove('device-tablet', 'device-mobile');
-            if (mode !== 'desktop') canvas.classList.add('device-' + mode);
-            document.querySelectorAll('[id^="dev"]').forEach(b => b.classList.remove('active'));
-            document.getElementById('dev' + mode.charAt(0).toUpperCase() + mode.slice(1))?.classList.add('active');
-        }
-
-        // ═══════════════════════════════════════════════
-        // RENDER ENGINE
-        // ═══════════════════════════════════════════════
-        function renderCanvas() {
-            const canvas = document.getElementById('canvas');
-            if (!blocks.length) {
-                canvas.innerHTML = `<div class="vb-canvas-empty">
-            <div class="vb-canvas-empty-icon">📦</div>
-            <h3>Drop blocks here to build your page</h3>
-            <p>Drag elements from the left palette onto this canvas</p>
-        </div>`;
-                renderProps();
-                return;
-            }
-            canvas.innerHTML = blocks.map((block, idx) => {
-                const sel = selectedBlockId === block.id ? ' selected' : '';
-                return `<div class="vb-drop-indicator" data-drop-idx="${idx}"></div>
-        <div class="vb-block${sel}" data-block-id="${block.id}" onclick="selectBlock('${block.id}')">
-            <div class="vb-block-drag-handle" draggable="true" data-drag-block="${block.id}">⠿</div>
-            <div class="vb-block-controls">
-                <button class="vb-block-ctrl-btn" onclick="event.stopPropagation();moveBlock('${block.id}',-1)" title="Move Up">▲</button>
-                <button class="vb-block-ctrl-btn" onclick="event.stopPropagation();moveBlock('${block.id}',1)" title="Move Down">▼</button>
-                <button class="vb-block-ctrl-btn" onclick="event.stopPropagation();duplicateBlock('${block.id}')" title="Duplicate">⧉</button>
-                <button class="vb-block-ctrl-btn delete" onclick="event.stopPropagation();deleteBlock('${block.id}')" title="Delete">✕</button>
-            </div>
-            <div class="vb-block-content">${renderBlockContent(block)}</div>
-        </div>`;
-            }).join('') + `<div class="vb-drop-indicator" data-drop-idx="${blocks.length}"></div>`;
-        }
-
-        function renderBlockContent(block) {
-            const p = block.props || {};
-            switch (block.type) {
-                case 'heading': {
-                    const tag = 'h' + (p.level || 2);
-                    const align = p.alignment ? `text-align:${p.alignment}` : '';
-                    return `<${tag} style="${align}" contenteditable="true" onblur="updateProp('${block.id}','text',this.textContent)">${p.text || 'Heading'}</${tag}>`;
-                }
-                case 'text':
-                    return `<div contenteditable="true" style="color:#ccc;line-height:1.7;font-size:0.95rem;" onblur="updateProp('${block.id}','html',this.innerHTML)">${p.html || '<p>Text block</p>'}</div>`;
-                case 'image':
-                    return p.src
-                        ? `<img src="${p.src}" alt="${p.alt || ''}" style="max-width:${p.width || '100%'};border-radius:0.5rem;">`
-                        : `<div class="vb-block-placeholder">🖼 Click to add an image — use Properties panel to set URL</div>`;
-                case 'gallery': {
-                    const cols = p.columns || 3;
-                    if (!p.images || !p.images.length) return `<div class="vb-block-placeholder">🎨 Gallery — add images via Properties panel</div>`;
-                    return `<div class="vb-gallery-grid" style="grid-template-columns:repeat(${cols},1fr);">${p.images.map(img => `<img src="${img.src}" alt="${img.alt || ''}">`).join('')}</div>`;
-                }
-                case 'video': {
-                    if (!p.url) return `<div class="vb-block-placeholder">▶ Video — paste YouTube URL in Properties panel</div>`;
-                    const m = p.url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
-                    const vid = m ? m[1] : '';
-                    if (vid) return `<div class="vb-video-preview"><iframe src="https://www.youtube.com/embed/${vid}" allowfullscreen></iframe></div>`;
-                    return `<div class="vb-video-preview"><iframe src="${p.url}" allowfullscreen></iframe></div>`;
-                }
-                case 'button': {
-                    const cls = p.style === 'secondary' ? 'vb-btn-secondary' : p.style === 'outline' ? 'vb-btn-outline' : 'vb-btn-primary';
-                    return `<div style="text-align:center;"><span class="vb-btn-preview ${cls}">${p.text || 'Button'}</span></div>`;
-                }
-                case 'cta':
-                    return `<div class="vb-cta-preview">
-                <h2 contenteditable="true" onblur="updateProp('${block.id}','title',this.textContent)">${p.title || 'Call to Action'}</h2>
-                <p contenteditable="true" onblur="updateProp('${block.id}','subtitle',this.textContent)">${p.subtitle || 'Subtitle text'}</p>
-                <span class="vb-btn-preview vb-btn-primary">${p.buttonText || 'Get Started'}</span>
-            </div>`;
-                case 'spacer':
-                    return `<div class="vb-spacer" style="height:${p.height || 60}px;">↕ ${p.height || 60}px</div>`;
-                case 'divider':
-                    return `<div class="vb-divider"><hr style="border-style:${p.style || 'solid'}"></div>`;
-                case 'columns': {
-                    const widths = p.widths || '1fr 1fr';
-                    const cols = p.columns || [{ html: '' }, { html: '' }];
-                    const gap = p.gap || '1.5rem';
-                    const colStyle = p.style || 'none';
-                    const colCls = colStyle !== 'none' ? ` vb-column-${colStyle}` : '';
-                    return `<div class="vb-columns-grid" style="grid-template-columns:${widths};gap:${gap};">${cols.map((c, i) => `<div class="vb-column${colCls}" contenteditable="true" onblur="updateColumnHtml('${block.id}',${i},this.innerHTML)">${c.html || '<p>Column ' + (i + 1) + '</p>'}</div>`).join('')}</div>`;
-                }
-                case 'testimonials': {
-                    const items = p.items || [];
-                    if (!items.length) return `<div class="vb-block-placeholder">💬 Testimonials — add via Properties panel</div>`;
-                    return items.map(t => `<div class="vb-testimonial-card"><blockquote>"${t.quote}"</blockquote><cite>— ${t.author}${t.role ? ', ' + t.role : ''}</cite></div>`).join('');
-                }
-                case 'subscribe':
-                    return `<div class="vb-subscribe-preview">
-                <h3>${p.title || 'Subscribe'}</h3>
-                <p>${p.subtitle || 'Stay updated'}</p>
-                <div class="vb-subscribe-row"><input type="email" placeholder="your@email.com" disabled><span class="vb-btn-preview vb-btn-primary">${p.buttonText || 'Subscribe'}</span></div>
-            </div>`;
-                case 'blog-feed':
-                    return `<div class="vb-blog-feed-preview">${Array.from({ length: p.count || 3 }).map((_, i) => `<div class="vb-blog-feed-card"><h4>Blog Post ${i + 1}</h4><p>Auto-generated from latest posts</p></div>`).join('')}</div>`;
-                case 'clients': {
-                    const logos = p.logos || [];
-                    return `<div class="vb-clients-grid">${logos.map(l => l.src ? `<img src="${l.src}" alt="${l.name || ''}" class="vb-client-logo" style="object-fit:contain;">` : `<div class="vb-client-logo">${l.name || 'Logo'}</div>`).join('')}</div>`;
-                }
-                case 'accordion': {
-                    const items = p.items || [];
-                    if (!items.length) return `<div class="vb-block-placeholder">❓ Accordion — add items via Properties panel</div>`;
-                    return items.map(item => `<div class="vb-accordion-item"><div class="vb-accordion-q" onclick="event.stopPropagation();this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'"><span>${item.question}</span><span>▸</span></div><div class="vb-accordion-a"><p>${item.answer}</p></div></div>`).join('');
-                }
-                case 'custom-html':
-                    return `<div class="vb-custom-html">${escapeHtml(p.html || '<div>Custom HTML</div>')}</div>`;
-                default:
-                    return `<div class="vb-block-placeholder">Unknown block type: ${block.type}</div>`;
-            }
-        }
-        function escapeHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-        // ═══════════════════════════════════════════════
-        // BLOCK MANIPULATION
-        // ═══════════════════════════════════════════════
-        function addBlock(type, idx) {
-            pushUndo();
-            const block = { id: genId(), type, props: JSON.parse(JSON.stringify(BLOCK_DEFAULTS[type] || {})) };
-            if (typeof idx === 'number') blocks.splice(idx, 0, block);
-            else blocks.push(block);
-            selectedBlockId = block.id;
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        function selectBlock(id) {
-            selectedBlockId = id;
-            document.querySelectorAll('.vb-block').forEach(el => el.classList.toggle('selected', el.dataset.blockId === id));
-            renderProps();
-        }
-
-        function deleteBlock(id) {
-            pushUndo();
-            blocks = blocks.filter(b => b.id !== id);
-            if (selectedBlockId === id) selectedBlockId = null;
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        function duplicateBlock(id) {
-            pushUndo();
-            const idx = blocks.findIndex(b => b.id === id);
-            if (idx < 0) return;
-            const clone = JSON.parse(JSON.stringify(blocks[idx]));
-            clone.id = genId();
-            blocks.splice(idx + 1, 0, clone);
-            selectedBlockId = clone.id;
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        function moveBlock(id, dir) {
-            const idx = blocks.findIndex(b => b.id === id);
-            if (idx < 0) return;
-            const newIdx = idx + dir;
-            if (newIdx < 0 || newIdx >= blocks.length) return;
-            pushUndo();
-            [blocks[idx], blocks[newIdx]] = [blocks[newIdx], blocks[idx]];
-            renderCanvas();
-            autoSave();
-        }
-
-        function updateProp(id, key, value) {
-            const block = blocks.find(b => b.id === id);
-            if (!block) return;
-            pushUndo();
-            block.props[key] = value;
-            autoSave();
-        }
-
-        // ── Image Upload ──
-        async function uploadImage(targetBlockId, targetKey, targetIndex) {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = async () => {
-                const file = input.files[0];
-                if (!file) return;
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('alt_text', file.name.replace(/\.[^.]+$/, ''));
-                try {
-                    const res = await fetch('/api/upload', { method: 'POST', body: formData });
-                    const data = await res.json();
-                    if (data.success && data.media) {
-                        const block = blocks.find(b => b.id === targetBlockId);
-                        if (!block) return;
-                        pushUndo();
-                        const url = data.media.url;
-                        if (targetKey === 'src') {
-                            block.props.src = url;
-                        } else if (targetKey === 'gallery-image') {
-                            if (!block.props.images) block.props.images = [];
-                            if (typeof targetIndex === 'number') {
-                                block.props.images[targetIndex] = { src: url, alt: file.name };
-                            } else {
-                                block.props.images.push({ src: url, alt: file.name });
-                            }
-                        } else if (targetKey === 'client-logo') {
-                            if (block.props.logos && typeof targetIndex === 'number') {
-                                block.props.logos[targetIndex].src = url;
-                            }
-                        }
-                        renderCanvas();
-                        renderProps();
-                        autoSave();
-                    }
-                } catch (err) { console.error('Upload failed:', err); }
-            };
-            input.click();
-        }
-
-        function updateColumnHtml(id, colIdx, html) {
-            const block = blocks.find(b => b.id === id);
-            if (!block || !block.props.columns) return;
-            pushUndo();
-            block.props.columns[colIdx] = { html };
-            autoSave();
-        }
-
-        // ═══════════════════════════════════════════════
-        // PROPERTIES PANEL
-        // ═══════════════════════════════════════════════
-        function renderProps() {
-            const body = document.getElementById('propsBody');
-            const empty = document.getElementById('propsEmpty');
-            if (!selectedBlockId) {
-                body.style.display = 'none';
-                empty.style.display = '';
-                return;
-            }
-            const block = blocks.find(b => b.id === selectedBlockId);
-            if (!block) { body.style.display = 'none'; empty.style.display = ''; return; }
-            empty.style.display = 'none';
-            body.style.display = '';
-            const p = block.props;
-            let html = `<div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.1em;">${block.type} Block</div>`;
-
-            switch (block.type) {
-                case 'heading':
-                    html += propInput('Text', 'text', p.text);
-                    html += propSelect('Level', 'level', p.level, { '1': 'H1', '2': 'H2', '3': 'H3', '4': 'H4', '5': 'H5', '6': 'H6' });
-                    html += propSelect('Alignment', 'alignment', p.alignment, { 'left': 'Left', 'center': 'Center', 'right': 'Right' });
-                    break;
-                case 'text':
-                    html += propTextarea('Content (HTML)', 'html', p.html);
-                    break;
-                case 'image':
-                    html += propImageUpload('Image', 'src', p.src, block.id);
-                    html += propInput('Alt Text', 'alt', p.alt);
-                    html += propInput('Caption', 'caption', p.caption);
-                    html += propSelect('Width', 'width', p.width || '100%', { '100%': 'Full Width', '75%': '75%', '50%': '50%', '33%': '33%' });
-                    break;
-                case 'gallery':
-                    html += propRange('Columns', 'columns', p.columns || 3, 2, 6);
-                    html += `<div class="vb-prop-group"><label class="vb-prop-label">Images (${(p.images || []).length})</label>`;
-                    (p.images || []).forEach((img, i) => {
-                        html += `<div class="vb-upload-row">
-                            <img src="${img.src}" class="vb-upload-thumb" onerror="this.style.display='none'">
-                            <input class="vb-prop-input" value="${(img.src || '').replace(/"/g, '&quot;')}" onchange="updateGalleryImage('${block.id}',${i},this.value)" placeholder="URL" style="flex:1;font-size:0.7rem;">
-                            <button class="vb-upload-btn" onclick="uploadImage('${block.id}','gallery-image',${i})" title="Upload">📤</button>
-                            <button class="vb-upload-btn vb-upload-del" onclick="removeGalleryImage('${block.id}',${i})" title="Remove">✕</button>
-                        </div>`;
-                    });
-                    html += `<button class="vb-toolbar-btn" onclick="uploadImage('${block.id}','gallery-image')" style="width:100%;justify-content:center;font-size:0.7rem;margin-top:0.5rem;">📤 Add Image</button></div>`;
-                    break;
-                case 'video':
-                    html += propInput('Video URL', 'url', p.url, 'url');
-                    break;
-                case 'button':
-                    html += propInput('Text', 'text', p.text);
-                    html += propInput('Link URL', 'url', p.url);
-                    html += propSelect('Style', 'style', p.style, { 'primary': 'Primary', 'secondary': 'Secondary', 'outline': 'Outline' });
-                    break;
-                case 'cta':
-                    html += propInput('Title', 'title', p.title);
-                    html += propInput('Subtitle', 'subtitle', p.subtitle);
-                    html += propInput('Button Text', 'buttonText', p.buttonText);
-                    html += propInput('Button URL', 'buttonUrl', p.buttonUrl);
-                    break;
-                case 'spacer':
-                    html += propRange('Height (px)', 'height', p.height || 60, 10, 200);
-                    break;
-                case 'divider':
-                    html += propSelect('Style', 'style', p.style, { 'solid': 'Solid', 'dashed': 'Dashed', 'dotted': 'Dotted' });
-                    break;
-                case 'columns':
-                    html += `<div class="vb-prop-group"><label class="vb-prop-label">Grid Presets</label>
-                    <div class="vb-grid-presets">
-                        <button class="vb-grid-preset" onclick="setGridPreset('${block.id}',2,'1fr 1fr')" title="2 Equal">▥ 2 Col</button>
-                        <button class="vb-grid-preset" onclick="setGridPreset('${block.id}',3,'1fr 1fr 1fr')" title="3 Equal">⊞ 3 Col</button>
-                        <button class="vb-grid-preset" onclick="setGridPreset('${block.id}',4,'1fr 1fr 1fr 1fr')" title="4 Equal">⊞ 4 Col</button>
-                        <button class="vb-grid-preset" onclick="setGridPreset('${block.id}',2,'2fr 1fr')" title="Sidebar Right">◧ 2:1</button>
-                        <button class="vb-grid-preset" onclick="setGridPreset('${block.id}',2,'1fr 2fr')" title="Sidebar Left">◨ 1:2</button>
-                        <button class="vb-grid-preset" onclick="setGridPreset('${block.id}',3,'1fr 2fr 1fr')" title="Center Wide">◫ 1:2:1</button>
-                    </div></div>`;
-                    html += propInput('Custom Widths', 'widths', p.widths || '1fr 1fr');
-                    html += propSelect('Gap', 'gap', p.gap || '1.5rem', { '0.5rem': 'Tight', '1rem': 'Normal', '1.5rem': 'Comfortable', '2.5rem': 'Wide', '4rem': 'Extra Wide' });
-                    html += propSelect('Style', 'style', p.style || 'none', { 'none': 'None', 'cards': 'Cards', 'bordered': 'Bordered', 'glass': 'Glass' });
-                    html += `<div class="vb-prop-group"><label class="vb-prop-label">Columns: ${(p.columns || []).length}</label>
-                <button class="vb-toolbar-btn" onclick="addColumn('${block.id}')" style="font-size:0.7rem;">+ Add Column</button>
-                <button class="vb-toolbar-btn delete" onclick="removeColumn('${block.id}')" style="font-size:0.7rem;margin-top:0.25rem;color:#ef4444;border-color:#ef4444;">− Remove Column</button></div>`;
-                    break;
-                case 'testimonials':
-                    html += propTextarea('Items JSON', 'items', JSON.stringify(p.items || [], null, 2));
-                    break;
-                case 'subscribe':
-                    html += propInput('Title', 'title', p.title);
-                    html += propInput('Subtitle', 'subtitle', p.subtitle);
-                    html += propInput('Button Text', 'buttonText', p.buttonText);
-                    break;
-                case 'blog-feed':
-                    html += propRange('Post Count', 'count', p.count || 3, 1, 12);
-                    html += propInput('Category Filter', 'category', p.category);
-                    break;
-                case 'clients':
-                    html += `<div class="vb-prop-group"><label class="vb-prop-label">Client Logos (${(p.logos || []).length})</label>`;
-                    (p.logos || []).forEach((logo, i) => {
-                        html += `<div class="vb-upload-row">
-                            ${logo.src ? `<img src="${logo.src}" class="vb-upload-thumb">` : ''}
-                            <input class="vb-prop-input" value="${(logo.name || '').replace(/"/g, '&quot;')}" onchange="updateClientLogo('${block.id}',${i},'name',this.value)" placeholder="Name" style="flex:1;font-size:0.7rem;">
-                            <button class="vb-upload-btn" onclick="uploadImage('${block.id}','client-logo',${i})" title="Upload Logo">📤</button>
-                            <button class="vb-upload-btn vb-upload-del" onclick="removeClientLogo('${block.id}',${i})" title="Remove">✕</button>
-                        </div>`;
-                    });
-                    html += `<button class="vb-toolbar-btn" onclick="addClientLogo('${block.id}')" style="width:100%;justify-content:center;font-size:0.7rem;margin-top:0.5rem;">+ Add Logo</button></div>`;
-                    break;
-                case 'accordion':
-                    html += propTextarea('Items JSON', 'items', JSON.stringify(p.items || [], null, 2));
-                    break;
-                case 'custom-html':
-                    html += propTextarea('HTML Content', 'html', p.html);
-                    break;
-            }
-            html += `<button class="vb-toolbar-btn delete" onclick="deleteBlock('${block.id}')" style="margin-top:1rem;width:100%;justify-content:center;color:#ef4444;border-color:#ef4444;">🗑 Delete Block</button>`;
-            body.innerHTML = html;
-        }
-
-        function propInput(label, key, value, type) {
-            return `<div class="vb-prop-group"><label class="vb-prop-label">${label}</label>
-        <input class="vb-prop-input" type="${type || 'text'}" value="${(value || '').toString().replace(/"/g, '&quot;')}" onchange="propChanged('${key}',this.value)"></div>`;
-        }
-        function propImageUpload(label, key, value, blockId) {
-            return `<div class="vb-prop-group"><label class="vb-prop-label">${label}</label>
-            <div class="vb-upload-area">
-                ${value ? `<img src="${value}" class="vb-upload-preview">` : ''}
-                <div class="vb-upload-row">
-                    <input class="vb-prop-input" type="url" value="${(value || '').replace(/"/g, '&quot;')}" onchange="propChanged('${key}',this.value)" placeholder="Paste image URL..." style="flex:1;">
-                    <button class="vb-upload-btn" onclick="uploadImage('${blockId}','${key}')" title="Upload Image">📤</button>
-                </div>
-                <button class="vb-toolbar-btn" onclick="uploadImage('${blockId}','${key}')" style="width:100%;justify-content:center;font-size:0.7rem;margin-top:0.4rem;">📁 Upload from device</button>
-            </div></div>`;
-        }
-        function propTextarea(label, key, value) {
-            return `<div class="vb-prop-group"><label class="vb-prop-label">${label}</label>
-        <textarea class="vb-prop-input vb-prop-textarea" onchange="propChanged('${key}',this.value)">${value || ''}</textarea></div>`;
-        }
-        function propSelect(label, key, value, options) {
-            const opts = Object.entries(options).map(([v, l]) => `<option value="${v}" ${v == value ? 'selected' : ''}>${l}</option>`).join('');
-            return `<div class="vb-prop-group"><label class="vb-prop-label">${label}</label>
-        <select class="vb-prop-select" onchange="propChanged('${key}',this.value)">${opts}</select></div>`;
-        }
-        function propRange(label, key, value, min, max) {
-            return `<div class="vb-prop-group"><label class="vb-prop-label">${label}</label>
-        <div class="vb-prop-range-row"><input class="vb-prop-range" type="range" min="${min}" max="${max}" value="${value}" oninput="propChanged('${key}',parseInt(this.value));this.nextElementSibling.textContent=this.value"><span class="vb-prop-range-val">${value}</span></div></div>`;
-        }
-        function propChanged(key, value) {
-            if (!selectedBlockId) return;
-            const block = blocks.find(b => b.id === selectedBlockId);
-            if (!block) return;
-            pushUndo();
-            // Handle JSON fields
-            if (['images', 'items', 'logos'].includes(key)) {
-                try { value = JSON.parse(value); } catch { return; }
-            }
-            if (['level', 'columns', 'count', 'height'].includes(key) && typeof value === 'string') {
-                value = parseInt(value) || value;
-            }
-            block.props[key] = value;
-            renderCanvas();
-            autoSave();
-        }
-
-        function addColumn(id) {
-            const block = blocks.find(b => b.id === id);
-            if (!block) return;
-            pushUndo();
-            if (!block.props.columns) block.props.columns = [];
-            block.props.columns.push({ html: '' });
-            const n = block.props.columns.length;
-            block.props.widths = Array(n).fill('1fr').join(' ');
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        function removeColumn(id) {
-            const block = blocks.find(b => b.id === id);
-            if (!block || !block.props.columns || block.props.columns.length <= 1) return;
-            pushUndo();
-            block.props.columns.pop();
-            const n = block.props.columns.length;
-            block.props.widths = Array(n).fill('1fr').join(' ');
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        function setGridPreset(id, numCols, widths) {
-            const block = blocks.find(b => b.id === id);
-            if (!block) return;
-            pushUndo();
-            // Adjust columns array to match preset
-            while ((block.props.columns || []).length < numCols) block.props.columns.push({ html: '' });
-            while (block.props.columns.length > numCols) block.props.columns.pop();
-            block.props.widths = widths;
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        // Gallery helpers
-        function updateGalleryImage(id, idx, url) {
-            const block = blocks.find(b => b.id === id);
-            if (!block || !block.props.images) return;
-            pushUndo();
-            block.props.images[idx] = { ...block.props.images[idx], src: url };
-            renderCanvas();
-            autoSave();
-        }
-        function removeGalleryImage(id, idx) {
-            const block = blocks.find(b => b.id === id);
-            if (!block || !block.props.images) return;
-            pushUndo();
-            block.props.images.splice(idx, 1);
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        // Client logo helpers
-        function updateClientLogo(id, idx, key, value) {
-            const block = blocks.find(b => b.id === id);
-            if (!block || !block.props.logos) return;
-            pushUndo();
-            block.props.logos[idx][key] = value;
-            renderCanvas();
-            autoSave();
-        }
-        function addClientLogo(id) {
-            const block = blocks.find(b => b.id === id);
-            if (!block) return;
-            pushUndo();
-            if (!block.props.logos) block.props.logos = [];
-            block.props.logos.push({ name: 'New Client', src: '' });
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-        function removeClientLogo(id, idx) {
-            const block = blocks.find(b => b.id === id);
-            if (!block || !block.props.logos) return;
-            pushUndo();
-            block.props.logos.splice(idx, 1);
-            renderCanvas();
-            renderProps();
-            autoSave();
-        }
-
-        // ═══════════════════════════════════════════════
-        // DRAG & DROP FROM PALETTE
-        // ═══════════════════════════════════════════════
-        let dragData = null;
-        document.querySelectorAll('.vb-block-item[draggable]').forEach(item => {
-            item.addEventListener('dragstart', e => {
-                dragData = { type: 'new', blockType: item.dataset.blockType };
-                e.dataTransfer.effectAllowed = 'copy';
-                e.dataTransfer.setData('text/plain', item.dataset.blockType);
-            });
-            item.addEventListener('dragend', () => { dragData = null; clearDropIndicators(); });
-        });
-
-        // Canvas drop zone
-        const canvas = document.getElementById('canvas');
-        canvas.addEventListener('dragover', e => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = dragData?.type === 'new' ? 'copy' : 'move';
-            canvas.classList.add('drag-over');
-
-            // Find nearest drop indicator
-            clearDropIndicators();
-            const indicators = canvas.querySelectorAll('.vb-drop-indicator');
-            let closest = null, closestDist = Infinity;
-            indicators.forEach(ind => {
-                const rect = ind.getBoundingClientRect();
-                const dist = Math.abs(e.clientY - rect.top);
-                if (dist < closestDist) { closestDist = dist; closest = ind; }
-            });
-            if (closest) closest.classList.add('active');
-        });
-        canvas.addEventListener('dragleave', e => {
-            if (!canvas.contains(e.relatedTarget)) {
-                canvas.classList.remove('drag-over');
-                clearDropIndicators();
-            }
-        });
-        canvas.addEventListener('drop', e => {
-            e.preventDefault();
-            canvas.classList.remove('drag-over');
-
-            // Get drop index
-            const indicators = canvas.querySelectorAll('.vb-drop-indicator');
-            let dropIdx = blocks.length;
-            indicators.forEach(ind => {
-                if (ind.classList.contains('active')) dropIdx = parseInt(ind.dataset.dropIdx);
-            });
-            clearDropIndicators();
-
-            if (dragData?.type === 'new') {
-                addBlock(dragData.blockType, dropIdx);
-            } else if (dragData?.type === 'move') {
-                const oldIdx = blocks.findIndex(b => b.id === dragData.blockId);
-                if (oldIdx >= 0) {
-                    pushUndo();
-                    const [moved] = blocks.splice(oldIdx, 1);
-                    const newIdx = dropIdx > oldIdx ? dropIdx - 1 : dropIdx;
-                    blocks.splice(newIdx, 0, moved);
-                    renderCanvas();
-                    autoSave();
-                }
-            }
-            dragData = null;
-        });
-
-        function clearDropIndicators() {
-            document.querySelectorAll('.vb-drop-indicator').forEach(i => i.classList.remove('active'));
-        }
-
-        // Block drag handles (reorder within canvas)
-        document.addEventListener('dragstart', e => {
-            const handle = e.target.closest('[data-drag-block]');
-            if (handle) {
-                const blockId = handle.dataset.dragBlock;
-                dragData = { type: 'move', blockId };
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/plain', blockId);
-            }
-        });
-
-        // ── Keyboard shortcuts ──
-        document.addEventListener('keydown', e => {
-            if (e.target.isContentEditable || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
-            if (e.key === 'Delete' || e.key === 'Backspace') {
-                if (selectedBlockId) { e.preventDefault(); deleteBlock(selectedBlockId); }
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
-            if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveBlocks(); }
-        });
-
-        // ── Init ──
-        renderCanvas();
-        setDevice('desktop');
     </script>
 </body>
 

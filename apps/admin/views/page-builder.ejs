@@ -18,607 +18,469 @@
 </head>
 
 <body>
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="admin-sidebar-header">
-                <a href="/admin/" class="admin-logo"><span class="logo-x">X</span> DOT AI</a>
+    <div class="cms-layout">
+        <%- include('partials/sidebar', { currentMenu: 'pages' , page: page }) %>
 
+            <!-- Main Content -->
+            <main class="admin-main pb-main">
+                <div class="admin-header">
+                    <div>
+                        <h1>📝 Edit: <%= page.slug.charAt(0).toUpperCase() + page.slug.slice(1) %>
+                        </h1>
+                        <span class="pb-page-slug">/<%= page.slug==='home' ? '' : page.slug %></span>
+                    </div>
+                    <div class="pb-header-actions">
+                        <a href="/admin/visual-builder/<%= page.slug %>" class="admin-btn admin-btn-primary">🎨 Visual
 
-                <span class="admin-badge">PAGE BUILDER</span>
-            </div>
-            <nav class="admin-nav">
-                <span class="admin-nav-icon">📊</span> Dashboard
-
-                <div class="admin-nav-separator">Pages</div>
-                <% allPages.forEach(p=> { %>
-                    <a href="/admin/page/<%= p.slug %>"
-                        class="admin-nav-item <%= p.slug === page.slug ? 'active' : '' %>">
-
-                        <span class="admin-nav-icon">📄</span>
-                        <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
-                    </a>
-                    <% }) %>
-                        <a href="/admin/page-create" class="admin-nav-item"
-                            style="color: var(--accent-secondary); margin-top: 0.5rem;">
-                            <span class="admin-nav-icon">➕</span> Create New Page
-                        </a>
-            </nav>
-            <div class="admin-sidebar-footer">
-                <span>Logged in as <strong>
-                        <%= typeof settings !=='undefined' ? 'admin' : 'admin' %>
-                    </strong></span>
-                <a href="/admin/logout" class="admin-logout">Logout →</a>
-
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="admin-main pb-main">
-            <div class="admin-header">
-                <div>
-                    <h1>📝 Edit: <%= page.slug.charAt(0).toUpperCase() + page.slug.slice(1) %>
-                    </h1>
-                    <span class="pb-page-slug">/<%= page.slug==='home' ? '' : page.slug %></span>
+                            Builder</a>
+                        <a href="/<%= page.slug === 'home' ? '' : (page.slug === 'about' ? 'about-da-sachin' : page.slug) %>"
+                            class="admin-btn admin-btn-secondary" target="_blank">View Page ↗</a>
+                        <button class="admin-btn admin-btn-secondary" onclick="toggleAIPanel()">🤖 AI Assistant</button>
+                        <button class="admin-btn admin-btn-secondary" onclick="toggleMediaPanel()">📁 Media</button>
+                    </div>
                 </div>
-                <div class="pb-header-actions">
-                    <a href="/admin/visual-builder/<%= page.slug %>" class="admin-btn admin-btn-primary">🎨 Visual
 
-                        Builder</a>
-                    <a href="/<%= page.slug === 'home' ? '' : (page.slug === 'about' ? 'about-da-sachin' : page.slug) %>"
-                        class="admin-btn admin-btn-secondary" target="_blank">View Page ↗</a>
-                    <button class="admin-btn admin-btn-secondary" onclick="toggleAIPanel()">🤖 AI Assistant</button>
-                    <button class="admin-btn admin-btn-secondary" onclick="toggleMediaPanel()">📁 Media</button>
-                </div>
-            </div>
+                <% if (success) { %>
+                    <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
+                    <% } %>
 
-            <% if (success) { %>
-                <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
-                <% } %>
-
-                    <!-- Page Settings & SEO -->
-                    <div class="admin-card pb-card-collapsible">
-                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
-                            ⚙️ Page Settings & SEO
-                            <span class="pb-toggle-icon">▾</span>
-                        </h2>
-                        <div class="pb-card-body">
-                            <form method="POST" action="/admin/page/<%= page.slug %>">
+                        <!-- Page Settings & SEO -->
+                        <div class="admin-card pb-card-collapsible">
+                            <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                                ⚙️ Page Settings & SEO
+                                <span class="pb-toggle-icon">▾</span>
+                            </h2>
+                            <div class="pb-card-body">
+                                <form method="POST" action="/admin/page/<%= page.slug %>">
 
 
-                                <div class="admin-form-row">
-                                    <div class="admin-form-group" style="flex:3">
-                                        <label>Page Title (SEO) <span class="pb-char-count"
-                                                data-max="60"></span></label>
-                                        <input type="text" name="title" value="<%= page.title %>" required
-                                            oninput="updateCharCount(this, 60)">
+                                    <div class="admin-form-row">
+                                        <div class="admin-form-group" style="flex:3">
+                                            <label>Page Title (SEO) <span class="pb-char-count"
+                                                    data-max="60"></span></label>
+                                            <input type="text" name="title" value="<%= page.title %>" required
+                                                oninput="updateCharCount(this, 60)">
+                                        </div>
+                                        <div class="admin-form-group" style="flex:0 0 80px;">
+                                            <label>Nav Order</label>
+                                            <input type="number" name="nav_order" value="<%= page.nav_order || 99 %>">
+                                        </div>
                                     </div>
-                                    <div class="admin-form-group" style="flex:0 0 80px;">
-                                        <label>Nav Order</label>
-                                        <input type="number" name="nav_order" value="<%= page.nav_order || 99 %>">
-                                    </div>
-                                </div>
-                                <div class="admin-form-group">
-                                    <label>Meta Description <span class="pb-char-count" data-max="155"></span>
-                                        <button type="button" class="pb-ai-inline-btn" onclick="aiGenerateSEO()">🤖 AI
-                                            Optimize</button>
-                                    </label>
-                                    <textarea name="meta_description" rows="2" id="metaDescription"
-                                        oninput="updateCharCount(this, 155)"><%= page.meta_description %></textarea>
-                                </div>
-                                <div class="admin-form-row">
-                                    <div class="admin-form-group" style="flex:2">
-                                        <label>Hero Title (supports HTML)</label>
-                                        <input type="text" name="hero_title" value="<%= page.hero_title %>">
-                                    </div>
-                                    <div class="admin-form-group" style="flex:1">
-                                        <label>Hero Label</label>
-                                        <input type="text" name="hero_label" value="<%= page.hero_label %>">
-                                    </div>
-                                </div>
-                                <div class="admin-form-group">
-                                    <label>Hero Subtitle</label>
-                                    <textarea name="hero_subtitle" rows="2"><%= page.hero_subtitle %></textarea>
-                                </div>
-                                <div class="admin-form-row">
-                                    <div class="admin-form-group" style="flex:1">
-                                        <label>Template</label>
-                                        <select name="template">
-                                            <option value="default" <%=(page.template || 'default' )==='default'
-                                                ? 'selected' : '' %>>Default</option>
-                                            <option value="blog" <%=page.template==='blog' ? 'selected' : '' %>
-                                                >Blog</option>
-                                            <option value="custom" <%=page.template==='custom' ? 'selected' : '' %>
-                                                >Custom</option>
-                                        </select>
-                                    </div>
-                                    <div class="admin-form-group" style="flex:0 0 160px;">
-                                        <label>Visible in Nav</label>
-                                        <label class="pb-switch">
-                                            <input type="checkbox" name="is_visible" <%=page.is_visible !==0 ? 'checked'
-                                                : '' %>>
-                                            <span class="pb-switch-slider"></span>
+                                    <div class="admin-form-group">
+                                        <label>Meta Description <span class="pb-char-count" data-max="155"></span>
+                                            <button type="button" class="pb-ai-inline-btn" onclick="aiGenerateSEO()">🤖
+                                                AI
+                                                Optimize</button>
                                         </label>
+                                        <textarea name="meta_description" rows="2" id="metaDescription"
+                                            oninput="updateCharCount(this, 155)"><%= page.meta_description %></textarea>
                                     </div>
-                                </div>
-                                <button type="submit" class="admin-btn admin-btn-primary">Save Page Settings</button>
-                            </form>
+                                    <div class="admin-form-row">
+                                        <div class="admin-form-group" style="flex:2">
+                                            <label>Hero Title (supports HTML)</label>
+                                            <input type="text" name="hero_title" value="<%= page.hero_title %>">
+                                        </div>
+                                        <div class="admin-form-group" style="flex:1">
+                                            <label>Hero Label</label>
+                                            <input type="text" name="hero_label" value="<%= page.hero_label %>">
+                                        </div>
+                                    </div>
+                                    <div class="admin-form-group">
+                                        <label>Hero Subtitle</label>
+                                        <textarea name="hero_subtitle" rows="2"><%= page.hero_subtitle %></textarea>
+                                    </div>
+                                    <div class="admin-form-row">
+                                        <div class="admin-form-group" style="flex:1">
+                                            <label>Template</label>
+                                            <select name="template">
+                                                <option value="default" <%=(page.template || 'default' )==='default'
+                                                    ? 'selected' : '' %>>Default</option>
+                                                <option value="blog" <%=page.template==='blog' ? 'selected' : '' %>
+                                                    >Blog</option>
+                                                <option value="custom" <%=page.template==='custom' ? 'selected' : '' %>
+                                                    >Custom</option>
+                                            </select>
+                                        </div>
+                                        <div class="admin-form-group" style="flex:0 0 160px;">
+                                            <label>Visible in Nav</label>
+                                            <label class="pb-switch">
+                                                <input type="checkbox" name="is_visible" <%=page.is_visible !==0
+                                                    ? 'checked' : '' %>>
+                                                <span class="pb-switch-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="admin-btn admin-btn-primary">Save Page
+                                        Settings</button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Schema & FAQ -->
-                    <div class="admin-card pb-card-collapsible">
-                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
-                            🔍 Schema & FAQ (SEO) <span class="admin-nav-badge">
-                                <%= pageFaqs.length %>
-                            </span>
-                            <span class="pb-toggle-icon">▸</span>
-                        </h2>
-                        <div class="pb-card-body" style="display:none;">
-                            <form method="POST" action="/admin/page/<%= page.slug %>" id="schemaFaqForm">
+                        <!-- Schema & FAQ -->
+                        <div class="admin-card pb-card-collapsible">
+                            <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                                🔍 Schema & FAQ (SEO) <span class="admin-nav-badge">
+                                    <%= pageFaqs.length %>
+                                </span>
+                                <span class="pb-toggle-icon">▸</span>
+                            </h2>
+                            <div class="pb-card-body" style="display:none;">
+                                <form method="POST" action="/admin/page/<%= page.slug %>" id="schemaFaqForm">
 
 
-                                <!-- Hidden fields to carry page settings -->
-                                <input type="hidden" name="title" value="<%= page.title %>">
-                                <input type="hidden" name="meta_description" value="<%= page.meta_description %>">
-                                <input type="hidden" name="hero_title" value="<%- page.hero_title %>">
-                                <input type="hidden" name="hero_subtitle" value="<%= page.hero_subtitle %>">
-                                <input type="hidden" name="hero_label" value="<%= page.hero_label %>">
-                                <input type="hidden" name="nav_order" value="<%= page.nav_order %>">
-                                <input type="hidden" name="is_visible" value="<%= page.is_visible !== 0 ? 'on' : '' %>">
-                                <input type="hidden" name="template" value="<%= page.template || 'default' %>">
+                                    <!-- Hidden fields to carry page settings -->
+                                    <input type="hidden" name="title" value="<%= page.title %>">
+                                    <input type="hidden" name="meta_description" value="<%= page.meta_description %>">
+                                    <input type="hidden" name="hero_title" value="<%- page.hero_title %>">
+                                    <input type="hidden" name="hero_subtitle" value="<%= page.hero_subtitle %>">
+                                    <input type="hidden" name="hero_label" value="<%= page.hero_label %>">
+                                    <input type="hidden" name="nav_order" value="<%= page.nav_order %>">
+                                    <input type="hidden" name="is_visible"
+                                        value="<%= page.is_visible !== 0 ? 'on' : '' %>">
+                                    <input type="hidden" name="template" value="<%= page.template || 'default' %>">
 
-                                <div class="admin-form-row">
-                                    <div class="admin-form-group" style="flex:1;">
-                                        <label>Schema Type</label>
-                                        <select name="schema_type" id="schemaType">
-                                            <option value="WebPage" <%=page.schema_type==='WebPage' ?'selected':''%>
-                                                >WebPage</option>
-                                            <option value="Organization" <%=page.schema_type==='Organization'
-                                                ?'selected':''%>>Organization</option>
-                                            <option value="LocalBusiness" <%=page.schema_type==='LocalBusiness'
-                                                ?'selected':''%>>LocalBusiness</option>
-                                            <option value="Service" <%=page.schema_type==='Service' ?'selected':''%>
-                                                >Service</option>
-                                            <option value="AboutPage" <%=page.schema_type==='AboutPage' ?'selected':''%>
-                                                >AboutPage</option>
-                                            <option value="ContactPage" <%=page.schema_type==='ContactPage'
-                                                ?'selected':''%>>ContactPage</option>
-                                            <option value="FAQPage" <%=page.schema_type==='FAQPage' ?'selected':''%>
-                                                >FAQPage</option>
-                                            <option value="CollectionPage" <%=page.schema_type==='CollectionPage'
-                                                ?'selected':''%>>CollectionPage</option>
-                                        </select>
+                                    <div class="admin-form-row">
+                                        <div class="admin-form-group" style="flex:1;">
+                                            <label>Schema Type</label>
+                                            <select name="schema_type" id="schemaType">
+                                                <option value="WebPage" <%=page.schema_type==='WebPage' ?'selected':''%>
+                                                    >WebPage</option>
+                                                <option value="Organization" <%=page.schema_type==='Organization'
+                                                    ?'selected':''%>>Organization</option>
+                                                <option value="LocalBusiness" <%=page.schema_type==='LocalBusiness'
+                                                    ?'selected':''%>>LocalBusiness</option>
+                                                <option value="Service" <%=page.schema_type==='Service' ?'selected':''%>
+                                                    >Service</option>
+                                                <option value="AboutPage" <%=page.schema_type==='AboutPage'
+                                                    ?'selected':''%>
+                                                    >AboutPage</option>
+                                                <option value="ContactPage" <%=page.schema_type==='ContactPage'
+                                                    ?'selected':''%>>ContactPage</option>
+                                                <option value="FAQPage" <%=page.schema_type==='FAQPage' ?'selected':''%>
+                                                    >FAQPage</option>
+                                                <option value="CollectionPage" <%=page.schema_type==='CollectionPage'
+                                                    ?'selected':''%>>CollectionPage</option>
+                                            </select>
+                                        </div>
+                                        <div class="admin-form-group" style="flex:0 0 auto;">
+                                            <label>&nbsp;</label>
+                                            <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                                onclick="aiGeneratePageFaqs()" id="aiFaqBtn">
+                                                🤖 AI Generate FAQs
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="admin-form-group" style="flex:0 0 auto;">
-                                        <label>&nbsp;</label>
-                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
-                                            onclick="aiGeneratePageFaqs()" id="aiFaqBtn">
-                                            🤖 AI Generate FAQs
-                                        </button>
-                                    </div>
-                                </div>
 
-                                <input type="hidden" name="schema_json" value="<%= page.schema_json || '' %>">
-                                <input type="hidden" name="faq_json" id="pageFaqJson" value="">
-                                <script id="page-faqs-data"
-                                    type="application/json"><%- JSON.stringify(pageFaqs) %></script>
+                                    <input type="hidden" name="schema_json" value="<%= page.schema_json || '' %>">
+                                    <input type="hidden" name="faq_json" id="pageFaqJson" value="">
+                                    <script id="page-faqs-data"
+                                        type="application/json"><%- JSON.stringify(pageFaqs) %></script>
 
-                                <div style="margin-top:1rem;">
-                                    <div
-                                        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                                        <label style="margin:0;font-weight:600;font-size:0.85rem;">❓ FAQ Items <small
-                                                style="color:var(--text-muted);">(generates FAQ schema)</small></label>
-                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
-                                            onclick="addPageFaq()">+ Add FAQ</button>
+                                    <div style="margin-top:1rem;">
+                                        <div
+                                            style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                                            <label style="margin:0;font-weight:600;font-size:0.85rem;">❓ FAQ Items
+                                                <small style="color:var(--text-muted);">(generates FAQ
+                                                    schema)</small></label>
+                                            <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                                onclick="addPageFaq()">+ Add FAQ</button>
+                                        </div>
+                                        <div id="pageFaqList" class="faq-editor-list">
+                                            <!-- FAQ items added dynamically -->
+                                        </div>
+                                        <span id="pageFaqStatus"
+                                            style="font-size:0.75rem;color:var(--text-muted);"></span>
                                     </div>
-                                    <div id="pageFaqList" class="faq-editor-list">
-                                        <!-- FAQ items added dynamically -->
-                                    </div>
-                                    <span id="pageFaqStatus" style="font-size:0.75rem;color:var(--text-muted);"></span>
-                                </div>
 
-                                <button type="submit" class="admin-btn admin-btn-primary" style="margin-top:1rem;">Save
-                                    Schema & FAQs</button>
-                            </form>
+                                    <button type="submit" class="admin-btn admin-btn-primary"
+                                        style="margin-top:1rem;">Save
+                                        Schema & FAQs</button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Hero Banners -->
-                    <div class="admin-card pb-card-collapsible">
-                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
-                            🖼️ Hero Banners <span class="admin-nav-badge">
-                                <%= heroBanners.length %>
-                            </span>
-                            <span class="pb-toggle-icon">▾</span>
-                        </h2>
-                        <div class="pb-card-body">
-                            <% heroBanners.forEach(b=> { %>
-                                <div class="admin-section-item">
-                                    <div class="pb-banner-preview-row">
-                                        <img src="<%= b.image_url %>" class="pb-banner-thumb"
-                                            alt="<%= b.alt_text || 'Banner' %>">
-                                        <div class="pb-banner-meta">
-                                            <strong>
-                                                <%= b.overlay_title || 'No overlay' %>
-                                            </strong>
-                                            <small>Position: <%= b.overlay_position %> | <%= b.is_active ? '🟢 Active'
-                                                        : '🔴 Inactive' %></small>
-                                        </div>
-                                    </div>
-                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>"
-                                        enctype="multipart/form-data" class="admin-section-form">
-                                        <div class="admin-form-row">
-                                            <div class="admin-form-group" style="flex:2">
-                                                <label>Overlay Title</label>
-                                                <input type="text" name="overlay_title" value="<%= b.overlay_title %>">
-                                            </div>
-                                            <div class="admin-form-group" style="flex:1">
-                                                <label>Position</label>
-                                                <select name="overlay_position">
-                                                    <option value="center" <%=b.overlay_position==='center' ? 'selected'
-                                                        : '' %>>Center</option>
-                                                    <option value="left" <%=b.overlay_position==='left' ? 'selected'
-                                                        : '' %>>Left</option>
-                                                    <option value="right" <%=b.overlay_position==='right' ? 'selected'
-                                                        : '' %>>Right</option>
-                                                    <option value="bottom" <%=b.overlay_position==='bottom' ? 'selected'
-                                                        : '' %>>Bottom</option>
-                                                    <option value="top-left" <%=b.overlay_position==='top-left'
-                                                        ? 'selected' : '' %>>Top Left</option>
-                                                </select>
-                                            </div>
-                                            <div class="admin-form-group" style="flex:0 0 60px;">
-                                                <label>Order</label>
-                                                <input type="number" name="sort_order" value="<%= b.sort_order %>">
+                        <!-- Hero Banners -->
+                        <div class="admin-card pb-card-collapsible">
+                            <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                                🖼️ Hero Banners <span class="admin-nav-badge">
+                                    <%= heroBanners.length %>
+                                </span>
+                                <span class="pb-toggle-icon">▾</span>
+                            </h2>
+                            <div class="pb-card-body">
+                                <% heroBanners.forEach(b=> { %>
+                                    <div class="admin-section-item">
+                                        <div class="pb-banner-preview-row">
+                                            <img src="<%= b.image_url %>" class="pb-banner-thumb"
+                                                alt="<%= b.alt_text || 'Banner' %>">
+                                            <div class="pb-banner-meta">
+                                                <strong>
+                                                    <%= b.overlay_title || 'No overlay' %>
+                                                </strong>
+                                                <small>Position: <%= b.overlay_position %> | <%= b.is_active
+                                                            ? '🟢 Active' : '🔴 Inactive' %></small>
                                             </div>
                                         </div>
-                                        <div class="admin-form-group">
-                                            <label>Overlay Subtitle</label>
-                                            <input type="text" name="overlay_subtitle"
-                                                value="<%= b.overlay_subtitle %>">
-                                        </div>
-                                        <div class="admin-form-row">
-                                            <div class="admin-form-group" style="flex:1">
-                                                <label>Image URL <button type="button" class="pb-ai-inline-btn"
-                                                        onclick="openMediaPicker(this, 'image_url')">📁
-                                                        Browse</button></label>
-                                                <input type="text" name="image_url" value="<%= b.image_url %>">
-                                            </div>
-                                            <div class="admin-form-group" style="flex:1">
-                                                <label>Or Upload New Image</label>
-                                                <input type="file" name="banner_image" accept="image/*"
-                                                    class="pb-file-input">
-                                            </div>
-                                        </div>
-                                        <div class="admin-form-row">
-                                            <div class="admin-form-group" style="flex:1">
-                                                <label>🔍 Alt Text (SEO)</label>
-                                                <input type="text" name="alt_text" value="<%= b.alt_text %>"
-                                                    placeholder="Describe image for accessibility">
-                                            </div>
-                                            <div class="admin-form-group" style="flex:1">
-                                                <label>🔍 SEO Title</label>
-                                                <input type="text" name="seo_title" value="<%= b.seo_title %>"
-                                                    placeholder="Search engine title">
-                                            </div>
-                                            <div class="admin-form-group" style="flex:0 0 100px;">
-                                                <label>Active</label>
-                                                <label class="pb-switch">
-                                                    <input type="checkbox" name="is_active" <%=b.is_active ? 'checked'
-                                                        : '' %>>
-                                                    <span class="pb-switch-slider"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="admin-form-actions">
-                                            <button type="submit"
-                                                class="admin-btn admin-btn-primary admin-btn-small">Save Banner</button>
-                                        </div>
-                                    </form>
-                                    <form method="POST" action="/admin/hero-banner/<%= b.id %>/delete"
-                                        class="admin-delete-form" onsubmit="return confirm('Delete this banner?')">
-                                        <button type="submit"
-                                            class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
-                                    </form>
-                                </div>
-                                <% }) %>
-
-                                    <details class="admin-add-section">
-                                        <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add Hero Banner
-                                        </summary>
-                                        <form method="POST" action="/admin/page/<%= page.slug %>/hero-banner"
-                                            enctype="multipart/form-data" class="admin-section-form"
-                                            style="margin-top:1rem;">
-                                            <div class="admin-form-row">
-                                                <div class="admin-form-group" style="flex:1">
-                                                    <label>Upload Banner Image</label>
-                                                    <input type="file" name="banner_image" accept="image/*"
-                                                        class="pb-file-input" required>
-                                                </div>
-                                                <div class="admin-form-group" style="flex:1">
-                                                    <label>Or Image URL</label>
-                                                    <input type="text" name="image_url"
-                                                        placeholder="/uploads/banner.jpg or external URL">
-                                                </div>
-                                            </div>
+                                        <form method="POST" action="/admin/hero-banner/<%= b.id %>"
+                                            enctype="multipart/form-data" class="admin-section-form">
                                             <div class="admin-form-row">
                                                 <div class="admin-form-group" style="flex:2">
                                                     <label>Overlay Title</label>
                                                     <input type="text" name="overlay_title"
-                                                        placeholder="Hero headline text">
+                                                        value="<%= b.overlay_title %>">
                                                 </div>
                                                 <div class="admin-form-group" style="flex:1">
                                                     <label>Position</label>
                                                     <select name="overlay_position">
-                                                        <option value="center">Center</option>
-                                                        <option value="left">Left</option>
-                                                        <option value="right">Right</option>
-                                                        <option value="bottom">Bottom</option>
-                                                        <option value="top-left">Top Left</option>
+                                                        <option value="center" <%=b.overlay_position==='center'
+                                                            ? 'selected' : '' %>>Center</option>
+                                                        <option value="left" <%=b.overlay_position==='left' ? 'selected'
+                                                            : '' %>>Left</option>
+                                                        <option value="right" <%=b.overlay_position==='right'
+                                                            ? 'selected' : '' %>>Right</option>
+                                                        <option value="bottom" <%=b.overlay_position==='bottom'
+                                                            ? 'selected' : '' %>>Bottom</option>
+                                                        <option value="top-left" <%=b.overlay_position==='top-left'
+                                                            ? 'selected' : '' %>>Top Left</option>
                                                     </select>
+                                                </div>
+                                                <div class="admin-form-group" style="flex:0 0 60px;">
+                                                    <label>Order</label>
+                                                    <input type="number" name="sort_order" value="<%= b.sort_order %>">
                                                 </div>
                                             </div>
                                             <div class="admin-form-group">
                                                 <label>Overlay Subtitle</label>
                                                 <input type="text" name="overlay_subtitle"
-                                                    placeholder="Supporting text">
+                                                    value="<%= b.overlay_subtitle %>">
+                                            </div>
+                                            <div class="admin-form-row">
+                                                <div class="admin-form-group" style="flex:1">
+                                                    <label>Image URL <button type="button" class="pb-ai-inline-btn"
+                                                            onclick="openMediaPicker(this, 'image_url')">📁
+                                                            Browse</button></label>
+                                                    <input type="text" name="image_url" value="<%= b.image_url %>">
+                                                </div>
+                                                <div class="admin-form-group" style="flex:1">
+                                                    <label>Or Upload New Image</label>
+                                                    <input type="file" name="banner_image" accept="image/*"
+                                                        class="pb-file-input">
+                                                </div>
                                             </div>
                                             <div class="admin-form-row">
                                                 <div class="admin-form-group" style="flex:1">
                                                     <label>🔍 Alt Text (SEO)</label>
-                                                    <input type="text" name="alt_text"
-                                                        placeholder="Describe image for accessibility & SEO">
+                                                    <input type="text" name="alt_text" value="<%= b.alt_text %>"
+                                                        placeholder="Describe image for accessibility">
                                                 </div>
                                                 <div class="admin-form-group" style="flex:1">
                                                     <label>🔍 SEO Title</label>
-                                                    <input type="text" name="seo_title"
-                                                        placeholder="Image title for search engines">
+                                                    <input type="text" name="seo_title" value="<%= b.seo_title %>"
+                                                        placeholder="Search engine title">
                                                 </div>
-                                            </div>
-                                            <button type="submit"
-                                                class="admin-btn admin-btn-primary admin-btn-small">Add Banner</button>
-                                        </form>
-                                    </details>
-                        </div>
-                    </div>
-
-                    <!-- Portfolio Categories (only for portfolio page) -->
-                    <% if (page.slug==='portfolio' && typeof portfolioCategories !=='undefined' ) { %>
-                        <div class="admin-card pb-card-collapsible">
-                            <h2 class="pb-card-toggle" onclick="toggleCard(this)">
-                                📂 Portfolio Categories <span class="admin-nav-badge">
-                                    <%= portfolioCategories.length %>
-                                </span>
-                                <span class="pb-toggle-icon">▾</span>
-                            </h2>
-                            <div class="pb-card-body">
-                                <% portfolioCategories.forEach(cat=> { %>
-                                    <div class="admin-section-item">
-                                        <form method="POST" action="/admin/category/<%= cat.id %>"
-                                            class="admin-section-form">
-                                            <div class="admin-form-row">
-                                                <div class="admin-form-group" style="flex:2">
-                                                    <label>Category Name</label>
-                                                    <input type="text" name="name" value="<%= cat.name %>" required>
+                                                <div class="admin-form-group" style="flex:0 0 100px;">
+                                                    <label>Active</label>
+                                                    <label class="pb-switch">
+                                                        <input type="checkbox" name="is_active" <%=b.is_active
+                                                            ? 'checked' : '' %>>
+                                                        <span class="pb-switch-slider"></span>
+                                                    </label>
                                                 </div>
-                                                <div class="admin-form-group" style="flex:0 0 80px;">
-                                                    <label>Order</label>
-                                                    <input type="number" name="sort_order"
-                                                        value="<%= cat.sort_order %>">
-                                                </div>
-                                            </div>
-                                            <div class="admin-form-group">
-                                                <label>Description</label>
-                                                <textarea name="description" rows="2"><%= cat.description %></textarea>
                                             </div>
                                             <div class="admin-form-actions">
                                                 <button type="submit"
-                                                    class="admin-btn admin-btn-primary admin-btn-small">Save</button>
+                                                    class="admin-btn admin-btn-primary admin-btn-small">Save
+                                                    Banner</button>
                                             </div>
                                         </form>
-                                        <form method="POST" action="/admin/category/<%= cat.id %>/delete"
-                                            class="admin-delete-form" onsubmit="return confirm('Delete category?')">
+                                        <form method="POST" action="/admin/hero-banner/<%= b.id %>/delete"
+                                            class="admin-delete-form" onsubmit="return confirm('Delete this banner?')">
                                             <button type="submit"
                                                 class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
                                         </form>
                                     </div>
                                     <% }) %>
+
                                         <details class="admin-add-section">
-                                            <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add
-                                                Category</summary>
-                                            <form method="POST" action="/admin/category" class="admin-section-form"
+                                            <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add Hero
+                                                Banner
+                                            </summary>
+                                            <form method="POST" action="/admin/page/<%= page.slug %>/hero-banner"
+                                                enctype="multipart/form-data" class="admin-section-form"
                                                 style="margin-top:1rem;">
                                                 <div class="admin-form-row">
-                                                    <div class="admin-form-group" style="flex:2">
-                                                        <label>Name</label><input type="text" name="name" required>
+                                                    <div class="admin-form-group" style="flex:1">
+                                                        <label>Upload Banner Image</label>
+                                                        <input type="file" name="banner_image" accept="image/*"
+                                                            class="pb-file-input" required>
                                                     </div>
-                                                    <div class="admin-form-group" style="flex:0 0 80px;">
-                                                        <label>Order</label><input type="number" name="sort_order"
-                                                            value="0">
+                                                    <div class="admin-form-group" style="flex:1">
+                                                        <label>Or Image URL</label>
+                                                        <input type="text" name="image_url"
+                                                            placeholder="/uploads/banner.jpg or external URL">
                                                     </div>
                                                 </div>
-                                                <div class="admin-form-group"><label>Description</label><textarea
-                                                        name="description" rows="2" required></textarea></div>
+                                                <div class="admin-form-row">
+                                                    <div class="admin-form-group" style="flex:2">
+                                                        <label>Overlay Title</label>
+                                                        <input type="text" name="overlay_title"
+                                                            placeholder="Hero headline text">
+                                                    </div>
+                                                    <div class="admin-form-group" style="flex:1">
+                                                        <label>Position</label>
+                                                        <select name="overlay_position">
+                                                            <option value="center">Center</option>
+                                                            <option value="left">Left</option>
+                                                            <option value="right">Right</option>
+                                                            <option value="bottom">Bottom</option>
+                                                            <option value="top-left">Top Left</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="admin-form-group">
+                                                    <label>Overlay Subtitle</label>
+                                                    <input type="text" name="overlay_subtitle"
+                                                        placeholder="Supporting text">
+                                                </div>
+                                                <div class="admin-form-row">
+                                                    <div class="admin-form-group" style="flex:1">
+                                                        <label>🔍 Alt Text (SEO)</label>
+                                                        <input type="text" name="alt_text"
+                                                            placeholder="Describe image for accessibility & SEO">
+                                                    </div>
+                                                    <div class="admin-form-group" style="flex:1">
+                                                        <label>🔍 SEO Title</label>
+                                                        <input type="text" name="seo_title"
+                                                            placeholder="Image title for search engines">
+                                                    </div>
+                                                </div>
                                                 <button type="submit"
                                                     class="admin-btn admin-btn-primary admin-btn-small">Add
-                                                    Category</button>
+                                                    Banner</button>
                                             </form>
                                         </details>
                             </div>
                         </div>
-                        <% } %>
 
-                            <!-- Content Sections -->
-                            <% const sectionTypes=Object.keys(sections); %>
-                                <% sectionTypes.forEach(type=> { %>
-                                    <div class="admin-card pb-card-collapsible">
-                                        <h2 class="pb-card-toggle" onclick="toggleCard(this)">
-                                            📑 <%= type.replace(/-/g, ' ' ).replace(/\b\w/g, l=> l.toUpperCase()) %>
-                                                Sections
-                                                <span class="admin-nav-badge">
-                                                    <%= sections[type].length %>
-                                                </span>
-                                                <span class="pb-toggle-icon">▾</span>
-                                        </h2>
-                                        <div class="pb-card-body" id="sections-<%= type %>">
-                                            <% sections[type].forEach((s, idx)=> { %>
-                                                <div class="admin-section-item pb-section-draggable"
-                                                    data-id="<%= s.id %>" data-order="<%= s.sort_order %>">
-                                                    <div class="pb-section-header" onclick="toggleSection(this)">
-                                                        <span class="pb-drag-handle" draggable="true"
-                                                            title="Drag to reorder">⠿</span>
-                                                        <span class="pb-section-title">
-                                                            <%= s.icon %>
-                                                                <%= s.title || 'Untitled Section' %>
-                                                        </span>
-                                                        <span class="pb-section-expand">▾</span>
+                        <!-- Portfolio Categories (only for portfolio page) -->
+                        <% if (page.slug==='portfolio' && typeof portfolioCategories !=='undefined' ) { %>
+                            <div class="admin-card pb-card-collapsible">
+                                <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                                    📂 Portfolio Categories <span class="admin-nav-badge">
+                                        <%= portfolioCategories.length %>
+                                    </span>
+                                    <span class="pb-toggle-icon">▾</span>
+                                </h2>
+                                <div class="pb-card-body">
+                                    <% portfolioCategories.forEach(cat=> { %>
+                                        <div class="admin-section-item">
+                                            <form method="POST" action="/admin/category/<%= cat.id %>"
+                                                class="admin-section-form">
+                                                <div class="admin-form-row">
+                                                    <div class="admin-form-group" style="flex:2">
+                                                        <label>Category Name</label>
+                                                        <input type="text" name="name" value="<%= cat.name %>" required>
                                                     </div>
-                                                    <div class="pb-section-body" style="display:none;">
-                                                        <form method="POST" action="/admin/section/<%= s.id %>"
-                                                            class="admin-section-form pb-section-form">
+                                                    <div class="admin-form-group" style="flex:0 0 80px;">
+                                                        <label>Order</label>
+                                                        <input type="number" name="sort_order"
+                                                            value="<%= cat.sort_order %>">
+                                                    </div>
+                                                </div>
+                                                <div class="admin-form-group">
+                                                    <label>Description</label>
+                                                    <textarea name="description"
+                                                        rows="2"><%= cat.description %></textarea>
+                                                </div>
+                                                <div class="admin-form-actions">
+                                                    <button type="submit"
+                                                        class="admin-btn admin-btn-primary admin-btn-small">Save</button>
+                                                </div>
+                                            </form>
+                                            <form method="POST" action="/admin/category/<%= cat.id %>/delete"
+                                                class="admin-delete-form" onsubmit="return confirm('Delete category?')">
+                                                <button type="submit"
+                                                    class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
+                                            </form>
+                                        </div>
+                                        <% }) %>
+                                            <details class="admin-add-section">
+                                                <summary class="admin-btn admin-btn-secondary admin-btn-small">+ Add
+                                                    Category</summary>
+                                                <form method="POST" action="/admin/category" class="admin-section-form"
+                                                    style="margin-top:1rem;">
+                                                    <div class="admin-form-row">
+                                                        <div class="admin-form-group" style="flex:2">
+                                                            <label>Name</label><input type="text" name="name" required>
+                                                        </div>
+                                                        <div class="admin-form-group" style="flex:0 0 80px;">
+                                                            <label>Order</label><input type="number" name="sort_order"
+                                                                value="0">
+                                                        </div>
+                                                    </div>
+                                                    <div class="admin-form-group"><label>Description</label><textarea
+                                                            name="description" rows="2" required></textarea></div>
+                                                    <button type="submit"
+                                                        class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                        Category</button>
+                                                </form>
+                                            </details>
+                                </div>
+                            </div>
+                            <% } %>
 
-                                                            <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
-                                                                <!-- Portfolio Section -->
-                                                                <div class="admin-form-row">
-                                                                    <div class="admin-form-group" style="flex:2">
-                                                                        <label>Project Title</label>
-                                                                        <input type="text" name="title"
-                                                                            value="<%= s.title %>">
-                                                                    </div>
-                                                                    <div class="admin-form-group" style="flex:1">
-                                                                        <label>Category</label>
-                                                                        <select name="tag">
-                                                                            <option value="">Select...</option>
-                                                                            <% if (typeof portfolioCategories
-                                                                                !=='undefined' ) {
-                                                                                portfolioCategories.forEach(cat=> { %>
-                                                                                <option value="<%= cat.name %>"
-                                                                                    <%=s.tag===cat.name ? 'selected'
-                                                                                    : '' %>><%= cat.name %>
-                                                                                </option>
-                                                                                <% }); } %>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="admin-form-group"
-                                                                        style="flex:0 0 60px;">
-                                                                        <label>Order</label>
-                                                                        <input type="number" name="sort_order"
-                                                                            value="<%= s.sort_order %>">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="admin-form-group">
-                                                                    <label>YouTube URL</label>
-                                                                    <input type="url" name="youtube_url"
-                                                                        value="<%= (s.extra && s.extra.youtube_url) || '' %>"
-                                                                        placeholder="https://www.youtube.com/watch?v=...">
-                                                                </div>
-                                                                <div class="admin-form-group">
-                                                                    <label>Description</label>
-                                                                    <textarea name="description"
-                                                                        rows="2"><%= s.description %></textarea>
-                                                                </div>
-                                                                <div class="admin-form-group" style="flex:0 0 160px;">
-                                                                    <label>⭐ Featured on Home</label>
-                                                                    <label class="pb-switch">
-                                                                        <input type="checkbox" name="is_featured_home"
-                                                                            <%=(s.extra && s.extra.is_featured_home)
-                                                                            ? 'checked' : '' %>>
-                                                                        <span class="pb-switch-slider"></span>
-                                                                    </label>
-                                                                </div>
-                                                                <input type="hidden" name="icon" value="<%= s.icon %>">
-                                                                <input type="hidden" name="extra_json"
-                                                                    value='<%= JSON.stringify({youtube_url: (s.extra && s.extra.youtube_url) || "", ...s.extra}) %>'>
-                                                                <input type="hidden" name="content_html" value="">
-                                                                <input type="hidden" name="image_url"
-                                                                    value="<%= s.image_url || '' %>">
-                                                                <input type="hidden" name="video_url"
-                                                                    value="<%= s.video_url || '' %>">
+                                <!-- Content Sections -->
+                                <% const sectionTypes=Object.keys(sections); %>
+                                    <% sectionTypes.forEach(type=> { %>
+                                        <div class="admin-card pb-card-collapsible">
+                                            <h2 class="pb-card-toggle" onclick="toggleCard(this)">
+                                                📑 <%= type.replace(/-/g, ' ' ).replace(/\b\w/g, l=> l.toUpperCase()) %>
+                                                    Sections
+                                                    <span class="admin-nav-badge">
+                                                        <%= sections[type].length %>
+                                                    </span>
+                                                    <span class="pb-toggle-icon">▾</span>
+                                            </h2>
+                                            <div class="pb-card-body" id="sections-<%= type %>">
+                                                <% sections[type].forEach((s, idx)=> { %>
+                                                    <div class="admin-section-item pb-section-draggable"
+                                                        data-id="<%= s.id %>" data-order="<%= s.sort_order %>">
+                                                        <div class="pb-section-header" onclick="toggleSection(this)">
+                                                            <span class="pb-drag-handle" draggable="true"
+                                                                title="Drag to reorder">⠿</span>
+                                                            <span class="pb-section-title">
+                                                                <%= s.icon %>
+                                                                    <%= s.title || 'Untitled Section' %>
+                                                            </span>
+                                                            <span class="pb-section-expand">▾</span>
+                                                        </div>
+                                                        <div class="pb-section-body" style="display:none;">
+                                                            <form method="POST" action="/admin/section/<%= s.id %>"
+                                                                class="admin-section-form pb-section-form">
 
-                                                                <% } else { %>
-                                                                    <!-- Generic Section with Rich Text -->
+                                                                <% if (page.slug==='portfolio' && type==='portfolio' ) {
+                                                                    %>
+                                                                    <!-- Portfolio Section -->
                                                                     <div class="admin-form-row">
                                                                         <div class="admin-form-group" style="flex:2">
-                                                                            <label>Title</label>
+                                                                            <label>Project Title</label>
                                                                             <input type="text" name="title"
                                                                                 value="<%= s.title %>">
                                                                         </div>
-                                                                        <div class="admin-form-group pb-icon-group"
-                                                                            style="flex:0 0 200px;">
-                                                                            <label>Icon</label>
-                                                                            <div class="pb-icon-picker-wrap">
-                                                                                <select class="pb-icon-type-select"
-                                                                                    name="icon_type"
-                                                                                    onchange="toggleIconMode(this)">
-                                                                                    <option value="emoji"
-                                                                                        <%=(s.icon_type || 'emoji'
-                                                                                        )==='emoji' ? 'selected' : '' %>
-                                                                                        >Emoji</option>
-                                                                                    <option value="lucide"
-                                                                                        <%=s.icon_type==='lucide'
-                                                                                        ? 'selected' : '' %>>Lucide
+                                                                        <div class="admin-form-group" style="flex:1">
+                                                                            <label>Category</label>
+                                                                            <select name="tag">
+                                                                                <option value="">Select...</option>
+                                                                                <% if (typeof portfolioCategories
+                                                                                    !=='undefined' ) {
+                                                                                    portfolioCategories.forEach(cat=> {
+                                                                                    %>
+                                                                                    <option value="<%= cat.name %>"
+                                                                                        <%=s.tag===cat.name ? 'selected'
+                                                                                        : '' %>><%= cat.name %>
                                                                                     </option>
-                                                                                    <option value="image"
-                                                                                        <%=s.icon_type==='image'
-                                                                                        ? 'selected' : '' %>>Image
-                                                                                    </option>
-                                                                                </select>
-                                                                                <div class="pb-icon-emoji" <%-
-                                                                                    (s.icon_type || 'emoji' ) !=='emoji'
-                                                                                    ? 'style="display:none"' : '' %>>
-                                                                                    <input type="text" name="icon"
-                                                                                        value="<%= s.icon %>"
-                                                                                        placeholder="🔧"
-                                                                                        style="width:60px;">
-                                                                                </div>
-                                                                                <div class="pb-icon-lucide" <%-
-                                                                                    s.icon_type !=='lucide'
-                                                                                    ? 'style="display:none"' : '' %>>
-                                                                                    <input type="text"
-                                                                                        name="icon_lucide"
-                                                                                        value="<%= s.icon_type === 'lucide' ? s.icon : '' %>"
-                                                                                        placeholder="e.g. star"
-                                                                                        readonly>
-                                                                                    <button type="button"
-                                                                                        class="pb-ai-inline-btn"
-                                                                                        onclick="openIconPicker(this)">🎨
-                                                                                        Pick</button>
-                                                                                </div>
-                                                                                <div class="pb-icon-image" <%-
-                                                                                    s.icon_type !=='image'
-                                                                                    ? 'style="display:none"' : '' %>>
-                                                                                    <input type="text"
-                                                                                        name="icon_image_url"
-                                                                                        value="<%= s.icon_image_url || '' %>"
-                                                                                        placeholder="/uploads/icon.png">
-                                                                                    <button type="button"
-                                                                                        class="pb-ai-inline-btn"
-                                                                                        onclick="openMediaPicker(this, 'icon_image_url')">📁</button>
-                                                                                </div>
-                                                                                <div class="pb-icon-preview">
-                                                                                    <% if (s.icon_type==='lucide' ) { %>
-                                                                                        <i
-                                                                                            data-lucide="<%= s.icon %>"></i>
-                                                                                        <% } else if
-                                                                                            (s.icon_type==='image' &&
-                                                                                            s.icon_image_url) { %>
-                                                                                            <img src="<%= s.icon_image_url %>"
-                                                                                                alt="icon"
-                                                                                                style="width:24px;height:24px;">
-                                                                                            <% } else { %>
-                                                                                                <span>
-                                                                                                    <%= s.icon %>
-                                                                                                </span>
-                                                                                                <% } %>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="admin-form-group"
-                                                                            style="flex:0 0 100px;">
-                                                                            <label>Tag</label>
-                                                                            <input type="text" name="tag"
-                                                                                value="<%= s.tag %>">
+                                                                                    <% }); } %>
+                                                                            </select>
                                                                         </div>
                                                                         <div class="admin-form-group"
                                                                             style="flex:0 0 60px;">
@@ -628,156 +490,238 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="admin-form-group">
-                                                                        <label>Description (plain text)</label>
+                                                                        <label>YouTube URL</label>
+                                                                        <input type="url" name="youtube_url"
+                                                                            value="<%= (s.extra && s.extra.youtube_url) || '' %>"
+                                                                            placeholder="https://www.youtube.com/watch?v=...">
+                                                                    </div>
+                                                                    <div class="admin-form-group">
+                                                                        <label>Description</label>
                                                                         <textarea name="description"
-                                                                            rows="3"><%= s.description %></textarea>
-                                                                    </div>
-                                                                    <div class="admin-form-group">
-                                                                        <label>Rich Content (HTML)
-                                                                            <button type="button"
-                                                                                class="pb-ai-inline-btn"
-                                                                                onclick="aiWriteForSection(this)">🤖 AI
-                                                                                Write</button>
-                                                                        </label>
-                                                                        <div class="pb-quill-container">
-                                                                            <div class="pb-quill-editor"
-                                                                                data-field-name="content_html">
-                                                                                <%= s.content_html || '' %>
-                                                                            </div>
-                                                                        </div>
-                                                                        <input type="hidden" name="content_html"
-                                                                            value="<%= s.content_html || '' %>">
-                                                                    </div>
-                                                                    <div class="admin-form-row">
-                                                                        <div class="admin-form-group" style="flex:1">
-                                                                            <label>Image URL
-                                                                                <button type="button"
-                                                                                    class="pb-ai-inline-btn"
-                                                                                    onclick="openMediaPicker(this, 'image_url')">📁
-                                                                                    Browse</button>
-                                                                            </label>
-                                                                            <input type="text" name="image_url"
-                                                                                value="<%= s.image_url || '' %>"
-                                                                                placeholder="/uploads/image.jpg or external URL">
-                                                                            <% if (s.image_url) { %>
-                                                                                <img src="<%= s.image_url %>"
-                                                                                    class="pb-image-preview"
-                                                                                    alt="Preview">
-                                                                                <% } %>
-                                                                        </div>
-                                                                        <div class="admin-form-group" style="flex:1">
-                                                                            <label>Video URL</label>
-                                                                            <input type="text" name="video_url"
-                                                                                value="<%= s.video_url || '' %>"
-                                                                                placeholder="YouTube or uploaded video URL">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="admin-form-group">
-                                                                        <label>Extra JSON</label>
-                                                                        <input type="text" name="extra_json"
-                                                                            value='<%= s.extra_json || "{}" %>'>
-                                                                    </div>
-                                                                    <% } %>
-
-                                                                        <div class="admin-form-actions">
-                                                                            <button type="submit"
-                                                                                class="admin-btn admin-btn-primary admin-btn-small">Save
-                                                                                Section</button>
-                                                                        </div>
-                                                        </form>
-                                                        <form method="POST" action="/admin/section/<%= s.id %>/delete"
-                                                            class="admin-delete-form"
-                                                            onsubmit="return confirm('Delete this section?')">
-                                                            <button type="submit"
-                                                                class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                <% }) %>
-
-                                                    <!-- Add New Section -->
-                                                    <details class="admin-add-section">
-                                                        <summary class="admin-btn admin-btn-secondary admin-btn-small">+
-                                                            Add <%= type.replace(/-/g, ' ' ) %>
-                                                        </summary>
-                                                        <form method="POST"
-                                                            action="/admin/page/<%= page.slug %>/add-section"
-                                                            class="admin-section-form" style="margin-top:1rem;">
-                                                            <input type="hidden" name="type" value="<%= type %>">
-                                                            <% if (page.slug==='portfolio' && type==='portfolio' ) { %>
-                                                                <div class="admin-form-row">
-                                                                    <div class="admin-form-group" style="flex:2">
-                                                                        <label>Title</label><input type="text"
-                                                                            name="title" required>
-                                                                    </div>
-                                                                    <div class="admin-form-group" style="flex:1">
-                                                                        <label>Category</label>
-                                                                        <select name="tag">
-                                                                            <option value="">Select...</option>
-                                                                            <% if (typeof portfolioCategories
-                                                                                !=='undefined' ) {
-                                                                                portfolioCategories.forEach(cat=> { %>
-                                                                                <option value="<%= cat.name %>">
-                                                                                    <%= cat.name %>
-                                                                                </option>
-                                                                                <% }); } %>
-                                                                        </select>
+                                                                            rows="2"><%= s.description %></textarea>
                                                                     </div>
                                                                     <div class="admin-form-group"
-                                                                        style="flex:0 0 60px;">
-                                                                        <label>Order</label><input type="number"
-                                                                            name="sort_order" value="0">
+                                                                        style="flex:0 0 160px;">
+                                                                        <label>⭐ Featured on Home</label>
+                                                                        <label class="pb-switch">
+                                                                            <input type="checkbox"
+                                                                                name="is_featured_home" <%=(s.extra &&
+                                                                                s.extra.is_featured_home) ? 'checked'
+                                                                                : '' %>>
+                                                                            <span class="pb-switch-slider"></span>
+                                                                        </label>
                                                                     </div>
-                                                                </div>
-                                                                <div class="admin-form-group"><label>YouTube
-                                                                        URL</label><input type="url" name="youtube_url"
-                                                                        required></div>
-                                                                <div class="admin-form-group">
-                                                                    <label>Description</label><textarea
-                                                                        name="description" rows="2" required></textarea>
-                                                                </div>
-                                                                <div class="admin-form-group" style="flex:0 0 160px;">
-                                                                    <label>⭐ Featured on Home</label>
-                                                                    <label class="pb-switch">
-                                                                        <input type="checkbox" name="is_featured_home">
-                                                                        <span class="pb-switch-slider"></span>
-                                                                    </label>
-                                                                </div>
-                                                                <input type="hidden" name="icon" value=""><input
-                                                                    type="hidden" name="icon_type" value="emoji"><input
-                                                                    type="hidden" name="icon_image_url" value=""><input
-                                                                    type="hidden" name="extra_json" value='{}'>
-                                                                <input type="hidden" name="content_html" value=""><input
-                                                                    type="hidden" name="image_url" value=""><input
-                                                                    type="hidden" name="video_url" value="">
-                                                                <% } else { %>
+                                                                    <input type="hidden" name="icon"
+                                                                        value="<%= s.icon %>">
+                                                                    <input type="hidden" name="extra_json"
+                                                                        value='<%= JSON.stringify({youtube_url: (s.extra && s.extra.youtube_url) || "", ...s.extra}) %>'>
+                                                                    <input type="hidden" name="content_html" value="">
+                                                                    <input type="hidden" name="image_url"
+                                                                        value="<%= s.image_url || '' %>">
+                                                                    <input type="hidden" name="video_url"
+                                                                        value="<%= s.video_url || '' %>">
+
+                                                                    <% } else { %>
+                                                                        <!-- Generic Section with Rich Text -->
+                                                                        <div class="admin-form-row">
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:2">
+                                                                                <label>Title</label>
+                                                                                <input type="text" name="title"
+                                                                                    value="<%= s.title %>">
+                                                                            </div>
+                                                                            <div class="admin-form-group pb-icon-group"
+                                                                                style="flex:0 0 200px;">
+                                                                                <label>Icon</label>
+                                                                                <div class="pb-icon-picker-wrap">
+                                                                                    <select class="pb-icon-type-select"
+                                                                                        name="icon_type"
+                                                                                        onchange="toggleIconMode(this)">
+                                                                                        <option value="emoji"
+                                                                                            <%=(s.icon_type || 'emoji'
+                                                                                            )==='emoji' ? 'selected'
+                                                                                            : '' %>
+                                                                                            >Emoji</option>
+                                                                                        <option value="lucide"
+                                                                                            <%=s.icon_type==='lucide'
+                                                                                            ? 'selected' : '' %>>Lucide
+                                                                                        </option>
+                                                                                        <option value="image"
+                                                                                            <%=s.icon_type==='image'
+                                                                                            ? 'selected' : '' %>>Image
+                                                                                        </option>
+                                                                                    </select>
+                                                                                    <div class="pb-icon-emoji" <%-
+                                                                                        (s.icon_type || 'emoji' )
+                                                                                        !=='emoji'
+                                                                                        ? 'style="display:none"' : '' %>
+                                                                                        >
+                                                                                        <input type="text" name="icon"
+                                                                                            value="<%= s.icon %>"
+                                                                                            placeholder="🔧"
+                                                                                            style="width:60px;">
+                                                                                    </div>
+                                                                                    <div class="pb-icon-lucide" <%-
+                                                                                        s.icon_type !=='lucide'
+                                                                                        ? 'style="display:none"' : '' %>
+                                                                                        >
+                                                                                        <input type="text"
+                                                                                            name="icon_lucide"
+                                                                                            value="<%= s.icon_type === 'lucide' ? s.icon : '' %>"
+                                                                                            placeholder="e.g. star"
+                                                                                            readonly>
+                                                                                        <button type="button"
+                                                                                            class="pb-ai-inline-btn"
+                                                                                            onclick="openIconPicker(this)">🎨
+                                                                                            Pick</button>
+                                                                                    </div>
+                                                                                    <div class="pb-icon-image" <%-
+                                                                                        s.icon_type !=='image'
+                                                                                        ? 'style="display:none"' : '' %>
+                                                                                        >
+                                                                                        <input type="text"
+                                                                                            name="icon_image_url"
+                                                                                            value="<%= s.icon_image_url || '' %>"
+                                                                                            placeholder="/uploads/icon.png">
+                                                                                        <button type="button"
+                                                                                            class="pb-ai-inline-btn"
+                                                                                            onclick="openMediaPicker(this, 'icon_image_url')">📁</button>
+                                                                                    </div>
+                                                                                    <div class="pb-icon-preview">
+                                                                                        <% if (s.icon_type==='lucide' )
+                                                                                            { %>
+                                                                                            <i
+                                                                                                data-lucide="<%= s.icon %>"></i>
+                                                                                            <% } else if
+                                                                                                (s.icon_type==='image'
+                                                                                                && s.icon_image_url) {
+                                                                                                %>
+                                                                                                <img src="<%= s.icon_image_url %>"
+                                                                                                    alt="icon"
+                                                                                                    style="width:24px;height:24px;">
+                                                                                                <% } else { %>
+                                                                                                    <span>
+                                                                                                        <%= s.icon %>
+                                                                                                    </span>
+                                                                                                    <% } %>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:0 0 100px;">
+                                                                                <label>Tag</label>
+                                                                                <input type="text" name="tag"
+                                                                                    value="<%= s.tag %>">
+                                                                            </div>
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:0 0 60px;">
+                                                                                <label>Order</label>
+                                                                                <input type="number" name="sort_order"
+                                                                                    value="<%= s.sort_order %>">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="admin-form-group">
+                                                                            <label>Description (plain text)</label>
+                                                                            <textarea name="description"
+                                                                                rows="3"><%= s.description %></textarea>
+                                                                        </div>
+                                                                        <div class="admin-form-group">
+                                                                            <label>Rich Content (HTML)
+                                                                                <button type="button"
+                                                                                    class="pb-ai-inline-btn"
+                                                                                    onclick="aiWriteForSection(this)">🤖
+                                                                                    AI
+                                                                                    Write</button>
+                                                                            </label>
+                                                                            <div class="pb-quill-container">
+                                                                                <div class="pb-quill-editor"
+                                                                                    data-field-name="content_html">
+                                                                                    <%= s.content_html || '' %>
+                                                                                </div>
+                                                                            </div>
+                                                                            <input type="hidden" name="content_html"
+                                                                                value="<%= s.content_html || '' %>">
+                                                                        </div>
+                                                                        <div class="admin-form-row">
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:1">
+                                                                                <label>Image URL
+                                                                                    <button type="button"
+                                                                                        class="pb-ai-inline-btn"
+                                                                                        onclick="openMediaPicker(this, 'image_url')">📁
+                                                                                        Browse</button>
+                                                                                </label>
+                                                                                <input type="text" name="image_url"
+                                                                                    value="<%= s.image_url || '' %>"
+                                                                                    placeholder="/uploads/image.jpg or external URL">
+                                                                                <% if (s.image_url) { %>
+                                                                                    <img src="<%= s.image_url %>"
+                                                                                        class="pb-image-preview"
+                                                                                        alt="Preview">
+                                                                                    <% } %>
+                                                                            </div>
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:1">
+                                                                                <label>Video URL</label>
+                                                                                <input type="text" name="video_url"
+                                                                                    value="<%= s.video_url || '' %>"
+                                                                                    placeholder="YouTube or uploaded video URL">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="admin-form-group">
+                                                                            <label>Extra JSON</label>
+                                                                            <input type="text" name="extra_json"
+                                                                                value='<%= s.extra_json || "{}" %>'>
+                                                                        </div>
+                                                                        <% } %>
+
+                                                                            <div class="admin-form-actions">
+                                                                                <button type="submit"
+                                                                                    class="admin-btn admin-btn-primary admin-btn-small">Save
+                                                                                    Section</button>
+                                                                            </div>
+                                                            </form>
+                                                            <form method="POST"
+                                                                action="/admin/section/<%= s.id %>/delete"
+                                                                class="admin-delete-form"
+                                                                onsubmit="return confirm('Delete this section?')">
+                                                                <button type="submit"
+                                                                    class="admin-btn admin-btn-danger admin-btn-small">Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <% }) %>
+
+                                                        <!-- Add New Section -->
+                                                        <details class="admin-add-section">
+                                                            <summary
+                                                                class="admin-btn admin-btn-secondary admin-btn-small">+
+                                                                Add <%= type.replace(/-/g, ' ' ) %>
+                                                            </summary>
+                                                            <form method="POST"
+                                                                action="/admin/page/<%= page.slug %>/add-section"
+                                                                class="admin-section-form" style="margin-top:1rem;">
+                                                                <input type="hidden" name="type" value="<%= type %>">
+                                                                <% if (page.slug==='portfolio' && type==='portfolio' ) {
+                                                                    %>
                                                                     <div class="admin-form-row">
                                                                         <div class="admin-form-group" style="flex:2">
                                                                             <label>Title</label><input type="text"
                                                                                 name="title" required>
                                                                         </div>
-                                                                        <div class="admin-form-group"
-                                                                            style="flex:0 0 130px;">
-                                                                            <label>Icon</label>
-                                                                            <div style="display:flex;gap:4px;">
-                                                                                <input type="text" name="icon"
-                                                                                    placeholder="🔧"
-                                                                                    style="width:50px;">
-                                                                                <select name="icon_type"
-                                                                                    style="width:70px;font-size:0.7rem;">
-                                                                                    <option value="emoji">Emoji</option>
-                                                                                    <option value="lucide">Lucide
+                                                                        <div class="admin-form-group" style="flex:1">
+                                                                            <label>Category</label>
+                                                                            <select name="tag">
+                                                                                <option value="">Select...</option>
+                                                                                <% if (typeof portfolioCategories
+                                                                                    !=='undefined' ) {
+                                                                                    portfolioCategories.forEach(cat=> {
+                                                                                    %>
+                                                                                    <option value="<%= cat.name %>">
+                                                                                        <%= cat.name %>
                                                                                     </option>
-                                                                                    <option value="image">Image</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <input type="hidden" name="icon_image_url"
-                                                                                value="">
-                                                                        </div>
-                                                                        <div class="admin-form-group"
-                                                                            style="flex:0 0 100px;">
-                                                                            <label>Tag</label><input type="text"
-                                                                                name="tag">
+                                                                                    <% }); } %>
+                                                                            </select>
                                                                         </div>
                                                                         <div class="admin-form-group"
                                                                             style="flex:0 0 60px;">
@@ -785,234 +729,301 @@
                                                                                 name="sort_order" value="0">
                                                                         </div>
                                                                     </div>
+                                                                    <div class="admin-form-group"><label>YouTube
+                                                                            URL</label><input type="url"
+                                                                            name="youtube_url" required></div>
                                                                     <div class="admin-form-group">
                                                                         <label>Description</label><textarea
-                                                                            name="description" rows="3"
+                                                                            name="description" rows="2"
                                                                             required></textarea>
                                                                     </div>
-                                                                    <div class="admin-form-group"><label>Extra
-                                                                            JSON</label><input type="text"
-                                                                            name="extra_json" value='{}'></div>
+                                                                    <div class="admin-form-group"
+                                                                        style="flex:0 0 160px;">
+                                                                        <label>⭐ Featured on Home</label>
+                                                                        <label class="pb-switch">
+                                                                            <input type="checkbox"
+                                                                                name="is_featured_home">
+                                                                            <span class="pb-switch-slider"></span>
+                                                                        </label>
+                                                                    </div>
+                                                                    <input type="hidden" name="icon" value=""><input
+                                                                        type="hidden" name="icon_type"
+                                                                        value="emoji"><input type="hidden"
+                                                                        name="icon_image_url" value=""><input
+                                                                        type="hidden" name="extra_json" value='{}'>
                                                                     <input type="hidden" name="content_html"
                                                                         value=""><input type="hidden" name="image_url"
                                                                         value=""><input type="hidden" name="video_url"
                                                                         value="">
-                                                                    <% } %>
-                                                                        <button type="submit"
-                                                                            class="admin-btn admin-btn-primary admin-btn-small">Add
-                                                                            Section</button>
-                                                        </form>
-                                                    </details>
+                                                                    <% } else { %>
+                                                                        <div class="admin-form-row">
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:2">
+                                                                                <label>Title</label><input type="text"
+                                                                                    name="title" required>
+                                                                            </div>
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:0 0 130px;">
+                                                                                <label>Icon</label>
+                                                                                <div style="display:flex;gap:4px;">
+                                                                                    <input type="text" name="icon"
+                                                                                        placeholder="🔧"
+                                                                                        style="width:50px;">
+                                                                                    <select name="icon_type"
+                                                                                        style="width:70px;font-size:0.7rem;">
+                                                                                        <option value="emoji">Emoji
+                                                                                        </option>
+                                                                                        <option value="lucide">Lucide
+                                                                                        </option>
+                                                                                        <option value="image">Image
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                                <input type="hidden"
+                                                                                    name="icon_image_url" value="">
+                                                                            </div>
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:0 0 100px;">
+                                                                                <label>Tag</label><input type="text"
+                                                                                    name="tag">
+                                                                            </div>
+                                                                            <div class="admin-form-group"
+                                                                                style="flex:0 0 60px;">
+                                                                                <label>Order</label><input type="number"
+                                                                                    name="sort_order" value="0">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="admin-form-group">
+                                                                            <label>Description</label><textarea
+                                                                                name="description" rows="3"
+                                                                                required></textarea>
+                                                                        </div>
+                                                                        <div class="admin-form-group"><label>Extra
+                                                                                JSON</label><input type="text"
+                                                                                name="extra_json" value='{}'></div>
+                                                                        <input type="hidden" name="content_html"
+                                                                            value=""><input type="hidden"
+                                                                            name="image_url" value=""><input
+                                                                            type="hidden" name="video_url" value="">
+                                                                        <% } %>
+                                                                            <button type="submit"
+                                                                                class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                                                Section</button>
+                                                            </form>
+                                                        </details>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <% }) %>
+                                        <% }) %>
 
-                                        <!-- Add New Section Type -->
-                                        <div class="admin-card">
-                                            <h2>➕ Add New Section Type</h2>
-                                            <form method="POST" action="./page/<%= page.slug %>/add-section"
-                                                class="admin-section-form">
-                                                <div class="admin-form-row">
-                                                    <div class="admin-form-group" style="flex:1">
-                                                        <label>Section Type (e.g. "feature", "testimonial",
-                                                            "cta")</label>
-                                                        <input type="text" name="type" required
-                                                            placeholder="my-new-section">
-                                                    </div>
-                                                    <div class="admin-form-group" style="flex:2">
-                                                        <label>Title</label>
-                                                        <input type="text" name="title" required>
-                                                    </div>
-                                                    <div class="admin-form-group" style="flex:0 0 130px;">
-                                                        <label>Icon</label>
-                                                        <div style="display:flex;gap:4px;">
-                                                            <input type="text" name="icon" placeholder="🔧"
-                                                                style="width:50px;">
-                                                            <select name="icon_type"
-                                                                style="width:70px;font-size:0.7rem;">
-                                                                <option value="emoji">Emoji</option>
-                                                                <option value="lucide">Lucide</option>
-                                                                <option value="image">Image</option>
-                                                            </select>
+                                            <!-- Add New Section Type -->
+                                            <div class="admin-card">
+                                                <h2>➕ Add New Section Type</h2>
+                                                <form method="POST" action="./page/<%= page.slug %>/add-section"
+                                                    class="admin-section-form">
+                                                    <div class="admin-form-row">
+                                                        <div class="admin-form-group" style="flex:1">
+                                                            <label>Section Type (e.g. "feature", "testimonial",
+                                                                "cta")</label>
+                                                            <input type="text" name="type" required
+                                                                placeholder="my-new-section">
                                                         </div>
-                                                        <input type="hidden" name="icon_image_url" value="">
+                                                        <div class="admin-form-group" style="flex:2">
+                                                            <label>Title</label>
+                                                            <input type="text" name="title" required>
+                                                        </div>
+                                                        <div class="admin-form-group" style="flex:0 0 130px;">
+                                                            <label>Icon</label>
+                                                            <div style="display:flex;gap:4px;">
+                                                                <input type="text" name="icon" placeholder="🔧"
+                                                                    style="width:50px;">
+                                                                <select name="icon_type"
+                                                                    style="width:70px;font-size:0.7rem;">
+                                                                    <option value="emoji">Emoji</option>
+                                                                    <option value="lucide">Lucide</option>
+                                                                    <option value="image">Image</option>
+                                                                </select>
+                                                            </div>
+                                                            <input type="hidden" name="icon_image_url" value="">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="admin-form-group"><label>Description</label><textarea
-                                                        name="description" rows="3"></textarea></div>
-                                                <input type="hidden" name="tag" value=""><input type="hidden"
-                                                    name="sort_order" value="0">
-                                                <input type="hidden" name="extra_json" value='{}'><input type="hidden"
-                                                    name="content_html" value="">
-                                                <input type="hidden" name="image_url" value=""><input type="hidden"
-                                                    name="video_url" value="">
-                                                <button type="submit"
-                                                    class="admin-btn admin-btn-primary admin-btn-small">Add
-                                                    Section</button>
-                                            </form>
-                                        </div>
-
-                                        <!-- Page Actions -->
-                                        <div class="admin-card pb-page-actions">
-                                            <h2>🔧 Page Actions</h2>
-                                            <div class="pb-actions-row">
-                                                <form method="POST" action="./page/<%= page.slug %>/duplicate">
-
-                                                    <button type="submit" class="admin-btn admin-btn-secondary">📋
-                                                        Duplicate Page</button>
+                                                    <div class="admin-form-group"><label>Description</label><textarea
+                                                            name="description" rows="3"></textarea></div>
+                                                    <input type="hidden" name="tag" value=""><input type="hidden"
+                                                        name="sort_order" value="0">
+                                                    <input type="hidden" name="extra_json" value='{}'><input
+                                                        type="hidden" name="content_html" value="">
+                                                    <input type="hidden" name="image_url" value=""><input type="hidden"
+                                                        name="video_url" value="">
+                                                    <button type="submit"
+                                                        class="admin-btn admin-btn-primary admin-btn-small">Add
+                                                        Section</button>
                                                 </form>
-                                                <% if (page.slug !=='home' ) { %>
-                                                    <form method="POST" action="./page/<%= page.slug %>/delete"
-                                                        onsubmit="return confirm('⚠️ Are you sure you want to DELETE this entire page? This cannot be undone.')">
-                                                        <button type="submit" class="admin-btn admin-btn-danger">🗑️
-                                                            Delete Page</button>
+                                            </div>
+
+                                            <!-- Page Actions -->
+                                            <div class="admin-card pb-page-actions">
+                                                <h2>🔧 Page Actions</h2>
+                                                <div class="pb-actions-row">
+                                                    <form method="POST" action="./page/<%= page.slug %>/duplicate">
+
+                                                        <button type="submit" class="admin-btn admin-btn-secondary">📋
+                                                            Duplicate Page</button>
                                                     </form>
-                                                    <% } %>
+                                                    <% if (page.slug !=='home' ) { %>
+                                                        <form method="POST" action="./page/<%= page.slug %>/delete"
+                                                            onsubmit="return confirm('⚠️ Are you sure you want to DELETE this entire page? This cannot be undone.')">
+                                                            <button type="submit" class="admin-btn admin-btn-danger">🗑️
+                                                                Delete Page</button>
+                                                        </form>
+                                                        <% } %>
+                                                </div>
                                             </div>
-                                        </div>
-        </main>
+            </main>
 
-        <!-- AI Assistant Panel -->
-        <aside class="pb-ai-panel" id="aiPanel">
-            <div class="pb-panel-header">
-                <h3>🤖 AI Assistant</h3>
-                <button class="pb-panel-close" onclick="toggleAIPanel()">✕</button>
-            </div>
-            <div class="pb-panel-content">
-                <!-- AI Generate -->
-                <div class="pb-ai-section">
-                    <h4>Generate Content</h4>
-                    <textarea id="aiPrompt" rows="3"
-                        placeholder="Describe what content you want to generate..."></textarea>
-                    <button class="admin-btn admin-btn-primary admin-btn-small pb-ai-btn" onclick="aiGenerate()">
-                        <span class="pb-ai-btn-text">✨ Generate</span>
-                        <span class="pb-ai-spinner" style="display:none;">⏳</span>
-                    </button>
+            <!-- AI Assistant Panel -->
+            <aside class="pb-ai-panel" id="aiPanel">
+                <div class="pb-panel-header">
+                    <h3>🤖 AI Assistant</h3>
+                    <button class="pb-panel-close" onclick="toggleAIPanel()">✕</button>
                 </div>
-
-                <!-- AI SEO -->
-                <div class="pb-ai-section">
-                    <h4>SEO Optimizer</h4>
-                    <p class="pb-ai-desc">Auto-generate optimized title, meta description & keywords.</p>
-                    <button class="admin-btn admin-btn-secondary admin-btn-small" onclick="aiGenerateSEO()">
-                        📊 Optimize SEO
-                    </button>
-                    <div id="seoResults" class="pb-ai-results" style="display:none;"></div>
-                </div>
-
-                <!-- AI Rewrite -->
-                <div class="pb-ai-section">
-                    <h4>Rewrite Selected Text</h4>
-                    <p class="pb-ai-desc">Select text in any editor, then choose an action:</p>
-                    <div class="pb-ai-actions-grid">
-                        <button class="pb-ai-action-btn" onclick="aiRewrite('expand')">📝 Expand</button>
-                        <button class="pb-ai-action-btn" onclick="aiRewrite('summarize')">📄 Summarize</button>
-                        <button class="pb-ai-action-btn" onclick="aiRewrite('professional')">🎩 Professional</button>
-                        <button class="pb-ai-action-btn" onclick="aiRewrite('casual')">😊 Casual</button>
-                        <button class="pb-ai-action-btn" onclick="aiRewrite('persuasive')">🔥 Persuasive</button>
-                        <button class="pb-ai-action-btn" onclick="aiRewrite('seo')">🔍 SEO</button>
+                <div class="pb-panel-content">
+                    <!-- AI Generate -->
+                    <div class="pb-ai-section">
+                        <h4>Generate Content</h4>
+                        <textarea id="aiPrompt" rows="3"
+                            placeholder="Describe what content you want to generate..."></textarea>
+                        <button class="admin-btn admin-btn-primary admin-btn-small pb-ai-btn" onclick="aiGenerate()">
+                            <span class="pb-ai-btn-text">✨ Generate</span>
+                            <span class="pb-ai-spinner" style="display:none;">⏳</span>
+                        </button>
                     </div>
-                </div>
 
-                <!-- AI Output -->
-                <div class="pb-ai-section" id="aiOutputSection" style="display:none;">
-                    <h4>AI Output</h4>
-                    <div id="aiOutput" class="pb-ai-output"></div>
-                    <div class="pb-ai-output-actions">
-                        <button class="admin-btn admin-btn-primary admin-btn-small" onclick="insertAIOutput()">Insert
-                            into Editor</button>
-                        <button class="admin-btn admin-btn-secondary admin-btn-small" onclick="copyAIOutput()">📋
-                            Copy</button>
+                    <!-- AI SEO -->
+                    <div class="pb-ai-section">
+                        <h4>SEO Optimizer</h4>
+                        <p class="pb-ai-desc">Auto-generate optimized title, meta description & keywords.</p>
+                        <button class="admin-btn admin-btn-secondary admin-btn-small" onclick="aiGenerateSEO()">
+                            📊 Optimize SEO
+                        </button>
+                        <div id="seoResults" class="pb-ai-results" style="display:none;"></div>
                     </div>
-                </div>
-            </div>
-        </aside>
 
-        <!-- Media Browser Panel -->
-        <aside class="pb-media-panel" id="mediaPanel">
-            <div class="pb-panel-header">
-                <h3>📁 Media Library</h3>
-                <button class="pb-panel-close" onclick="toggleMediaPanel()">✕</button>
-            </div>
-            <div class="pb-panel-content">
-                <!-- Upload -->
-                <div class="pb-media-upload">
-                    <div class="pb-dropzone" id="dropzone"
-                        ondragover="event.preventDefault(); this.classList.add('dragover')"
-                        ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
-                        <span class="pb-dropzone-icon">📤</span>
-                        <p>Drag & drop files here</p>
-                        <label class="admin-btn admin-btn-secondary admin-btn-small pb-upload-btn">
-                            Choose File
-                            <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;"
-                                onchange="uploadFile(this.files[0])">
-                        </label>
-                    </div>
-                    <!-- SEO Fields for Upload -->
-                    <div class="pb-upload-seo">
-                        <div class="admin-form-group" style="margin-top:0.5rem;">
-                            <label style="font-size:0.7rem;">🔍 Alt Text</label>
-                            <input type="text" id="uploadAltText" placeholder="Describe image for SEO & accessibility"
-                                style="font-size:0.75rem;">
+                    <!-- AI Rewrite -->
+                    <div class="pb-ai-section">
+                        <h4>Rewrite Selected Text</h4>
+                        <p class="pb-ai-desc">Select text in any editor, then choose an action:</p>
+                        <div class="pb-ai-actions-grid">
+                            <button class="pb-ai-action-btn" onclick="aiRewrite('expand')">📝 Expand</button>
+                            <button class="pb-ai-action-btn" onclick="aiRewrite('summarize')">📄 Summarize</button>
+                            <button class="pb-ai-action-btn" onclick="aiRewrite('professional')">🎩
+                                Professional</button>
+                            <button class="pb-ai-action-btn" onclick="aiRewrite('casual')">😊 Casual</button>
+                            <button class="pb-ai-action-btn" onclick="aiRewrite('persuasive')">🔥 Persuasive</button>
+                            <button class="pb-ai-action-btn" onclick="aiRewrite('seo')">🔍 SEO</button>
                         </div>
-                        <div class="admin-form-row" style="gap:0.5rem;">
-                            <div class="admin-form-group" style="flex:1;">
-                                <label style="font-size:0.7rem;">🔍 SEO Title</label>
-                                <input type="text" id="uploadSeoTitle" placeholder="Image title"
-                                    style="font-size:0.75rem;">
+                    </div>
+
+                    <!-- AI Output -->
+                    <div class="pb-ai-section" id="aiOutputSection" style="display:none;">
+                        <h4>AI Output</h4>
+                        <div id="aiOutput" class="pb-ai-output"></div>
+                        <div class="pb-ai-output-actions">
+                            <button class="admin-btn admin-btn-primary admin-btn-small"
+                                onclick="insertAIOutput()">Insert
+                                into Editor</button>
+                            <button class="admin-btn admin-btn-secondary admin-btn-small" onclick="copyAIOutput()">📋
+                                Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Media Browser Panel -->
+            <aside class="pb-media-panel" id="mediaPanel">
+                <div class="pb-panel-header">
+                    <h3>📁 Media Library</h3>
+                    <button class="pb-panel-close" onclick="toggleMediaPanel()">✕</button>
+                </div>
+                <div class="pb-panel-content">
+                    <!-- Upload -->
+                    <div class="pb-media-upload">
+                        <div class="pb-dropzone" id="dropzone"
+                            ondragover="event.preventDefault(); this.classList.add('dragover')"
+                            ondragleave="this.classList.remove('dragover')" ondrop="handleDrop(event)">
+                            <span class="pb-dropzone-icon">📤</span>
+                            <p>Drag & drop files here</p>
+                            <label class="admin-btn admin-btn-secondary admin-btn-small pb-upload-btn">
+                                Choose File
+                                <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;"
+                                    onchange="uploadFile(this.files[0])">
+                            </label>
+                        </div>
+                        <!-- SEO Fields for Upload -->
+                        <div class="pb-upload-seo">
+                            <div class="admin-form-group" style="margin-top:0.5rem;">
+                                <label style="font-size:0.7rem;">🔍 Alt Text</label>
+                                <input type="text" id="uploadAltText"
+                                    placeholder="Describe image for SEO & accessibility" style="font-size:0.75rem;">
                             </div>
-                            <div class="admin-form-group" style="flex:1;">
-                                <label style="font-size:0.7rem;">📝 Caption</label>
-                                <input type="text" id="uploadSeoCaption" placeholder="Image caption"
-                                    style="font-size:0.75rem;">
+                            <div class="admin-form-row" style="gap:0.5rem;">
+                                <div class="admin-form-group" style="flex:1;">
+                                    <label style="font-size:0.7rem;">🔍 SEO Title</label>
+                                    <input type="text" id="uploadSeoTitle" placeholder="Image title"
+                                        style="font-size:0.75rem;">
+                                </div>
+                                <div class="admin-form-group" style="flex:1;">
+                                    <label style="font-size:0.7rem;">📝 Caption</label>
+                                    <input type="text" id="uploadSeoCaption" placeholder="Image caption"
+                                        style="font-size:0.75rem;">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="uploadProgress" class="pb-upload-progress" style="display:none;">
-                        <div class="pb-progress-bar">
-                            <div class="pb-progress-fill" id="progressFill"></div>
+                        <div id="uploadProgress" class="pb-upload-progress" style="display:none;">
+                            <div class="pb-progress-bar">
+                                <div class="pb-progress-fill" id="progressFill"></div>
+                            </div>
+                            <span id="uploadStatus">Uploading...</span>
                         </div>
-                        <span id="uploadStatus">Uploading...</span>
                     </div>
-                </div>
 
-                <!-- Media Grid -->
-                <div class="pb-media-grid" id="mediaGrid">
-                    <% media.forEach(m=> { %>
-                        <div class="pb-media-item" data-id="<%= m.id %>" data-url="/uploads/<%= m.filename %>">
-                            <% if (m.mime_type.startsWith('image/')) { %>
-                                <img src="/uploads/<%= m.filename %>" alt="<%= m.alt_text || m.original_name %>">
-                                <% } else { %>
-                                    <div class="pb-media-video-thumb">🎬</div>
-                                    <% } %>
-                                        <div class="pb-media-info">
-                                            <span class="pb-media-name">
-                                                <%= m.original_name %>
-                                            </span>
-                                            <div class="pb-media-actions">
-                                                <button class="pb-media-insert"
-                                                    onclick="insertMedia('/uploads/<%= m.filename %>')">Insert</button>
-                                                <button class="pb-media-delete" data-id="<%= m.id %>"
-                                                    onclick="deleteMedia(this.dataset.id, this)">✕</button>
+                    <!-- Media Grid -->
+                    <div class="pb-media-grid" id="mediaGrid">
+                        <% media.forEach(m=> { %>
+                            <div class="pb-media-item" data-id="<%= m.id %>" data-url="/uploads/<%= m.filename %>">
+                                <% if (m.mime_type.startsWith('image/')) { %>
+                                    <img src="/uploads/<%= m.filename %>" alt="<%= m.alt_text || m.original_name %>">
+                                    <% } else { %>
+                                        <div class="pb-media-video-thumb">🎬</div>
+                                        <% } %>
+                                            <div class="pb-media-info">
+                                                <span class="pb-media-name">
+                                                    <%= m.original_name %>
+                                                </span>
+                                                <div class="pb-media-actions">
+                                                    <button class="pb-media-insert"
+                                                        onclick="insertMedia('/uploads/<%= m.filename %>')">Insert</button>
+                                                    <button class="pb-media-delete" data-id="<%= m.id %>"
+                                                        onclick="deleteMedia(this.dataset.id, this)">✕</button>
+                                                </div>
                                             </div>
-                                        </div>
-                        </div>
-                        <% }) %>
+                            </div>
+                            <% }) %>
+                    </div>
                 </div>
-            </div>
-        </aside>
+            </aside>
 
-        <!-- Lucide Icon Picker Modal -->
-        <div class="pb-icon-modal" id="iconPickerModal" style="display:none;">
-            <div class="pb-icon-modal-content">
-                <div class="pb-icon-modal-header">
-                    <h3>🎨 Choose Lucide Icon</h3>
-                    <input type="text" id="iconSearch" placeholder="Search icons..." oninput="filterIcons(this.value)">
-                    <button class="pb-panel-close" onclick="closeIconPicker()">✕</button>
+            <!-- Lucide Icon Picker Modal -->
+            <div class="pb-icon-modal" id="iconPickerModal" style="display:none;">
+                <div class="pb-icon-modal-content">
+                    <div class="pb-icon-modal-header">
+                        <h3>🎨 Choose Lucide Icon</h3>
+                        <input type="text" id="iconSearch" placeholder="Search icons..."
+                            oninput="filterIcons(this.value)">
+                        <button class="pb-panel-close" onclick="closeIconPicker()">✕</button>
+                    </div>
+                    <div class="pb-icon-grid" id="iconGrid"></div>
                 </div>
-                <div class="pb-icon-grid" id="iconGrid"></div>
             </div>
-        </div>
     </div>
 
     <!-- Core toggle functions (must be global, before Quill) -->

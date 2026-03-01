@@ -105,14 +105,16 @@ button {
 /* ============================================
    ADMIN LAYOUT
    ============================================ */
-.admin-layout {
+.admin-layout,
+.cms-layout {
     display: flex;
     min-height: 100vh;
+    width: 100%;
 }
 
 /* --- Sidebar --- */
 .admin-sidebar {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     width: var(--admin-sidebar-w);
@@ -123,6 +125,7 @@ button {
     flex-direction: column;
     z-index: 50;
     overflow-y: auto;
+    flex-shrink: 0;
 }
 
 .admin-sidebar-header {
@@ -245,10 +248,11 @@ button {
 
 /* --- Main Content --- */
 .admin-main {
-    margin-left: var(--admin-sidebar-w);
     flex: 1;
     padding: 2rem 2.5rem;
     min-height: 100vh;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .admin-header {
@@ -672,6 +676,7 @@ button {
 
 @media (max-width: 768px) {
     .admin-sidebar {
+        position: fixed;
         transform: translateX(-100%);
         transition: transform var(--transition-base);
     }

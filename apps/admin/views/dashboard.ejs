@@ -13,89 +13,396 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/admin.css">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-primary, #0a0a1a);
+        }
+
+        .cms-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Modal Styles */
+        .admin-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-modal-overlay.active {
+            display: flex;
+        }
+
+        .admin-modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .admin-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .admin-modal-close:hover {
+            color: #fff;
+        }
+
+        /* Visual builder styles */
+        .vb-toolbar {
+            height: 60px;
+            background: var(--bg-secondary, #111127);
+            border-bottom: 1px solid var(--border, #1e1e3a);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .vb-toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .device-toggles {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .device-btn {
+            background: transparent;
+            border: none;
+            color: #888;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .device-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .device-btn.active {
+            color: #fff;
+            background: #7c3aed;
+        }
+
+        .vb-workspace {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(135deg, #080818 0%, #0d0d25 100%);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .vb-canvas-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .vb-iframe {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .vb-canvas-container.desktop .vb-iframe {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .vb-canvas-container.tablet .vb-iframe {
+            width: 768px;
+        }
+
+        .vb-canvas-container.mobile .vb-iframe {
+            width: 375px;
+        }
+
+        .admin-nav-item.active {
+            background: rgba(124, 58, 237, 0.15);
+            border-left: 3px solid #7c3aed;
+            color: #fff;
+        }
+
+        /* Properties Panel (Elementor Style) */
+        .properties-panel {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100vh;
+            background: var(--bg-secondary, #111127);
+            border-left: 1px solid var(--border, #1e1e3a);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .properties-panel.open {
+            right: 0;
+        }
+
+        .properties-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border, #1e1e3a);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .properties-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .properties-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .properties-close:hover {
+            color: #fff;
+        }
+
+        .properties-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .properties-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border, #1e1e3a);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .prop-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .prop-group label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #a0a0c0;
+            margin-bottom: 0.5rem;
+        }
+
+        .prop-group input,
+        .prop-group textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            color: #fff;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .prop-group input:focus,
+        .prop-group textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        .prop-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+    </style>
 </head>
 
-<body>
+<body data-saved="<%= typeof saved !== 'undefined' && saved ? 'true' : 'false' %>"
+    data-pw-modal="<%= ((typeof pwError !== 'undefined' && pwError) || (typeof pwSuccess !== 'undefined' && pwSuccess)) ? 'true' : 'false' %>">
+    <div class="cms-layout">
+        <!-- Sidebar via Partial -->
+        <%- include('partials/sidebar', { currentMenu: 'dashboard' , page: null }) %>
 
-    <div class="admin-layout">
-        <!-- Sidebar -->
-        <aside class="admin-sidebar">
-            <div class="admin-sidebar-header">
-                <a href="/" class="admin-logo">
+            <!-- Main Visual Builder Area -->
+            <main class="cms-main">
+                <!-- Toolbar -->
+                <header class="vb-toolbar">
+                    <div class="vb-toolbar-group">
+                        <div class="vb-toolbar-title" style="color: #fff; font-weight: 600;">
+                            Visual Builder: <span id="currentPageLabel"
+                                style="color: #a78bfa; margin-left:0.5rem;">Home</span>
+                        </div>
+                    </div>
 
-                    <span class="logo-x">X</span> DOT AI
-                </a>
-                <span class="admin-badge">CMS</span>
-            </div>
+                    <div class="vb-toolbar-group device-toggles">
+                        <button class="device-btn active" onclick="setDevice('desktop')" id="btn-desktop"
+                            title="Desktop View">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                        </button>
+                        <button class="device-btn" onclick="setDevice('tablet')" id="btn-tablet" title="Tablet View">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                            </svg>
+                        </button>
+                        <button class="device-btn" onclick="setDevice('mobile')" id="btn-mobile" title="Mobile View">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
 
-            <nav class="admin-nav">
-                <a href="/admin/" class="admin-nav-item active">
+                    <div class="vb-toolbar-group">
+                        <a href="#" id="editPageBtn" class="admin-btn admin-btn-secondary admin-btn-small">Page
+                            Options</a>
+                        <a href="/" id="viewLiveBtn" class="admin-btn admin-btn-small" target="_blank">View Live ↗</a>
+                    </div>
+                </header>
 
-                    <span class="admin-nav-icon">📊</span> Dashboard
-                </a>
+                <div class="vb-workspace">
+                    <div class="vb-canvas-container desktop" id="canvasContainer">
+                        <iframe src="/" class="vb-iframe" id="previewIframe" title="Live Preview"></iframe>
+                    </div>
+                </div>
+            </main>
 
-                <a href="/admin/blog" class="admin-nav-item">
+            <!-- Elementor-Style Properties Panel -->
+            <aside class="properties-panel" id="propertiesPanel">
+                <div class="properties-header">
+                    <h3>⚙️ Edit Section</h3>
+                    <button class="properties-close" onclick="closePropertiesPanel()">&times;</button>
+                </div>
+                <div class="properties-body">
+                    <input type="hidden" id="prop-model">
+                    <input type="hidden" id="prop-id">
 
-                    <span class="admin-nav-icon">📝</span> Blog Manager
-                </a>
+                    <div class="prop-group">
+                        <label>Title</label>
+                        <input type="text" id="prop-title" oninput="streamPreviewUpdate('title', this.value)">
+                    </div>
 
-                <a href="/admin/nav-logos" class="admin-nav-item">
+                    <div class="prop-group">
+                        <label>Description</label>
+                        <textarea id="prop-description"
+                            oninput="streamPreviewUpdate('description', this.value)"></textarea>
+                    </div>
 
-                    <span class="admin-nav-icon">🧭</span> Nav & Logos
-                </a>
+                    <div class="prop-group">
+                        <label>Icon / Emoji</label>
+                        <input type="text" id="prop-icon" oninput="streamPreviewUpdate('icon', this.value)">
+                    </div>
 
-                <a href="/admin/home-manager" class="admin-nav-item">
+                    <hr style="border:0; border-top:1px solid #1e1e3a; margin: 1.5rem 0;">
 
-                    <span class="admin-nav-icon">🏠</span> Home Manager
-                </a>
+                    <h4 style="margin-top:0; margin-bottom:1rem; color:#fff; font-size:0.9rem;">🎨 Styling</h4>
 
-                <div class="admin-nav-separator">Pages</div>
-                <% pages.forEach(p=> { %>
-                    <a href="/admin/page/<%= p.slug %>" class="admin-nav-item">
+                    <div class="prop-group">
+                        <label>Background Color</label>
+                        <div style="display:flex; gap:0.5rem;">
+                            <input type="color" id="prop-bg-color-picker"
+                                style="width:40px; padding:0; height:36px; border:none;"
+                                oninput="document.getElementById('prop-bg-color').value = this.value; streamPreviewUpdate('background_color', this.value)">
+                            <input type="text" id="prop-bg-color" placeholder="e.g. #000000 or rgba(0,0,0,0.5)"
+                                oninput="document.getElementById('prop-bg-color-picker').value = this.value.startsWith('#') ? this.value.substring(0,7) : '#000000'; streamPreviewUpdate('background_color', this.value)">
+                        </div>
+                    </div>
 
-                        <span class="admin-nav-icon">📄</span>
-                        <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
-                            <span class="admin-nav-badge">
-                                <%= sectionCounts[p.slug] || 0 %>
-                            </span>
-                    </a>
+                    <div class="prop-group">
+                        <label>Padding Area</label>
+                        <input type="text" id="prop-padding" placeholder="e.g. 4rem 0"
+                            oninput="streamPreviewUpdate('padding', this.value)">
+                    </div>
+                </div>
+                <div class="properties-footer">
+                    <button class="admin-btn admin-btn-primary" style="width:100%; justify-content:center;"
+                        onclick="saveSectionProperties()" id="savePropsBtn">Save Changes</button>
+                </div>
+            </aside>
+    </div>
 
-                    <% }) %>
-            </nav>
-
-            <div class="admin-sidebar-footer">
-                <span>Logged in as <strong>
-                        <%= adminUser %>
-                    </strong></span>
-                <a href="/admin/logout" class="admin-logout">Logout →</a>
-
-
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="admin-main">
+    <!-- Modals Overlay -->
+    <div id="settingsModal" class="admin-modal-overlay">
+        <div class="admin-modal-content">
+            <button class="admin-modal-close" onclick="closeModal('settingsModal')">&times;</button>
             <div class="admin-header">
-                <h1>Dashboard</h1>
-                <a href="/" class="admin-btn admin-btn-secondary" target="_blank">View Site ↗</a>
-
-                <a href="/admin/page-create" class="admin-btn admin-btn-primary">✨ Create New Page</a>
-
-
+                <h1>Settings & System</h1>
             </div>
 
             <% if (typeof saved !=='undefined' && saved) { %>
                 <div class="admin-alert admin-alert-success">✅ Changes saved successfully!</div>
                 <% } %>
 
-                    <!-- Stats Cards -->
-                    <div class="admin-stats-grid">
+                    <!-- Stats -->
+                    <div class="admin-stats-grid" style="margin-bottom: 2rem;">
                         <div class="admin-stat-card">
                             <div class="admin-stat-number">
                                 <%= pages.length %>
                             </div>
                             <div class="admin-stat-label">Total Pages</div>
                         </div>
+                        <!-- section counts block -->
                         <div class="admin-stat-card">
                             <div class="admin-stat-number">
                                 <%= Object.values(sectionCounts).reduce((a,b)=> a+b, 0) %>
@@ -104,21 +411,9 @@
                         </div>
                         <div class="admin-stat-card">
                             <div class="admin-stat-number">
-                                <%= settings.stat_projects || '50' %>+
-                            </div>
-                            <div class="admin-stat-label">Projects</div>
-                        </div>
-                        <div class="admin-stat-card">
-                            <div class="admin-stat-number">
                                 <%= typeof mediaCount !=='undefined' ? mediaCount : 0 %>
                             </div>
                             <div class="admin-stat-label">Media Files</div>
-                        </div>
-                        <div class="admin-stat-card">
-                            <div class="admin-stat-number">
-                                <%= settings.stat_trained || '5000' %>+
-                            </div>
-                            <div class="admin-stat-label">Trained</div>
                         </div>
                     </div>
 
@@ -126,8 +421,6 @@
                     <div class="admin-card">
                         <h2>Site Settings</h2>
                         <form method="POST" action="/admin/settings" class="admin-settings-form">
-
-
                             <div class="admin-form-row">
                                 <div class="admin-form-group">
                                     <label>Site Name</label>
@@ -167,10 +460,9 @@
                                         AI content generation & SEO)</small></label>
                                 <input type="password" name="openai_api_key"
                                     value="<%= settings.openai_api_key || '' %>" placeholder="sk-...">
-                                <small style="color: var(--text-muted); font-size: 0.7rem;">
-                                    Your API key is stored securely and never exposed. Required for AI Assistant
-                                    features in the Page Builder.
-                                </small>
+                                <small style="color: var(--text-muted); font-size: 0.7rem;">Your API key is stored
+                                    securely and never exposed. Required for AI Assistant features in the Page
+                                    Builder.</small>
                             </div>
                             <button type="submit" class="admin-btn admin-btn-primary">Save Settings</button>
                         </form>
@@ -180,8 +472,6 @@
                     <div class="admin-card">
                         <h2>🎨 Branding</h2>
                         <form method="POST" action="/admin/branding" enctype="multipart/form-data">
-
-
                             <div class="admin-form-row">
                                 <div class="admin-form-group">
                                     <label>🔷 Favicon <small
@@ -228,8 +518,6 @@
                     <div class="admin-card">
                         <h2>🔒 Change Admin Password</h2>
                         <form method="POST" action="/admin/change-password">
-
-
                             <% if (typeof pwError !=='undefined' && pwError) { %>
                                 <div class="admin-alert"
                                     style="background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.3); color:#ef4444; margin-bottom:1rem;">
@@ -261,49 +549,200 @@
                                                 Password</button>
                         </form>
                     </div>
-                    <!-- Pages Overview -->
-                    <div class="admin-card">
-                        <h2>Pages</h2>
-                        <div class="admin-table-wrapper">
-                            <table class="admin-table">
-                                <thead>
-                                    <tr>
-                                        <th>Page</th>
-                                        <th>Slug</th>
-                                        <th>Sections</th>
-                                        <th>Last Updated</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% pages.forEach(p=> { %>
-                                        <tr>
-                                            <td><strong>
-                                                    <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
-                                                </strong></td>
-                                            <td><code>/<%= p.slug === 'home' ? '' : p.slug %></code></td>
-                                            <td><span class="admin-nav-badge">
-                                                    <%= sectionCounts[p.slug] || 0 %>
-                                                </span></td>
-                                            <td>
-                                                <%= p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '—' %>
-                                            </td>
-                                            <td>
-                                                <a href="./page/<%= p.slug %>"
-                                                    class="admin-btn admin-btn-small">Edit</a>
-                                                <a href="/<%= p.slug === 'home' ? '' : p.slug %>"
-                                                    class="admin-btn admin-btn-small admin-btn-secondary"
-                                                    target="_blank">View</a>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-        </main>
+        </div>
     </div>
 
+    <!-- Pages Overview Modal -->
+    <div id="pagesModal" class="admin-modal-overlay">
+        <div class="admin-modal-content">
+            <button class="admin-modal-close" onclick="closeModal('pagesModal')">&times;</button>
+            <div class="admin-header">
+                <h1>Pages Overview</h1>
+                <a href="/admin/page-create" class="admin-btn admin-btn-primary">✨ Create New Page</a>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Page</th>
+                                <th>Slug</th>
+                                <th>Sections</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% pages.forEach(p=> { %>
+                                <tr>
+                                    <td><strong>
+                                            <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
+                                        </strong></td>
+                                    <td><code>/<%= p.slug === 'home' ? '' : p.slug %></code></td>
+                                    <td><span class="admin-nav-badge">
+                                            <%= sectionCounts[p.slug] || 0 %>
+                                        </span></td>
+                                    <td>
+                                        <%= p.updated_at ? new Date(p.updated_at).toLocaleDateString() : '—' %>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/page/<%= p.slug %>" class="admin-btn admin-btn-small">Page
+                                            Options</a>
+                                        <a href="/<%= p.slug === 'home' ? '' : p.slug %>"
+                                            class="admin-btn admin-btn-small admin-btn-secondary"
+                                            target="_blank">View</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Init visual builder
+        let activeDevice = 'desktop';
+
+        function setDevice(device) {
+            document.getElementById('canvasContainer').className = 'vb-canvas-container ' + device;
+            document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + device).classList.add('active');
+            activeDevice = device;
+        }
+
+        function loadPageInBuilder(slug) {
+            const iframeSrc = slug === 'home' ? '/' : '/' + slug;
+            document.getElementById('previewIframe').src = iframeSrc;
+
+            document.getElementById('currentPageLabel').textContent = slug.charAt(0).toUpperCase() + slug.slice(1);
+            document.getElementById('viewLiveBtn').href = iframeSrc;
+            document.getElementById('editPageBtn').href = '/admin/page/' + slug;
+
+            document.querySelectorAll('.page-nav-item').forEach(el => el.classList.remove('active'));
+            const activeNav = document.querySelector(`.page-nav-item[data-slug='${slug}']`);
+            if (activeNav) activeNav.classList.add('active');
+
+            // Push state so reload works
+            window.history.replaceState({ slug }, '', '/admin/?page=' + slug);
+        }
+
+        // Modals
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // Setup initial state
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+
+            // Check for modals opening
+            if (params.get('modal') === 'settings') {
+                openModal('settingsModal');
+            } else if (params.get('modal') === 'pages') {
+                openModal('pagesModal');
+            }
+
+            const initPage = params.get('page') || 'home';
+            loadPageInBuilder(initPage);
+
+            const bodyData = document.body.dataset;
+            if (bodyData.saved === 'true') openModal('settingsModal');
+            if (bodyData.pwModal === 'true') openModal('settingsModal');
+        });
+
+        // ─── POSTMESSAGE LISTENER FOR ADVANCED SECTION EDITING ───
+        const propPanel = document.getElementById('propertiesPanel');
+        const iframe = document.getElementById('previewIframe');
+
+        window.addEventListener('message', (event) => {
+            const { action, data } = event.data;
+            if (action === 'OPEN_SECTION_EDITOR' && data) {
+                openPropertiesPanel(data);
+            }
+        });
+
+        function openPropertiesPanel(data) {
+            document.getElementById('prop-model').value = data.model;
+            document.getElementById('prop-id').value = data.id;
+            document.getElementById('prop-title').value = data.title || '';
+            document.getElementById('prop-description').value = data.description || '';
+            document.getElementById('prop-icon').value = data.icon || '';
+
+            const extra = data.extra_json || {};
+            const bgColor = extra.background_color || '';
+            document.getElementById('prop-bg-color').value = bgColor;
+            if (bgColor.startsWith('#')) {
+                document.getElementById('prop-bg-color-picker').value = bgColor.substring(0, 7);
+            } else {
+                document.getElementById('prop-bg-color-picker').value = '#000000';
+            }
+
+            document.getElementById('prop-padding').value = extra.padding || '';
+
+            propPanel.classList.add('open');
+        }
+
+        function closePropertiesPanel() {
+            propPanel.classList.remove('open');
+        }
+
+        function streamPreviewUpdate(field, value) {
+            const id = document.getElementById('prop-id').value;
+            if (!id || !iframe.contentWindow) return;
+
+            iframe.contentWindow.postMessage({
+                action: 'UPDATE_SECTION_PREVIEW',
+                id,
+                field,
+                value
+            }, '*');
+        }
+
+        async function saveSectionProperties() {
+            const btn = document.getElementById('savePropsBtn');
+            const originalText = btn.innerText;
+            btn.innerText = 'Saving...';
+            btn.disabled = true;
+
+            const model = document.getElementById('prop-model').value;
+            const id = document.getElementById('prop-id').value;
+
+            const updates = {
+                title: document.getElementById('prop-title').value,
+                description: document.getElementById('prop-description').value,
+                icon: document.getElementById('prop-icon').value,
+                extra_json: JSON.stringify({
+                    background_color: document.getElementById('prop-bg-color').value,
+                    padding: document.getElementById('prop-padding').value
+                })
+            };
+
+            try {
+                const res = await fetch('/admin/api/section-update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model, id, updates })
+                });
+
+                if (res.ok) {
+                    btn.innerText = 'Saved!';
+                    setTimeout(() => { btn.innerText = originalText; btn.disabled = false; closePropertiesPanel(); }, 2000);
+                } else {
+                    const data = await res.json();
+                    alert('Error saving: ' + data.error);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error saving section.');
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
 </body>
 
 </html>

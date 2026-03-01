@@ -57,11 +57,14 @@
         <!-- Page Hero -->
         <section class="page-hero" aria-label="Portfolio hero">
             <div class="container">
-                <span class="section-label">
+                <span class="section-label" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                    data-field="hero_label" data-type="text">
                     <%= page.hero_label %>
                 </span>
-                <h1 class="page-hero-title"><%- page.hero_title %></h1>
-                <p class="page-hero-subtitle">
+                <h1 class="page-hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                    data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
+                <p class="page-hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                    data-field="hero_subtitle" data-type="text">
                     <%= page.hero_subtitle %>
                 </p>
             </div>
@@ -86,7 +89,8 @@
 
                 <!-- Filter Description -->
                 <div class="portfolio-filter-desc reveal" id="filterDesc">
-                    <p>
+                    <p data-editable="true" data-model="Page" data-id="<%= page._id %>" data-field="hero_subtitle"
+                        data-type="text">
                         <%= page.hero_subtitle %>
                     </p>
                 </div>
@@ -98,47 +102,27 @@
                         const thumbUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : '';
                         const watchUrl = youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : '';
                         %>
-                        <article class="portfolio-card"
-                            data-category="<%= (p.tag || '').toLowerCase().replace(/\s+/g, '-') %>" itemscope
-                            itemtype="https://schema.org/VideoObject">
-                            <figure class="portfolio-video-wrap">
-                                <% if (youtubeId) { %>
-                                    <!-- Facade Player: thumbnail + play button, iframe loads on click -->
-                                    <div class="portfolio-facade" data-youtube-id="<%= youtubeId %>" role="button"
-                                        tabindex="0" aria-label="Play video: <%= p.title %>"
-                                        title="Click to play: <%= p.title %>">
-                                        <img class="portfolio-thumb-img"
-                                            src="https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg" srcset="https://img.youtube.com/vi/<%= youtubeId %>/mqdefault.jpg 320w,
+                        <% var portExtra=p && p.extra_json ? JSON.parse(p.extra_json) : {}; var portStyle="" ; if
+                            (portExtra.background_color) portStyle +=`background-color: ${portExtra.background_color};
+                            `; if (portExtra.padding) portStyle +=`padding: ${portExtra.padding};`; %>
+                            <article class="portfolio-card"
+                                data-category="<%= (p.tag || '').toLowerCase().replace(/\s+/g, '-') %>" itemscope
+                                itemtype="https://schema.org/VideoObject" data-editable-section="true"
+                                data-model="Section" data-id="<%= p.id %>" data-extra="<%= p.extra_json || '{}' %>" <%-
+                                portStyle ? `style="${portStyle}" ` : '' %>>
+                                <figure class="portfolio-video-wrap">
+                                    <% if (youtubeId) { %>
+                                        <!-- Facade Player: thumbnail + play button, iframe loads on click -->
+                                        <div class="portfolio-facade" data-youtube-id="<%= youtubeId %>" role="button"
+                                            tabindex="0" aria-label="Play video: <%= p.title %>"
+                                            title="Click to play: <%= p.title %>">
+                                            <img class="portfolio-thumb-img"
+                                                src="https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg" srcset="https://img.youtube.com/vi/<%= youtubeId %>/mqdefault.jpg 320w,
                                                  https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg 480w,
                                                  https://img.youtube.com/vi/<%= youtubeId %>/maxresdefault.jpg 1280w"
-                                            sizes="(max-width: 768px) 100vw, 50vw"
-                                            alt="<%= p.title %> — <%= p.tag || 'Video' %> by X DOT AI" loading="lazy"
-                                            width="480" height="360">
-                                        <div class="facade-play-btn" aria-hidden="true">
-                                            <svg viewBox="0 0 68 48" width="68" height="48">
-                                                <path class="facade-play-bg"
-                                                    d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"
-                                                    fill="#f00" />
-                                                <path d="M45 24L27 14v20" fill="#fff" />
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <!-- Noscript fallback: direct YouTube link -->
-                                    <noscript>
-                                        <a href="<%= watchUrl %>" target="_blank" rel="noopener noreferrer">
-                                            <img src="https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg"
-                                                alt="Watch <%= p.title %> on YouTube" width="480" height="360">
-                                        </a>
-                                    </noscript>
-
-                                    <!-- Hidden SEO meta -->
-                                    <meta itemprop="thumbnailUrl" content="<%= thumbUrl %>">
-                                    <meta itemprop="contentUrl" content="<%= watchUrl %>">
-                                    <meta itemprop="embedUrl" content="https://www.youtube.com/embed/<%= youtubeId %>">
-                                    <% } else { %>
-                                        <div class="portfolio-placeholder"
-                                            style="background: <%= (p.extra && p.extra.gradient) || 'linear-gradient(135deg, #1a0533, #7c3aed)' %>;">
+                                                sizes="(max-width: 768px) 100vw, 50vw"
+                                                alt="<%= p.title %> — <%= p.tag || 'Video' %> by X DOT AI"
+                                                loading="lazy" width="480" height="360">
                                             <div class="facade-play-btn" aria-hidden="true">
                                                 <svg viewBox="0 0 68 48" width="68" height="48">
                                                     <path class="facade-play-bg"
@@ -148,26 +132,58 @@
                                                 </svg>
                                             </div>
                                         </div>
-                                        <% } %>
-                            </figure>
 
-                            <div class="portfolio-info">
-                                <h2 itemprop="name">
-                                    <%= p.title %>
-                                </h2>
-                                <p itemprop="description">
-                                    <%= p.description %>
-                                </p>
-                                <% if (p.tag) { %>
-                                    <span class="portfolio-tag">
-                                        <%= p.tag %>
-                                    </span>
-                                    <% } %>
-                                        <meta itemprop="uploadDate"
-                                            content="<%= new Date().toISOString().split('T')[0] %>">
-                            </div>
-                        </article>
-                        <% }) %>
+                                        <!-- Noscript fallback: direct YouTube link -->
+                                        <noscript>
+                                            <a href="<%= watchUrl %>" target="_blank" rel="noopener noreferrer">
+                                                <img src="https://img.youtube.com/vi/<%= youtubeId %>/hqdefault.jpg"
+                                                    alt="Watch <%= p.title %> on YouTube" width="480" height="360">
+                                            </a>
+                                        </noscript>
+
+                                        <!-- Hidden SEO meta -->
+                                        <meta itemprop="thumbnailUrl" content="<%= thumbUrl %>">
+                                        <meta itemprop="contentUrl" content="<%= watchUrl %>">
+                                        <meta itemprop="embedUrl"
+                                            content="https://www.youtube.com/embed/<%= youtubeId %>">
+                                        <% } else { %>
+                                            <% const bgGrad=(p.extra && p.extra.gradient)
+                                                || 'linear-gradient(135deg, #1a0533, #7c3aed)' ; const
+                                                bgStyle=`background: ${bgGrad};`; %>
+                                                <div class="portfolio-placeholder" <%- bgStyle ? `style="${bgStyle}" `
+                                                    : '' %>>
+                                                    <div class="facade-play-btn" aria-hidden="true">
+                                                        <svg viewBox="0 0 68 48" width="68" height="48">
+                                                            <path class="facade-play-bg"
+                                                                d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"
+                                                                fill="#f00" />
+                                                            <path d="M45 24L27 14v20" fill="#fff" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <% } %>
+                                </figure>
+
+                                <div class="portfolio-info">
+                                    <h2 itemprop="name" data-editable="true" data-model="Section" data-id="<%= p.id %>"
+                                        data-field="title" data-type="text">
+                                        <%= p.title %>
+                                    </h2>
+                                    <p itemprop="description" data-editable="true" data-model="Section"
+                                        data-id="<%= p.id %>" data-field="description" data-type="text">
+                                        <%= p.description %>
+                                    </p>
+                                    <% if (p.tag) { %>
+                                        <span class="portfolio-tag" data-editable="true" data-model="Section"
+                                            data-id="<%= p.id %>" data-field="tag" data-type="text">
+                                            <%= p.tag %>
+                                        </span>
+                                        <% } %>
+                                            <meta itemprop="uploadDate"
+                                                content="<%= new Date().toISOString().split('T')[0] %>">
+                                </div>
+                            </article>
+                            <% }) %>
                 </div>
 
                 <% if (portfolioItems.length===0) { %>
@@ -193,7 +209,8 @@
         <script>
             (function () {
                 // ── Tab descriptions (from DB) ──
-                const filterDescs = <%- categoryDescsJson %>;
+                const filterDescsStr = `<%- categoryDescsJson %>`;
+                const filterDescs = filterDescsStr ? JSON.parse(filterDescsStr) : {};
                 const descEl = document.getElementById('filterDesc');
 
                 // ── Facade → iframe swap ──

@@ -3,11 +3,14 @@
     <!-- Hero Section -->
     <section class="page-hero" aria-label="About Da Sachin Sharma">
         <div class="container">
-            <div class="hero-badge">
+            <div class="hero-badge" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="nav_label" data-type="text">
                 <%= page.nav_label %>
             </div>
-            <h1 class="hero-title"><%- page.hero_title %></h1>
-            <p class="hero-subtitle">
+            <h1 class="hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
+            <p class="hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_subtitle" data-type="text">
                 <%= page.hero_subtitle %>
             </p>
         </div>
@@ -18,24 +21,33 @@
         <% if (founder) { %>
             <section class="section" aria-label="About the Founder">
                 <div class="container">
-                    <div class="about-founder-card glass-card">
-                        <div class="about-founder-avatar">
-                            <span class="founder-icon">
-                                <%= founder.icon %>
-                            </span>
+                    <% var fExtra=founder && founder.extra_json ? JSON.parse(founder.extra_json) : {}; var fStyle="" ;
+                        if (fExtra.background_color) fStyle +=`background-color: ${fExtra.background_color}; `; if
+                        (fExtra.padding) fStyle +=`padding: ${fExtra.padding};`; %>
+                        <div class="about-founder-card glass-card" data-editable-section="true" data-model="Section"
+                            data-id="<%= founder.id %>" data-extra="<%= founder.extra_json || '{}' %>" <%- fStyle ?
+                            `style="${fStyle}" ` : '' %>>
+                            <div class="about-founder-avatar">
+                                <span class="founder-icon" data-editable="true" data-model="Section"
+                                    data-id="<%= founder.id %>" data-field="icon" data-type="text">
+                                    <%= founder.icon %>
+                                </span>
+                            </div>
+                            <div class="about-founder-content">
+                                <span class="founder-role" data-editable="true" data-model="Section"
+                                    data-id="<%= founder.id %>" data-field="subtitle" data-type="text">
+                                    <%= founder.subtitle %>
+                                </span>
+                                <h2 data-editable="true" data-model="Section" data-id="<%= founder.id %>"
+                                    data-field="title" data-type="text">
+                                    <%= founder.title %>
+                                </h2>
+                                <p data-editable="true" data-model="Section" data-id="<%= founder.id %>"
+                                    data-field="description" data-type="text">
+                                    <%= founder.description %>
+                                </p>
+                            </div>
                         </div>
-                        <div class="about-founder-content">
-                            <span class="founder-role">
-                                <%= founder.subtitle %>
-                            </span>
-                            <h2>
-                                <%= founder.title %>
-                            </h2>
-                            <p>
-                                <%= founder.description %>
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </section>
             <% } %>
@@ -48,18 +60,28 @@
                                 <h2 class="section-title">Key <span class="text-gradient">Achievements</span></h2>
                                 <div class="achievements-grid">
                                     <% achievements.forEach(ach=> { %>
-                                        <div class="achievement-card glass-card">
-                                            <span class="achievement-icon">
-                                                <%= ach.icon %>
-                                            </span>
-                                            <h3>
-                                                <%= ach.title %>
-                                            </h3>
-                                            <p>
-                                                <%= ach.description %>
-                                            </p>
-                                        </div>
-                                        <% }) %>
+                                        <% var achExtra=ach && ach.extra_json ? JSON.parse(ach.extra_json) : {}; var
+                                            achStyle="" ; if (achExtra.background_color) achStyle +=`background-color:
+                                            ${achExtra.background_color}; `; if (achExtra.padding) achStyle +=`padding:
+                                            ${achExtra.padding};`; %>
+                                            <div class="achievement-card glass-card" data-editable-section="true"
+                                                data-model="Section" data-id="<%= ach.id %>"
+                                                data-extra="<%= ach.extra_json || '{}' %>" <%- achStyle ?
+                                                `style="${achStyle}" ` : '' %>>
+                                                <span class="achievement-icon" data-editable="true" data-model="Section"
+                                                    data-id="<%= ach.id %>" data-field="icon" data-type="text">
+                                                    <%= ach.icon %>
+                                                </span>
+                                                <h3 data-editable="true" data-model="Section" data-id="<%= ach.id %>"
+                                                    data-field="title" data-type="text">
+                                                    <%= ach.title %>
+                                                </h3>
+                                                <p data-editable="true" data-model="Section" data-id="<%= ach.id %>"
+                                                    data-field="description" data-type="text">
+                                                    <%= ach.description %>
+                                                </p>
+                                            </div>
+                                            <% }) %>
                                 </div>
                             </div>
                         </section>
@@ -73,18 +95,32 @@
                                             <h2 class="section-title">Our <span class="text-gradient">Values</span></h2>
                                             <div class="values-grid">
                                                 <% values.forEach(v=> { %>
-                                                    <div class="value-card glass-card">
-                                                        <span class="value-icon">
-                                                            <%= v.icon %>
-                                                        </span>
-                                                        <h3>
-                                                            <%= v.title %>
-                                                        </h3>
-                                                        <p>
-                                                            <%= v.description %>
-                                                        </p>
-                                                    </div>
-                                                    <% }) %>
+                                                    <% var valExtra=v && v.extra_json ? JSON.parse(v.extra_json) : {};
+                                                        var valStyle="" ; if (valExtra.background_color) valStyle
+                                                        +=`background-color: ${valExtra.background_color}; `; if
+                                                        (valExtra.padding) valStyle +=`padding: ${valExtra.padding};`;
+                                                        %>
+                                                        <div class="value-card glass-card" data-editable-section="true"
+                                                            data-model="Section" data-id="<%= v.id %>"
+                                                            data-extra="<%= v.extra_json || '{}' %>" <%- valStyle ?
+                                                            `style="${valStyle}" ` : '' %>>
+                                                            <span class="value-icon" data-editable="true"
+                                                                data-model="Section" data-id="<%= v.id %>"
+                                                                data-field="icon" data-type="text">
+                                                                <%= v.icon %>
+                                                            </span>
+                                                            <h3 data-editable="true" data-model="Section"
+                                                                data-id="<%= v.id %>" data-field="title"
+                                                                data-type="text">
+                                                                <%= v.title %>
+                                                            </h3>
+                                                            <p data-editable="true" data-model="Section"
+                                                                data-id="<%= v.id %>" data-field="description"
+                                                                data-type="text">
+                                                                <%= v.description %>
+                                                            </p>
+                                                        </div>
+                                                        <% }) %>
                                             </div>
                                         </div>
                                     </section>

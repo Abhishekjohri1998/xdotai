@@ -17,300 +17,280 @@
 </head>
 
 <body>
-    <div class="admin-layout">
-        <aside class="admin-sidebar">
-            <a href="/admin/" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
-                    class="admin-badge">BLOG</span></a>
-            <nav class="admin-nav">
-                <a href="/admin/" class="admin-nav-link">📊 Dashboard</a>
+    <div class="cms-layout">
+        <%- include('partials/sidebar', { currentMenu: 'blog' , page: null }) %>
 
-
-                <a href="/admin/blog" class="admin-nav-link">📝 All Posts</a>
-
-
-                <a href="/admin/blog/new" class="admin-nav-link <%= isNew ? 'active' : '' %>">✨ New Post</a>
-
-
-                <% if (!isNew && post) { %>
-                    <a href="/blogs/<%= post.slug %>" target="_blank" class="admin-nav-link">🌐 View Post</a>
-
+            <main class="admin-main">
+                <% if (typeof success !=='undefined' || (typeof req !=='undefined' )) { %>
                     <% } %>
-            </nav>
-            <div class="admin-sidebar-footer">
-                <span>Logged in as admin</span>
-                <a href="/admin/logout">Logout →</a>
+
+                        <form method="POST" action="/admin/blog/<%= isNew ? 'new' : post.slug %>"
+                            enctype="multipart/form-data" id="blogForm">
+                            <div class="admin-header" style="margin-bottom:1rem;">
+                                <h1>
+                                    <%= isNew ? '✨ New Blog Post' : '✏️ Edit Post' %>
+                                </h1>
+                                <div style="display:flex;gap:0.5rem;">
+                                    <a href="/admin/blog" class="admin-btn admin-btn-secondary">← Back</a>
 
 
-            </div>
-        </aside>
-
-        <main class="admin-main">
-            <% if (typeof success !=='undefined' || (typeof req !=='undefined' )) { %>
-                <% } %>
-
-                    <form method="POST" action="/admin/blog/<%= isNew ? 'new' : post.slug %>"
-                        enctype="multipart/form-data" id="blogForm">
-                        <div class="admin-header" style="margin-bottom:1rem;">
-                            <h1>
-                                <%= isNew ? '✨ New Blog Post' : '✏️ Edit Post' %>
-                            </h1>
-                            <div style="display:flex;gap:0.5rem;">
-                                <a href="/admin/blog" class="admin-btn admin-btn-secondary">← Back</a>
-
-
-                                <button type="submit" name="status" value="draft"
-                                    class="admin-btn admin-btn-secondary">💾 Save Draft</button>
-                                <button type="submit" name="status" value="published"
-                                    class="admin-btn admin-btn-primary">🚀 Publish</button>
+                                    <button type="submit" name="status" value="draft"
+                                        class="admin-btn admin-btn-secondary">💾 Save Draft</button>
+                                    <button type="submit" name="status" value="published"
+                                        class="admin-btn admin-btn-primary">🚀 Publish</button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="blog-editor-layout">
-                            <!-- Main Content -->
-                            <div class="blog-editor-main">
-                                <!-- Title -->
-                                <div class="admin-card" style="padding:1.5rem;">
-                                    <input type="text" name="title" id="postTitle" value="<%= post ? post.title : '' %>"
-                                        placeholder="Enter your blog post title..." required class="blog-title-input"
-                                        oninput="generateSlug(this.value)">
-                                    <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
-                                        <span style="color:var(--text-muted);font-size:0.75rem;">🔗</span>
-                                        <input type="text" name="slug" id="postSlug"
-                                            value="<%= post ? post.slug : '' %>" placeholder="auto-generated-slug"
-                                            style="flex:1;font-size:0.8rem;background:transparent;border:1px solid var(--border-subtle);border-radius:6px;padding:0.3rem 0.5rem;color:var(--text-secondary);">
-                                    </div>
-                                </div>
-
-                                <!-- Featured Image -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🖼️ Featured Image</h3>
-                                    <div class="blog-featured-image-area">
-                                        <% if (post && post.featured_image) { %>
-                                            <img src="<%= post.featured_image %>" alt="<%= post.featured_image_alt %>"
-                                                id="featuredPreview" class="blog-featured-preview">
-                                            <% } else { %>
-                                                <div id="featuredPreview" class="blog-featured-placeholder">
-                                                    <span>📷</span>
-                                                    <p>No featured image</p>
-                                                </div>
-                                                <% } %>
-                                                    <div class="blog-featured-controls">
-                                                        <input type="file" name="featured_image_file" id="featuredFile"
-                                                            accept="image/*" class="pb-file-input"
-                                                            onchange="previewFeaturedImage(this)">
-                                                        <input type="hidden" name="featured_image" id="featuredUrl"
-                                                            value="<%= post ? post.featured_image || '' : '' %>">
-                                                        <div class="admin-form-group" style="margin-top:0.5rem;">
-                                                            <label style="font-size:0.75rem;">Alt Text (SEO)</label>
-                                                            <input type="text" name="featured_image_alt"
-                                                                value="<%= post ? post.featured_image_alt || '' : '' %>"
-                                                                placeholder="Describe image for accessibility">
-                                                        </div>
-                                                    </div>
-                                    </div>
-                                </div>
-
-                                <!-- AI Content Generator -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🤖 AI Content Generator</h3>
-                                    <div class="admin-form-row" style="gap:0.5rem;">
-                                        <div class="admin-form-group" style="flex:3;">
-                                            <input type="text" id="aiTopic"
-                                                placeholder="Enter a topic, e.g. 'How AI is Transforming Ad Film Production'">
+                            <div class="blog-editor-layout">
+                                <!-- Main Content -->
+                                <div class="blog-editor-main">
+                                    <!-- Title -->
+                                    <div class="admin-card" style="padding:1.5rem;">
+                                        <input type="text" name="title" id="postTitle"
+                                            value="<%= post ? post.title : '' %>"
+                                            placeholder="Enter your blog post title..." required
+                                            class="blog-title-input" oninput="generateSlug(this.value)">
+                                        <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+                                            <span style="color:var(--text-muted);font-size:0.75rem;">🔗</span>
+                                            <input type="text" name="slug" id="postSlug"
+                                                value="<%= post ? post.slug : '' %>" placeholder="auto-generated-slug"
+                                                style="flex:1;font-size:0.8rem;background:transparent;border:1px solid var(--border-subtle);border-radius:6px;padding:0.3rem 0.5rem;color:var(--text-secondary);">
                                         </div>
-                                        <div class="admin-form-group" style="flex:1;">
-                                            <select id="aiStyle">
-                                                <option value="professional and insightful">Professional</option>
-                                                <option value="casual and engaging">Casual</option>
-                                                <option value="technical and detailed">Technical</option>
-                                                <option value="storytelling and narrative">Storytelling</option>
+                                    </div>
+
+                                    <!-- Featured Image -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🖼️ Featured Image</h3>
+                                        <div class="blog-featured-image-area">
+                                            <% if (post && post.featured_image) { %>
+                                                <img src="<%= post.featured_image %>"
+                                                    alt="<%= post.featured_image_alt %>" id="featuredPreview"
+                                                    class="blog-featured-preview">
+                                                <% } else { %>
+                                                    <div id="featuredPreview" class="blog-featured-placeholder">
+                                                        <span>📷</span>
+                                                        <p>No featured image</p>
+                                                    </div>
+                                                    <% } %>
+                                                        <div class="blog-featured-controls">
+                                                            <input type="file" name="featured_image_file"
+                                                                id="featuredFile" accept="image/*" class="pb-file-input"
+                                                                onchange="previewFeaturedImage(this)">
+                                                            <input type="hidden" name="featured_image" id="featuredUrl"
+                                                                value="<%= post ? post.featured_image || '' : '' %>">
+                                                            <div class="admin-form-group" style="margin-top:0.5rem;">
+                                                                <label style="font-size:0.75rem;">Alt Text (SEO)</label>
+                                                                <input type="text" name="featured_image_alt"
+                                                                    value="<%= post ? post.featured_image_alt || '' : '' %>"
+                                                                    placeholder="Describe image for accessibility">
+                                                            </div>
+                                                        </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- AI Content Generator -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🤖 AI Content Generator</h3>
+                                        <div class="admin-form-row" style="gap:0.5rem;">
+                                            <div class="admin-form-group" style="flex:3;">
+                                                <input type="text" id="aiTopic"
+                                                    placeholder="Enter a topic, e.g. 'How AI is Transforming Ad Film Production'">
+                                            </div>
+                                            <div class="admin-form-group" style="flex:1;">
+                                                <select id="aiStyle">
+                                                    <option value="professional and insightful">Professional</option>
+                                                    <option value="casual and engaging">Casual</option>
+                                                    <option value="technical and detailed">Technical</option>
+                                                    <option value="storytelling and narrative">Storytelling</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                                            <button type="button" class="admin-btn admin-btn-primary admin-btn-small"
+                                                onclick="aiGenerateBlog()" id="aiGenBtn">
+                                                ✨ Generate Article
+                                            </button>
+                                            <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                                onclick="aiGenerateSeo()" id="aiSeoBtn">
+                                                🔍 AI Optimize SEO
+                                            </button>
+                                            <span id="aiStatus"
+                                                style="font-size:0.75rem;color:var(--text-muted);align-self:center;"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Rich Text Editor -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📝 Content</h3>
+                                        <div id="blogEditor" class="blog-quill-editor">
+                                            <%= post ? post.content_html || '' : '' %>
+                                        </div>
+                                        <input type="hidden" name="content_html" id="contentHtml">
+                                        <input type="hidden" id="initContent"
+                                            value="<%- (post ? (post.content_html || '') : '').replace(/" /g, '&quot;' )
+                                            %>">
+                                    </div>
+
+                                    <!-- Excerpt -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📋 Excerpt</h3>
+                                        <textarea name="excerpt" id="postExcerpt" rows="3"
+                                            placeholder="A brief summary (auto-generated if left blank)..."
+                                            style="width:100%;"><%= post ? post.excerpt || '' : '' %></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Sidebar -->
+                                <div class="blog-editor-sidebar">
+                                    <!-- Publish Settings -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📊 Publish Settings</h3>
+                                        <div class="admin-form-group">
+                                            <label>Status</label>
+                                            <div class="blog-status-indicator">
+                                                <span
+                                                    class="blog-status-badge blog-status-<%= post ? post.status : 'draft' %>">
+                                                    <%= post ? post.status : 'draft' %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="admin-form-group">
+                                            <label>Author</label>
+                                            <input type="text" name="author"
+                                                value="<%= post ? post.author || 'Admin' : 'Admin' %>">
+                                        </div>
+                                        <div class="admin-form-group">
+                                            <label>Publish Date</label>
+                                            <input type="datetime-local" name="published_at"
+                                                value="<%= post && post.published_at ? new Date(post.published_at).toISOString().slice(0,16) : '' %>">
+                                        </div>
+                                        <div class="admin-form-group"
+                                            style="display:flex;align-items:center;gap:0.75rem;">
+                                            <label style="margin:0;">⭐ Featured on Home</label>
+                                            <label class="pb-switch">
+                                                <input type="checkbox" name="is_featured" <%=post && post.is_featured
+                                                    ? 'checked' : '' %>>
+                                                <span class="pb-switch-slider"></span>
+                                            </label>
+                                        </div>
+                                        <% if (post) { %>
+                                            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">
+                                                📖 ~<%= post.reading_time %> min read
+                                            </div>
+                                            <% } %>
+                                    </div>
+
+                                    <!-- Category & Tags -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🏷️ Category & Tags</h3>
+                                        <div class="admin-form-group">
+                                            <label>Category</label>
+                                            <select name="category">
+                                                <option value="">Select category...</option>
+                                                <% categories.forEach(cat=> { %>
+                                                    <option value="<%= cat.name %>" <%=post && post.category===cat.name
+                                                        ? 'selected' : '' %>><%= cat.name %>
+                                                    </option>
+                                                    <% }) %>
                                             </select>
                                         </div>
-                                    </div>
-                                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                                        <button type="button" class="admin-btn admin-btn-primary admin-btn-small"
-                                            onclick="aiGenerateBlog()" id="aiGenBtn">
-                                            ✨ Generate Article
-                                        </button>
-                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
-                                            onclick="aiGenerateSeo()" id="aiSeoBtn">
-                                            🔍 AI Optimize SEO
-                                        </button>
-                                        <span id="aiStatus"
-                                            style="font-size:0.75rem;color:var(--text-muted);align-self:center;"></span>
-                                    </div>
-                                </div>
-
-                                <!-- Rich Text Editor -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📝 Content</h3>
-                                    <div id="blogEditor" class="blog-quill-editor">
-                                        <%= post ? post.content_html || '' : '' %>
-                                    </div>
-                                    <input type="hidden" name="content_html" id="contentHtml">
-                                    <input type="hidden" id="initContent"
-                                        value="<%- (post ? (post.content_html || '') : '').replace(/" /g, '&quot;' )
-                                        %>">
-                                </div>
-
-                                <!-- Excerpt -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📋 Excerpt</h3>
-                                    <textarea name="excerpt" id="postExcerpt" rows="3"
-                                        placeholder="A brief summary (auto-generated if left blank)..."
-                                        style="width:100%;"><%= post ? post.excerpt || '' : '' %></textarea>
-                                </div>
-                            </div>
-
-                            <!-- Sidebar -->
-                            <div class="blog-editor-sidebar">
-                                <!-- Publish Settings -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">📊 Publish Settings</h3>
-                                    <div class="admin-form-group">
-                                        <label>Status</label>
-                                        <div class="blog-status-indicator">
-                                            <span
-                                                class="blog-status-badge blog-status-<%= post ? post.status : 'draft' %>">
-                                                <%= post ? post.status : 'draft' %>
-                                            </span>
+                                        <div class="admin-form-group">
+                                            <label>Tags <small>(comma-separated)</small></label>
+                                            <input type="text" name="tags" value="<%= post ? post.tags || '' : '' %>"
+                                                placeholder="ai, machine-learning, content-creation" id="postTags">
                                         </div>
                                     </div>
-                                    <div class="admin-form-group">
-                                        <label>Author</label>
-                                        <input type="text" name="author"
-                                            value="<%= post ? post.author || 'Admin' : 'Admin' %>">
-                                    </div>
-                                    <div class="admin-form-group">
-                                        <label>Publish Date</label>
-                                        <input type="datetime-local" name="published_at"
-                                            value="<%= post && post.published_at ? new Date(post.published_at).toISOString().slice(0,16) : '' %>">
-                                    </div>
-                                    <div class="admin-form-group" style="display:flex;align-items:center;gap:0.75rem;">
-                                        <label style="margin:0;">⭐ Featured on Home</label>
-                                        <label class="pb-switch">
-                                            <input type="checkbox" name="is_featured" <%=post && post.is_featured
-                                                ? 'checked' : '' %>>
-                                            <span class="pb-switch-slider"></span>
-                                        </label>
-                                    </div>
-                                    <% if (post) { %>
-                                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">
-                                            📖 ~<%= post.reading_time %> min read
+
+                                    <!-- FAQ Schema -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <div
+                                            style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                                            <h3 style="margin:0;font-size:0.9rem;">❓ FAQ Schema</h3>
+                                            <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                                onclick="addBlogFaq()">+ Add</button>
                                         </div>
-                                        <% } %>
-                                </div>
-
-                                <!-- Category & Tags -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🏷️ Category & Tags</h3>
-                                    <div class="admin-form-group">
-                                        <label>Category</label>
-                                        <select name="category">
-                                            <option value="">Select category...</option>
-                                            <% categories.forEach(cat=> { %>
-                                                <option value="<%= cat.name %>" <%=post && post.category===cat.name
-                                                    ? 'selected' : '' %>><%= cat.name %>
-                                                </option>
-                                                <% }) %>
-                                        </select>
-                                    </div>
-                                    <div class="admin-form-group">
-                                        <label>Tags <small>(comma-separated)</small></label>
-                                        <input type="text" name="tags" value="<%= post ? post.tags || '' : '' %>"
-                                            placeholder="ai, machine-learning, content-creation" id="postTags">
-                                    </div>
-                                </div>
-
-                                <!-- FAQ Schema -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <div
-                                        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                                        <h3 style="margin:0;font-size:0.9rem;">❓ FAQ Schema</h3>
-                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
-                                            onclick="addBlogFaq()">+ Add</button>
-                                    </div>
-                                    <div id="blogFaqList" class="faq-editor-list">
-                                        <!-- FAQ items added dynamically -->
-                                    </div>
-                                    <input type="hidden" name="faq_json" id="blogFaqJson">
-                                    <script id="blog-faqs-data" type="application/json">
+                                        <div id="blogFaqList" class="faq-editor-list">
+                                            <!-- FAQ items added dynamically -->
+                                        </div>
+                                        <input type="hidden" name="faq_json" id="blogFaqJson">
+                                        <script id="blog-faqs-data" type="application/json">
                                         <%- JSON.stringify(
                                             (post && post.faq_json) ? 
                                             (typeof post.faq_json === 'string' ? JSON.parse(post.faq_json) : post.faq_json) : 
                                             []
                                         ) %>
                                     </script>
-                                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;">
-                                        <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
-                                            onclick="aiGenerateBlogFaqs()" id="aiBlogFaqBtn">
-                                            🤖 AI Generate
-                                        </button>
-                                        <span id="blogFaqStatus"
-                                            style="font-size:0.75rem;color:var(--text-muted);"></span>
-                                    </div>
-                                </div>
-
-                                <!-- SEO Panel -->
-                                <div class="admin-card" style="padding:1.25rem;">
-                                    <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🔍 SEO Settings</h3>
-                                    <div class="admin-form-group">
-                                        <label>Meta Title <span class="pb-char-count" data-max="60"
-                                                id="metaTitleCount">0/60</span></label>
-                                        <input type="text" name="meta_title" id="metaTitle"
-                                            value="<%= post ? post.meta_title || '' : '' %>"
-                                            placeholder="SEO title (auto from post title)" maxlength="70"
-                                            oninput="updateCount('metaTitle', 'metaTitleCount', 60)">
-                                    </div>
-                                    <div class="admin-form-group">
-                                        <label>Meta Description <span class="pb-char-count" data-max="155"
-                                                id="metaDescCount">0/155</span></label>
-                                        <textarea name="meta_description" id="metaDesc" rows="3"
-                                            placeholder="SEO description (auto from excerpt)" maxlength="165"
-                                            oninput="updateCount('metaDesc', 'metaDescCount', 155)"><%= post ? post.meta_description || '' : '' %></textarea>
-                                    </div>
-                                    <div class="admin-form-group">
-                                        <label>OG Image URL</label>
-                                        <input type="text" name="og_image"
-                                            value="<%= post ? post.og_image || '' : '' %>"
-                                            placeholder="Auto from featured image">
+                                        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;">
+                                            <button type="button" class="admin-btn admin-btn-secondary admin-btn-small"
+                                                onclick="aiGenerateBlogFaqs()" id="aiBlogFaqBtn">
+                                                🤖 AI Generate
+                                            </button>
+                                            <span id="blogFaqStatus"
+                                                style="font-size:0.75rem;color:var(--text-muted);"></span>
+                                        </div>
                                     </div>
 
-                                    <!-- SEO Preview -->
-                                    <div class="blog-seo-preview">
-                                        <small style="color:var(--text-muted);">Google Preview</small>
-                                        <div class="blog-seo-preview-box">
-                                            <div class="seo-preview-title" id="seoPreviewTitle">
-                                                <%= post ? (post.meta_title || post.title) : 'Post Title' %>
-                                            </div>
-                                            <div class="seo-preview-url">/blogs/<span id="seoPreviewSlug">
-                                                    <%= post ? post.slug : 'your-slug' %>
-                                                </span></div>
-                                            <div class="seo-preview-desc" id="seoPreviewDesc">
-                                                <%= post ? (post.meta_description || post.excerpt
-                                                    || 'Post description...' ) : 'Post description...' %>
+                                    <!-- SEO Panel -->
+                                    <div class="admin-card" style="padding:1.25rem;">
+                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;">🔍 SEO Settings</h3>
+                                        <div class="admin-form-group">
+                                            <label>Meta Title <span class="pb-char-count" data-max="60"
+                                                    id="metaTitleCount">0/60</span></label>
+                                            <input type="text" name="meta_title" id="metaTitle"
+                                                value="<%= post ? post.meta_title || '' : '' %>"
+                                                placeholder="SEO title (auto from post title)" maxlength="70"
+                                                oninput="updateCount('metaTitle', 'metaTitleCount', 60)">
+                                        </div>
+                                        <div class="admin-form-group">
+                                            <label>Meta Description <span class="pb-char-count" data-max="155"
+                                                    id="metaDescCount">0/155</span></label>
+                                            <textarea name="meta_description" id="metaDesc" rows="3"
+                                                placeholder="SEO description (auto from excerpt)" maxlength="165"
+                                                oninput="updateCount('metaDesc', 'metaDescCount', 155)"><%= post ? post.meta_description || '' : '' %></textarea>
+                                        </div>
+                                        <div class="admin-form-group">
+                                            <label>OG Image URL</label>
+                                            <input type="text" name="og_image"
+                                                value="<%= post ? post.og_image || '' : '' %>"
+                                                placeholder="Auto from featured image">
+                                        </div>
+
+                                        <!-- SEO Preview -->
+                                        <div class="blog-seo-preview">
+                                            <small style="color:var(--text-muted);">Google Preview</small>
+                                            <div class="blog-seo-preview-box">
+                                                <div class="seo-preview-title" id="seoPreviewTitle">
+                                                    <%= post ? (post.meta_title || post.title) : 'Post Title' %>
+                                                </div>
+                                                <div class="seo-preview-url">/blogs/<span id="seoPreviewSlug">
+                                                        <%= post ? post.slug : 'your-slug' %>
+                                                    </span></div>
+                                                <div class="seo-preview-desc" id="seoPreviewDesc">
+                                                    <%= post ? (post.meta_description || post.excerpt
+                                                        || 'Post description...' ) : 'Post description...' %>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Delete -->
-                                <% if (!isNew && post) { %>
-                                    <div class="admin-card" style="padding:1.25rem;">
-                                        <h3 style="margin:0 0 0.75rem;font-size:0.9rem;color:#ef4444;">⚠️ Danger Zone
-                                        </h3>
-                                        <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
-                                            onsubmit="return confirm('Are you sure you want to delete this post? This cannot be undone.')">
-                                            <button type="submit" class="admin-btn admin-btn-small"
-                                                style="width:100%;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">🗑️
-                                                Delete Post</button>
-                                        </form>
-                                    </div>
-                                    <% } %>
+                                    <!-- Delete -->
+                                    <% if (!isNew && post) { %>
+                                        <div class="admin-card" style="padding:1.25rem;">
+                                            <h3 style="margin:0 0 0.75rem;font-size:0.9rem;color:#ef4444;">⚠️ Danger
+                                                Zone
+                                            </h3>
+                                            <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
+                                                onsubmit="return confirm('Are you sure you want to delete this post? This cannot be undone.')">
+                                                <button type="submit" class="admin-btn admin-btn-small"
+                                                    style="width:100%;background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">🗑️
+                                                    Delete Post</button>
+                                            </form>
+                                        </div>
+                                        <% } %>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-        </main>
+                        </form>
+            </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>

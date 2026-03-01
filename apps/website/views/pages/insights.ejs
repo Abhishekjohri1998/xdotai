@@ -3,11 +3,14 @@
     <!-- Page Hero -->
     <section class="page-hero" aria-label="Insights hero">
         <div class="container">
-            <span class="section-label">
+            <span class="section-label" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_label" data-type="text">
                 <%= page.hero_label %>
             </span>
-            <h1 class="page-hero-title"><%- page.hero_title %></h1>
-            <p class="page-hero-subtitle">
+            <h1 class="page-hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
+            <p class="page-hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_subtitle" data-type="text">
                 <%= page.hero_subtitle %>
             </p>
         </div>
@@ -27,17 +30,20 @@
                         </div>
                         <div class="insight-body">
                             <div class="insight-meta">
-                                <span class="insight-tag">
+                                <span class="insight-tag" data-editable="true" data-model="Section"
+                                    data-id="<%= i.id %>" data-field="tag" data-type="text">
                                     <%= i.tag %>
                                 </span>
                                 <span>
                                     <%= i.extra.date || '' %>
                                 </span>
                             </div>
-                            <h2>
+                            <h2 data-editable="true" data-model="Section" data-id="<%= i.id %>" data-field="title"
+                                data-type="text">
                                 <%= i.title %>
                             </h2>
-                            <p>
+                            <p data-editable="true" data-model="Section" data-id="<%= i.id %>" data-field="description"
+                                data-type="text">
                                 <%= i.description %>
                             </p>
                             <a href="#" class="insight-link">Read more <span>→</span></a>

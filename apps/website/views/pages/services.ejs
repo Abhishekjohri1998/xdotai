@@ -3,11 +3,14 @@
     <!-- Page Hero -->
     <section class="page-hero" aria-label="Services hero">
         <div class="container">
-            <span class="section-label">
+            <span class="section-label" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_label" data-type="text">
                 <%= page.hero_label %>
             </span>
-            <h1 class="page-hero-title"><%- page.hero_title %></h1>
-            <p class="page-hero-subtitle">
+            <h1 class="page-hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
+            <p class="page-hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_subtitle" data-type="text">
                 <%= page.hero_subtitle %>
             </p>
         </div>
@@ -19,19 +22,27 @@
         <div class="container">
             <div class="services-grid stagger-children" id="servicesGrid">
                 <% if (sections['service']) { sections['service'].forEach(s=> { %>
-                    <article class="service-card">
-                        <div class="service-icon">
-                            <%= s.icon %>
-                        </div>
-                        <h2>
-                            <%= s.title %>
-                        </h2>
-                        <p>
-                            <%= s.description %>
-                        </p>
-                        <div class="card-link">Learn more <span>→</span></div>
-                    </article>
-                    <% }) } %>
+                    <% var svcExtra=s && s.extra_json ? JSON.parse(s.extra_json) : {}; var svcStyle="" ; if
+                        (svcExtra.background_color) svcStyle +=`background-color: ${svcExtra.background_color}; `; if
+                        (svcExtra.padding) svcStyle +=`padding: ${svcExtra.padding};`; %>
+                        <article class="service-card" data-editable-section="true" data-model="Section"
+                            data-id="<%= s.id %>" data-extra="<%= s.extra_json || '{}' %>" <%- svcStyle ?
+                            `style="${svcStyle}" ` : '' %>>
+                            <div class="service-icon" data-editable="true" data-model="Section" data-id="<%= s.id %>"
+                                data-field="icon" data-type="text">
+                                <%= s.icon %>
+                            </div>
+                            <h2 data-editable="true" data-model="Section" data-id="<%= s.id %>" data-field="title"
+                                data-type="text">
+                                <%= s.title %>
+                            </h2>
+                            <p data-editable="true" data-model="Section" data-id="<%= s.id %>" data-field="description"
+                                data-type="text">
+                                <%= s.description %>
+                            </p>
+                            <div class="card-link">Learn more <span>→</span></div>
+                        </article>
+                        <% }) } %>
             </div>
         </div>
         <div class="glow-orb glow-orb-1" aria-hidden="true"></div>
@@ -48,19 +59,27 @@
             </div>
             <div class="deliverables-grid stagger-children">
                 <% if (sections['deliverable']) { sections['deliverable'].forEach(d=> { %>
-                    <div class="deliverable-tile"
-                        style="--tile-gradient: linear-gradient(135deg, <%= d.extra.gradient || 'rgba(168,85,247,0.15)' %> 0%, transparent 100%)">
-                        <div class="tile-icon">
-                            <%= d.icon %>
+                    <% var delExtra=d && d.extra_json ? JSON.parse(d.extra_json) : {}; var delStyle=`--tile-gradient:
+                        linear-gradient(135deg, ${d.extra.gradient || 'rgba(168,85,247,0.15)' } 0%, transparent 100%);
+                        `; if (delExtra.background_color) delStyle +=`background-color: ${delExtra.background_color}; `;
+                        if (delExtra.padding) delStyle +=`padding: ${delExtra.padding};`; %>
+                        <div class="deliverable-tile" data-editable-section="true" data-model="Section"
+                            data-id="<%= d.id %>" data-extra="<%= d.extra_json || '{}' %>" <%- delStyle ?
+                            `style="${delStyle}" ` : '' %>>
+                            <div class="tile-icon" data-editable="true" data-model="Section" data-id="<%= d.id %>"
+                                data-field="icon" data-type="text">
+                                <%= d.icon %>
+                            </div>
+                            <h4 data-editable="true" data-model="Section" data-id="<%= d.id %>" data-field="title"
+                                data-type="text">
+                                <%= d.title %>
+                            </h4>
+                            <p data-editable="true" data-model="Section" data-id="<%= d.id %>" data-field="description"
+                                data-type="text">
+                                <%= d.description %>
+                            </p>
                         </div>
-                        <h4>
-                            <%= d.title %>
-                        </h4>
-                        <p>
-                            <%= d.description %>
-                        </p>
-                    </div>
-                    <% }) } %>
+                        <% }) } %>
             </div>
         </div>
     </section>

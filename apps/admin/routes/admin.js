@@ -7,6 +7,21 @@ const { AdminUser, Page, Section, Setting, PortfolioCategory, Media, HeroBanner,
 const { requireAuth } = require('@xdotai/shared/backend/middleware/auth');
 const upload = require('@xdotai/shared/backend/middleware/upload');
 
+// ─── Global Admin Variables Middleware ──────────────────
+router.use(async (req, res, next) => {
+    if (req.session && req.session.isAdmin) {
+        res.locals.adminUser = req.session.adminUser;
+        const pages = await Page.find().sort({ nav_order: 1 }).lean();
+        res.locals.pages = pages;
+        const sectionCounts = {};
+        for (const p of pages) {
+            sectionCounts[p.slug] = await Section.countDocuments({ page_id: p._id });
+        }
+        res.locals.sectionCounts = sectionCounts;
+    }
+    next();
+});
+
 // ─── Login ───────────────────────────────────────────────
 router.get('/login', (req, res) => {
     if (req.session && req.session.isAdmin) return res.redirect('./');
@@ -141,11 +156,7 @@ router.post('/home-sections/reorder', requireAuth, async (req, res) => {
 
 // ─── Visual Builder ──────────────────────────────────────
 router.get('/visual-builder/:slug', requireAuth, async (req, res) => {
-    const page = await Page.findOne({ slug: req.params.slug }).lean();
-    if (!page) return res.redirect('./');
-
-    page.id = page._id;
-    res.render('visual-builder', { title: `Visual Builder: ${page.title} — Admin`, page });
+    res.redirect(`/admin/?page=${req.params.slug}`);
 });
 
 // ─── Create New Page ─────────────────────────────────────
@@ -694,6 +705,104 @@ router.post('/client-logos/:id/toggle', requireAuth, async (req, res) => {
 router.post('/client-logos/:id/delete', requireAuth, async (req, res) => {
     await ClientLogo.findByIdAndDelete(req.params.id);
     res.redirect('/admin/nav-logos?saved=1');
+});
+
+// ═══════════════════════ INLINE EDITING API ═══════════════════════
+
+router.post('/api/inline-edit', requireAuth, express.json(), async (req, res) => {
+    const { model, id, field, value, type } = req.body;
+
+    if (!model || !id || !field) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    try {
+        if (!models[model]) {
+            return res.status(400).json({ error: 'Invalid model' });
+        }
+
+        const Model = models[model];
+        const doc = await Model.findById(id);
+
+        if (!doc) {
+            return res.status(404).json({ error: 'Document not found' });
+        }
+
+        // Clean value if text type (strip basic HTML if someone pasted it)
+        let cleanValue = value;
+        if (type === 'text') {
+            cleanValue = value.replace(/<[^>]*>?/gm, '');
+        }
+
+        doc[field] = cleanValue;
+        if (doc.updated_at) doc.updated_at = new Date();
+
+        await doc.save();
+
+        res.json({ success: true, message: 'Content saved successfully' });
+    } catch (err) {
+        console.error('Inline Edit Error:', err);
+        res.status(500).json({ error: 'Failed to save content' });
+    }
+});
+
+// Advanced Layout & Property Editing (Elementor-style)
+router.post('/api/section-update', requireAuth, express.json(), async (req, res) => {
+    const { model, id, updates } = req.body;
+
+    if (!model || !id || !updates || typeof updates !== 'object') {
+        return res.status(400).json({ error: 'Missing required fields or invalid updates payload' });
+    }
+
+    try {
+        if (!models[model]) {
+            return res.status(400).json({ error: 'Invalid model type' });
+        }
+
+        const Model = models[model];
+        const doc = await Model.findById(id);
+
+        if (!doc) {
+            return res.status(404).json({ error: 'Document not found' });
+        }
+
+        // Apply whitelisted updates safely
+        const allowedFields = ['title', 'description', 'icon', 'tag', 'extra_json', 'sort_order'];
+
+        for (const field of Object.keys(updates)) {
+            if (allowedFields.includes(field)) {
+                // Parse existing extra_json if updating specific style keys
+                if (field === 'extra_json') {
+                    try {
+                        let currentExtra = {};
+                        if (doc.extra_json) {
+                            currentExtra = JSON.parse(doc.extra_json);
+                        }
+                        const newExtra = typeof updates.extra_json === 'string'
+                            ? JSON.parse(updates.extra_json)
+                            : updates.extra_json;
+
+                        // Merge them
+                        doc.extra_json = JSON.stringify({ ...currentExtra, ...newExtra });
+                    } catch (e) {
+                        console.warn('Failed to merge extra_json in section-update', e);
+                        doc.extra_json = typeof updates.extra_json === 'string' ? updates.extra_json : JSON.stringify(updates.extra_json);
+                    }
+                } else {
+                    doc[field] = updates[field];
+                }
+            }
+        }
+
+        if (doc.updated_at) doc.updated_at = new Date();
+
+        await doc.save();
+
+        res.json({ success: true, message: 'Section properties updated successfully', doc });
+    } catch (err) {
+        console.error('Section Update Error:', err);
+        res.status(500).json({ error: 'Failed to save section properties' });
+    }
 });
 
 module.exports = router;

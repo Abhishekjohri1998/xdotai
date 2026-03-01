@@ -16,164 +16,144 @@
 </head>
 
 <body>
-    <div class="admin-layout">
-        <aside class="admin-sidebar">
-            <a href="/admin/" class="admin-logo"><span class="logo-x">X</span> DOT AI <span
-                    class="admin-badge">BLOG</span></a>
-            <nav class="admin-nav">
-                <a href="/admin/" class="admin-nav-link">📊 Dashboard</a>
+    <div class="cms-layout">
+        <%- include('partials/sidebar', { currentMenu: 'blog' , page: null }) %>
 
+            <main class="admin-main">
+                <div class="admin-header">
+                    <h1>📝 Blog Manager</h1>
+                    <a href="/admin/blog/new" class="admin-btn admin-btn-primary">✨ New Post</a>
+                </div>
 
-                <a href="/admin/blog" class="admin-nav-link active">📝 All Posts</a>
-
-
-                <a href="/admin/blog/new" class="admin-nav-link">✨ New Post</a>
-
-
-                <a href="/blogs" target="_blank" class="admin-nav-link">🌐 View Blog</a>
-
-                <hr style="border-color: var(--border-subtle); margin: 1rem 0;">
-                <span class="admin-nav-label"
-                    style="padding: 0.5rem 0.75rem; font-size: 0.7rem; color: var(--text-muted);">CATEGORIES</span>
-                <% categories.forEach(cat=> { %>
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:0.25rem 0.75rem;">
-                        <span style="font-size:0.8rem;color:var(--text-secondary);">
-                            <%= cat.name %>
+                <!-- Stats -->
+                <div class="blog-stats-grid">
+                    <div class="blog-stat-card">
+                        <span class="blog-stat-number">
+                            <%= stats.total %>
                         </span>
-                        <form method="POST" action="/admin/blog/category/<%= cat.id %>/delete" style="margin:0;"
-                            onsubmit="return confirm('Delete category?')">
-                            <button type="submit"
-                                style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.7rem;">✕</button>
-                        </form>
+                        <span class="blog-stat-label">Total Posts</span>
                     </div>
-                    <% }) %>
-                        <form method="POST" action="/admin/blog/category" style="padding:0.5rem 0.75rem;">
-
-
-                            <div style="display:flex;gap:4px;">
-                                <input type="text" name="name" placeholder="New category..." required
-                                    style="flex:1;font-size:0.75rem;padding:0.3rem 0.5rem;">
-                                <button type="submit" class="admin-btn admin-btn-primary"
-                                    style="padding:0.3rem 0.5rem;font-size:0.7rem;">+</button>
-                            </div>
-                        </form>
-            </nav>
-            <div class="admin-sidebar-footer">
-                <span>Logged in as admin</span>
-                <a href="/admin/logout">Logout →</a>
-
-
-            </div>
-        </aside>
-
-        <main class="admin-main">
-            <div class="admin-header">
-                <h1>📝 Blog Manager</h1>
-                <a href="/admin/blog/new" class="admin-btn admin-btn-primary">✨ New Post</a>
-
-
-            </div>
-
-            <!-- Stats -->
-            <div class="blog-stats-grid">
-                <div class="blog-stat-card">
-                    <span class="blog-stat-number">
-                        <%= stats.total %>
-                    </span>
-                    <span class="blog-stat-label">Total Posts</span>
-                </div>
-                <div class="blog-stat-card blog-stat-published">
-                    <span class="blog-stat-number">
-                        <%= stats.published %>
-                    </span>
-                    <span class="blog-stat-label">Published</span>
-                </div>
-                <div class="blog-stat-card blog-stat-draft">
-                    <span class="blog-stat-number">
-                        <%= stats.drafts %>
-                    </span>
-                    <span class="blog-stat-label">Drafts</span>
-                </div>
-                <div class="blog-stat-card blog-stat-featured">
-                    <span class="blog-stat-number">
-                        <%= stats.featured %>
-                    </span>
-                    <span class="blog-stat-label">Featured</span>
-                </div>
-            </div>
-
-            <!-- Posts List -->
-            <div class="admin-card">
-                <% if (posts.length===0) { %>
-                    <div style="text-align:center;padding:3rem;color:var(--text-muted);">
-                        <p style="font-size:2rem;">📝</p>
-                        <h3>No blog posts yet</h3>
-                        <p>Create your first blog post to get started!</p>
-                        <a href="./blog/new" class="admin-btn admin-btn-primary" style="margin-top:1rem;">✨ Create
-
-                            First Post</a>
+                    <div class="blog-stat-card blog-stat-published">
+                        <span class="blog-stat-number">
+                            <%= stats.published %>
+                        </span>
+                        <span class="blog-stat-label">Published</span>
                     </div>
-                    <% } else { %>
-                        <div class="blog-posts-table">
-                            <div class="blog-table-header">
-                                <span style="flex:3;">Title</span>
-                                <span style="flex:1;">Category</span>
-                                <span style="flex:0 0 80px;text-align:center;">Status</span>
-                                <span style="flex:0 0 60px;text-align:center;">⭐</span>
-                                <span style="flex:1;">Date</span>
-                                <span style="flex:0 0 120px;text-align:right;">Actions</span>
-                            </div>
-                            <% posts.forEach(post=> { %>
-                                <div class="blog-table-row">
-                                    <div style="flex:3;display:flex;align-items:center;gap:0.75rem;">
-                                        <% if (post.featured_image) { %>
-                                            <img src="<%= post.featured_image %>" alt="" class="blog-table-thumb">
-                                            <% } else { %>
-                                                <div class="blog-table-thumb blog-table-thumb-empty">📄</div>
-                                                <% } %>
-                                                    <div>
-                                                        <a href="./blog/<%= post.slug %>/edit" class="blog-table-title">
-                                                            <%= post.title %>
-                                                        </a>
-                                                        <small style="color:var(--text-muted);display:block;">
-                                                            <%= post.reading_time %> min read
-                                                        </small>
-                                                    </div>
-                                    </div>
-                                    <span style="flex:1;"><span class="blog-category-pill">
-                                            <%= post.category || 'Uncategorized' %>
-                                        </span></span>
-                                    <span style="flex:0 0 80px;text-align:center;">
-                                        <span class="blog-status-badge blog-status-<%= post.status %>">
-                                            <%= post.status %>
-                                        </span>
-                                    </span>
-                                    <span style="flex:0 0 60px;text-align:center;">
-                                        <button class="blog-featured-btn <%= post.is_featured ? 'active' : '' %>"
-                                            onclick="toggleFeatured('<%= post.id %>', this)" title="Toggle featured">
+                    <div class="blog-stat-card blog-stat-draft">
+                        <span class="blog-stat-number">
+                            <%= stats.drafts %>
+                        </span>
+                        <span class="blog-stat-label">Drafts</span>
+                    </div>
+                    <div class="blog-stat-card blog-stat-featured">
+                        <span class="blog-stat-number">
+                            <%= stats.featured %>
+                        </span>
+                        <span class="blog-stat-label">Featured</span>
+                    </div>
+                </div>
 
-                                            <%= post.is_featured ? '⭐' : '☆' %>
-                                        </button>
-                                    </span>
-                                    <span style="flex:1;font-size:0.8rem;color:var(--text-secondary);">
-                                        <%= post.published_at ? new Date(post.published_at).toLocaleDateString('en-US',
-                                            {month:'short',day:'numeric',year:'numeric'}) : '—' %>
-                                    </span>
-                                    <div style="flex:0 0 120px;display:flex;gap:0.5rem;justify-content:flex-end;">
-                                        <a href="/admin/blog/<%= post.slug %>/edit"
-                                            class="admin-btn admin-btn-secondary admin-btn-small">Edit</a>
-                                        <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
-                                            style="margin:0;" onsubmit="return confirm('Delete this post?')">
-                                            <button type="submit" class="admin-btn admin-btn-small"
-                                                style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">✕</button>
-                                        </form>
-                                    </div>
-                                </div>
-                                <% }) %>
+                <!-- Categories Management -->
+                <div class="admin-card" style="margin-bottom: 2rem;">
+                    <h3
+                        style="margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+                        🏷️ Manage Categories</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                        <% categories.forEach(cat=> { %>
+                            <div
+                                style="display:flex;align-items:center; background: var(--bg-primary); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border);">
+                                <span style="font-size:0.85rem;color:var(--text-secondary); margin-right: 1rem;">
+                                    <%= cat.name %>
+                                </span>
+                                <form method="POST" action="/admin/blog/category/<%= cat.id %>/delete" style="margin:0;"
+                                    onsubmit="return confirm('Delete category?')">
+                                    <button type="submit"
+                                        style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.8rem;">✕</button>
+                                </form>
+                            </div>
+                            <% }) %>
+                                <form method="POST" action="/admin/blog/category" style="display:flex;gap:8px;">
+                                    <input type="text" name="name" placeholder="New category..." required
+                                        style="font-size:0.85rem;padding:0.4rem 0.75rem; border: 1px solid var(--border); background: var(--bg-primary); color: #fff; border-radius: 6px;">
+                                    <button type="submit" class="admin-btn admin-btn-primary"
+                                        style="padding:0.4rem 0.75rem;font-size:0.85rem;">+ Add</button>
+                                </form>
+                    </div>
+                </div>
+
+                <!-- Posts List -->
+                <div class="admin-card">
+                    <% if (posts.length===0) { %>
+                        <div style="text-align:center;padding:3rem;color:var(--text-muted);">
+                            <p style="font-size:2rem;">📝</p>
+                            <h3>No blog posts yet</h3>
+                            <p>Create your first blog post to get started!</p>
+                            <a href="./blog/new" class="admin-btn admin-btn-primary" style="margin-top:1rem;">✨ Create
+                                First Post</a>
                         </div>
-                        <% } %>
-            </div>
-        </main>
+                        <% } else { %>
+                            <div class="blog-posts-table">
+                                <div class="blog-table-header">
+                                    <span style="flex:3;">Title</span>
+                                    <span style="flex:1;">Category</span>
+                                    <span style="flex:0 0 80px;text-align:center;">Status</span>
+                                    <span style="flex:0 0 60px;text-align:center;">⭐</span>
+                                    <span style="flex:1;">Date</span>
+                                    <span style="flex:0 0 120px;text-align:right;">Actions</span>
+                                </div>
+                                <% posts.forEach(post=> { %>
+                                    <div class="blog-table-row">
+                                        <div style="flex:3;display:flex;align-items:center;gap:0.75rem;">
+                                            <% if (post.featured_image) { %>
+                                                <img src="<%= post.featured_image %>" alt="" class="blog-table-thumb">
+                                                <% } else { %>
+                                                    <div class="blog-table-thumb blog-table-thumb-empty">📄</div>
+                                                    <% } %>
+                                                        <div>
+                                                            <a href="./blog/<%= post.slug %>/edit"
+                                                                class="blog-table-title">
+                                                                <%= post.title %>
+                                                            </a>
+                                                            <small style="color:var(--text-muted);display:block;">
+                                                                <%= post.reading_time %> min read
+                                                            </small>
+                                                        </div>
+                                        </div>
+                                        <span style="flex:1;"><span class="blog-category-pill">
+                                                <%= post.category || 'Uncategorized' %>
+                                            </span></span>
+                                        <span style="flex:0 0 80px;text-align:center;">
+                                            <span class="blog-status-badge blog-status-<%= post.status %>">
+                                                <%= post.status %>
+                                            </span>
+                                        </span>
+                                        <span style="flex:0 0 60px;text-align:center;">
+                                            <button class="blog-featured-btn <%= post.is_featured ? 'active' : '' %>"
+                                                onclick="toggleFeatured('<%= post.id %>', this)"
+                                                title="Toggle featured">
+                                                <%= post.is_featured ? '⭐' : '☆' %>
+                                            </button>
+                                        </span>
+                                        <span style="flex:1;font-size:0.8rem;color:var(--text-secondary);">
+                                            <%= post.published_at ? new
+                                                Date(post.published_at).toLocaleDateString('en-US',
+                                                {month:'short',day:'numeric',year:'numeric'}) : '—' %>
+                                        </span>
+                                        <div style="flex:0 0 120px;display:flex;gap:0.5rem;justify-content:flex-end;">
+                                            <a href="/admin/blog/<%= post.slug %>/edit"
+                                                class="admin-btn admin-btn-secondary admin-btn-small">Edit</a>
+                                            <form method="POST" action="/admin/blog/<%= post.slug %>/delete"
+                                                style="margin:0;" onsubmit="return confirm('Delete this post?')">
+                                                <button type="submit" class="admin-btn admin-btn-small"
+                                                    style="background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">✕</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                            <% } %>
+                </div>
+            </main>
     </div>
 
     <script>
