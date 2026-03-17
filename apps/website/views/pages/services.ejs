@@ -1,0 +1,98 @@
+<%- include('../partials/header') %>
+
+    <!-- Page Hero -->
+    <section class="page-hero" aria-label="Services hero">
+        <div class="container">
+            <span class="section-label" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_label" data-type="text">
+                <%= page.hero_label %>
+            </span>
+            <h1 class="page-hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
+            <p class="page-hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
+                data-field="hero_subtitle" data-type="text">
+                <%= page.hero_subtitle %>
+            </p>
+        </div>
+        <div class="glow-orb glow-orb-1" aria-hidden="true"></div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="services section" aria-label="Our services">
+        <div class="container">
+            <div class="services-grid stagger-children" id="servicesGrid">
+                <% if (sections['service']) { sections['service'].forEach(s=> { %>
+                    <% var svcExtra=s && s.extra_json ? JSON.parse(s.extra_json) : {}; var svcStyle="" ; if
+                        (svcExtra.background_color) svcStyle +=`background-color: ${svcExtra.background_color}; `; if
+                        (svcExtra.padding) svcStyle +=`padding: ${svcExtra.padding};`; %>
+                        <article class="service-card" data-editable-section="true" data-model="Section"
+                            data-id="<%= s.id %>" data-extra="<%= s.extra_json || '{}' %>" <%- svcStyle ?
+                            `style="${svcStyle}" ` : '' %>>
+                            <div class="service-icon" data-editable="true" data-model="Section" data-id="<%= s.id %>"
+                                data-field="icon" data-type="text">
+                                <%= s.icon %>
+                            </div>
+                            <h2 data-editable="true" data-model="Section" data-id="<%= s.id %>" data-field="title"
+                                data-type="text">
+                                <%= s.title %>
+                            </h2>
+                            <p data-editable="true" data-model="Section" data-id="<%= s.id %>" data-field="description"
+                                data-type="text">
+                                <%= s.description %>
+                            </p>
+                            <div class="card-link">Learn more <span>→</span></div>
+                        </article>
+                        <% }) } %>
+            </div>
+        </div>
+        <div class="glow-orb glow-orb-1" aria-hidden="true"></div>
+    </section>
+
+    <!-- Deliverables -->
+    <section class="section" aria-label="Our deliverables">
+        <div class="container">
+            <div class="reveal">
+                <span class="section-label">Deliverables</span>
+                <h2 class="section-title">What We <span class="text-gradient">Create</span></h2>
+                <p class="section-subtitle">Every format, every platform — powered by AI creativity and human vision.
+                </p>
+            </div>
+            <div class="deliverables-grid stagger-children">
+                <% if (sections['deliverable']) { sections['deliverable'].forEach(d=> { %>
+                    <% var delExtra=d && d.extra_json ? JSON.parse(d.extra_json) : {}; var delStyle=`--tile-gradient:
+                        linear-gradient(135deg, ${d.extra.gradient || 'rgba(168,85,247,0.15)' } 0%, transparent 100%);
+                        `; if (delExtra.background_color) delStyle +=`background-color: ${delExtra.background_color}; `;
+                        if (delExtra.padding) delStyle +=`padding: ${delExtra.padding};`; %>
+                        <div class="deliverable-tile" data-editable-section="true" data-model="Section"
+                            data-id="<%= d.id %>" data-extra="<%= d.extra_json || '{}' %>" <%- delStyle ?
+                            `style="${delStyle}" ` : '' %>>
+                            <div class="tile-icon" data-editable="true" data-model="Section" data-id="<%= d.id %>"
+                                data-field="icon" data-type="text">
+                                <%= d.icon %>
+                            </div>
+                            <h4 data-editable="true" data-model="Section" data-id="<%= d.id %>" data-field="title"
+                                data-type="text">
+                                <%= d.title %>
+                            </h4>
+                            <p data-editable="true" data-model="Section" data-id="<%= d.id %>" data-field="description"
+                                data-type="text">
+                                <%= d.description %>
+                            </p>
+                        </div>
+                        <% }) } %>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner" aria-label="Get in touch">
+        <div class="container">
+            <div class="cta-content reveal-scale">
+                <h2>Ready to <span class="text-gradient">Supercharge</span> Your Creativity?</h2>
+                <p>Let us show you how AI can transform your creative pipeline.</p>
+                <a href="/contact" class="btn btn-primary">Start a Project <span class="btn-icon">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>

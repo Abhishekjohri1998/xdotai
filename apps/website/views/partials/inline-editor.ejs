@@ -1,0 +1,380 @@
+<% if (typeof isAdmin !=='undefined' && isAdmin) { %>
+    <style>
+        /* ─── Inline Editor UI ─── */
+        [data-editable="true"] {
+            position: relative;
+            outline: 2px dashed transparent;
+            transition: outline 0.2s ease, background-color 0.2s ease;
+            cursor: text;
+            border-radius: 4px;
+        }
+
+        [data-editable="true"]:hover {
+            outline-color: rgba(168, 85, 247, 0.5);
+            /* Brand purple */
+            background-color: rgba(168, 85, 247, 0.05);
+        }
+
+        [data-editable="true"]:focus {
+            outline-color: #a855f7;
+            background-color: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2);
+            z-index: 10;
+        }
+
+        #inline-editor-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 24px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transform: translateY(150%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #inline-editor-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        #inline-editor-toast .toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-loading {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #a855f7;
+            border-radius: 50%;
+            animation: rotateToast 1s linear infinite;
+        }
+
+        @keyframes rotateToast {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ─── Advanced Section Editor ─── */
+        [data-editable-section="true"] {
+            position: relative;
+            transition: box-shadow 0.2s ease;
+        }
+
+        [data-editable-section="true"]:hover {
+            box-shadow: inset 0 0 0 2px rgba(168, 85, 247, 0.4);
+            border-radius: 4px;
+        }
+
+        .section-edit-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #a855f7;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 100;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-edit-btn:hover {
+            background: #9333ea;
+        }
+
+        [data-editable-section="true"]:hover>.section-edit-btn {
+            display: flex;
+        }
+    </style>
+
+    <div id="inline-editor-toast">
+        <div class="toast-icon" id="toast-icon"></div>
+        <span id="toast-message">Saving changes...</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const editables = document.querySelectorAll('[data-editable="true"]');
+            const editableImages = document.querySelectorAll('[data-editable-image="true"]');
+
+            const toast = document.getElementById('inline-editor-toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+            let toastTimeout;
+
+            function showToast(message, state = 'loading') {
+                clearTimeout(toastTimeout);
+                toastMsg.textContent = message;
+
+                if (state === 'loading') {
+                    toastIcon.innerHTML = '<div class="toast-loading"></div>';
+                    toast.style.borderColor = '#333';
+                } else if (state === 'success') {
+                    toastIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                    toast.style.borderColor = '#22c55e';
+                    // Re-hide after delay
+                    toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
+                } else if (state === 'error') {
+                    toastIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                    toast.style.borderColor = '#ef4444';
+                    toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
+                }
+
+                toast.classList.add('show');
+            }
+
+            // TEXT EDITING
+            editables.forEach(el => {
+                el.setAttribute('contenteditable', 'true');
+
+                // Prevent default enters for simple text fields
+                if (el.getAttribute('data-type') === 'text') {
+                    el.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            el.blur(); // Trigger save
+                        }
+                    });
+                }
+
+                // Save original content to compare on blur
+                let originalContent = el.innerHTML;
+
+                el.addEventListener('focus', () => {
+                    originalContent = el.innerHTML;
+                });
+
+                el.addEventListener('blur', async () => {
+                    const currentContent = el.innerHTML;
+                    if (currentContent === originalContent) return; // No change
+
+                    const model = el.getAttribute('data-model');
+                    const id = el.getAttribute('data-id');
+                    const field = el.getAttribute('data-field');
+                    const type = el.getAttribute('data-type') || 'text';
+
+                    if (!model || !id || !field) {
+                        console.error("Missing inline editing attributes on element:", el);
+                        return;
+                    }
+
+                    showToast('Saving changes...', 'loading');
+
+                    try {
+                        const response = await fetch('/admin/api/inline-edit', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ model, id, field, value: currentContent, type })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            showToast('Saved!', 'success');
+                            originalContent = currentContent; // Update baseline
+                        } else {
+                            showToast(data.error || 'Failed to save', 'error');
+                            el.innerHTML = originalContent; // Revert visually
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showToast('Network error', 'error');
+                        el.innerHTML = originalContent; // Revert visually
+                    }
+                });
+            });
+
+            // IMAGE EDITING
+            editableImages.forEach(img => {
+                img.style.cursor = 'pointer';
+                img.title = 'Click to change image';
+
+                // Add hover effect via CSS classes
+                img.classList.add('inline-editable-image');
+
+                img.addEventListener('click', () => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+
+                    input.onchange = async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        showToast('Uploading image...', 'loading');
+
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('alt_text', 'Inline uploaded image');
+
+                        try {
+                            // Upload the file first
+                            const uploadRes = await fetch('/admin/api/upload', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            const uploadData = await uploadRes.json();
+
+                            if (!uploadRes.ok || !uploadData.success) {
+                                throw new Error(uploadData.error || 'Upload failed');
+                            }
+
+                            const imageUrl = uploadData.media.url;
+
+                            // Now save the reference in the database
+                            const model = img.getAttribute('data-model');
+                            const id = img.getAttribute('data-id');
+                            const field = img.getAttribute('data-field');
+
+                            if (model && id && field) {
+                                showToast('Saving to database...', 'loading');
+                                const saveRes = await fetch('/admin/api/inline-edit', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ model, id, field, value: imageUrl, type: 'image' })
+                                });
+
+                                if (!saveRes.ok) throw new Error('Failed to update record');
+                            }
+
+                            // Update visual presentation
+                            if (img.tagName === 'IMG') {
+                                img.src = imageUrl;
+                            } else {
+                                img.style.backgroundImage = `url('${imageUrl}')`;
+                            }
+
+                            showToast('Image updated!', 'success');
+
+                        } catch (err) {
+                            console.error(err);
+                            showToast(err.message || 'Error updating image', 'error');
+                        }
+                    };
+
+                    input.click();
+                });
+            });
+
+            // SECTION EDITING (Elementor-style)
+            const editableSections = document.querySelectorAll('[data-editable-section="true"]');
+
+            editableSections.forEach(section => {
+                // Determine if it already has position relative/absolute
+                const style = window.getComputedStyle(section);
+                if (style.position === 'static') {
+                    section.style.position = 'relative';
+                }
+
+                // Create the floating edit button
+                const editBtn = document.createElement('button');
+                editBtn.className = 'section-edit-btn';
+                editBtn.innerHTML = '⚙️ Edit Section';
+                // Prevent clicks on the button from triggering things inside the section
+                editBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const model = section.getAttribute('data-model');
+                    const id = section.getAttribute('data-id');
+
+                    // Gather current data to send to parent
+                    const titleEl = section.querySelector('[data-field="title"]');
+                    const descEl = section.querySelector('[data-field="description"]');
+                    const iconEl = section.querySelector('.section-icon'); // Assuming convention
+
+                    let extraJson = {};
+                    try {
+                        const extraRaw = section.getAttribute('data-extra');
+                        if (extraRaw) extraJson = JSON.parse(extraRaw);
+                    } catch (err) {
+                        console.warn('Failed to parse data-extra on section', id);
+                    }
+
+                    const payload = {
+                        action: 'OPEN_SECTION_EDITOR',
+                        data: {
+                            model,
+                            id,
+                            title: titleEl ? titleEl.innerText : section.getAttribute('data-title') || '',
+                            description: descEl ? descEl.innerText : section.getAttribute('data-description') || '',
+                            icon: iconEl ? iconEl.innerText : section.getAttribute('data-icon') || '',
+                            extra_json: extraJson
+                        }
+                    };
+
+                    // Send to parent window (Dashboard)
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage(payload, '*');
+                    }
+                });
+
+                section.appendChild(editBtn);
+            });
+
+            // LISTEN FOR LIVE PREVIEW UPDATES FROM DASHBOARD
+            window.addEventListener('message', (event) => {
+                // Validate origin in production, here we assume trusted dashboard iframe
+                const { action, id, field, value } = event.data;
+
+                if (action === 'UPDATE_SECTION_PREVIEW' && id) {
+                    const section = document.querySelector(`[data-editable-section="true"][data-id="${id}"]`);
+                    if (!section) return;
+
+                    if (field === 'background_color') {
+                        section.style.backgroundColor = value;
+                        // Also update data-extra so if we reopen it has the latest
+                        let extra = {};
+                        try { extra = JSON.parse(section.getAttribute('data-extra') || '{}'); } catch (e) { }
+                        extra.background_color = value;
+                        section.setAttribute('data-extra', JSON.stringify(extra));
+                    }
+                    else if (field === 'padding') {
+                        section.style.padding = value;
+                    }
+                    else if (field === 'title') {
+                        const titleEl = section.querySelector('[data-field="title"]');
+                        if (titleEl) titleEl.innerHTML = value;
+                    }
+                    else if (field === 'description') {
+                        const descEl = section.querySelector('[data-field="description"]');
+                        if (descEl) descEl.innerHTML = value;
+                    }
+                    else if (field === 'icon') {
+                        const iconEl = section.querySelector('.section-icon');
+                        if (iconEl) iconEl.innerText = value;
+                    }
+                }
+            });
+
+        });
+    </script>
+    <% } %>

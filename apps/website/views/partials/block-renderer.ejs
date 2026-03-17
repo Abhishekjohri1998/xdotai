@@ -1,0 +1,99 @@
+<% if (typeof pageBlocks !== 'undefined' && Array.isArray(pageBlocks) && pageBlocks.length > 0) { %>
+<section class="page-blocks-section">
+  <div class="container">
+    <% pageBlocks.forEach(function(block) { var p = block.props || {}; switch(block.type) { case 'heading': var tag = 'h' + (p.level || 2); var align = p.alignment ? 'text-align:' + p.alignment : ''; %>
+      <<%= tag %> class="pb-heading" style="<%= align %>"><%= p.text || '' %></<%= tag %>>
+    <% break; case 'text': %>
+      <div class="pb-text-block"><%- p.html || '' %></div>
+    <% break; case 'image': if (p.src) { %>
+      <figure class="pb-image-block" style="max-width:<%= p.width || '100%' %>">
+        <img src="<%= p.src %>" alt="<%= p.alt || '' %>" loading="lazy">
+        <% if (p.caption) { %><figcaption><%= p.caption %></figcaption><% } %>
+      </figure>
+    <% } break; case 'gallery': if (p.images && p.images.length) { %>
+      <div class="pb-gallery" style="grid-template-columns:repeat(<%= p.columns || 3 %>,1fr);">
+        <% p.images.forEach(function(img) { %>
+          <img src="<%= img.src %>" alt="<%= img.alt || '' %>" loading="lazy" class="pb-gallery-img">
+        <% }); %>
+      </div>
+    <% } break; case 'video': if (p.url) { var m = p.url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/); var vid = m ? m[1] : ''; %>
+      <div class="pb-video-block">
+        <% if (vid) { %>
+          <iframe src="https://www.youtube.com/embed/<%= vid %>" allowfullscreen loading="lazy" title="Video"></iframe>
+        <% } else { %>
+          <iframe src="<%= p.url %>" allowfullscreen loading="lazy"></iframe>
+        <% } %>
+      </div>
+    <% } break; case 'button': var cls = p.style === 'secondary' ? 'btn-secondary' : p.style === 'outline' ? 'btn-outline' : 'btn btn-primary'; %>
+      <div class="pb-button-block" style="text-align:center;">
+        <a href="<%= p.url || '#' %>" class="<%= cls %>"><%= p.text || 'Button' %></a>
+      </div>
+    <% break; case 'cta': %>
+      <div class="pb-cta-block">
+        <h2><%= p.title || 'Call to Action' %></h2>
+        <p><%= p.subtitle || '' %></p>
+        <a href="<%= p.buttonUrl || '/contact' %>" class="btn btn-primary"><%= p.buttonText || 'Get Started' %><span class="btn-icon">→</span></a>
+      </div>
+    <% break; case 'spacer': %>
+      <div class="pb-spacer" style="height:<%= p.height || 60 %>px;"></div>
+    <% break; case 'divider': %>
+      <hr class="pb-divider" style="border-style:<%= p.style || 'solid' %>;">
+    <% break; case 'columns': if (p.columns && p.columns.length) { var colStyleCls = (p.style && p.style !== 'none') ? 'pb-column-' + p.style : ''; %>
+      <div class="pb-columns" style="grid-template-columns:<%= p.widths || '1fr 1fr' %>;gap:<%= p.gap || '1.5rem' %>;">
+        <% p.columns.forEach(function(col) { %>
+          <div class="pb-column <%= colStyleCls %>"><%- col.html || '' %></div>
+        <% }); %>
+      </div>
+    <% } break; case 'testimonials': if (p.items && p.items.length) { %>
+      <div class="pb-testimonials">
+        <% p.items.forEach(function(t) { %>
+          <div class="pb-testimonial-card">
+            <blockquote>"<%= t.quote %>"</blockquote>
+            <cite>— <%= t.author %><% if (t.role) { %>, <%= t.role %><% } %></cite>
+          </div>
+        <% }); %>
+      </div>
+    <% } break; case 'subscribe': %>
+      <div class="pb-subscribe-block">
+        <h3><%= p.title || 'Stay Updated' %></h3>
+        <p><%= p.subtitle || '' %></p>
+        <form class="pb-subscribe-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed!';">
+          <input type="email" placeholder="your@email.com" required>
+          <button type="submit" class="btn btn-primary"><%= p.buttonText || 'Subscribe' %></button>
+        </form>
+      </div>
+    <% break; case 'blog-feed': if (typeof recentPosts !== 'undefined' && recentPosts.length) { %>
+      <div class="pb-blog-feed">
+        <% recentPosts.slice(0, p.count || 3).forEach(function(post) { %>
+          <a href="/blogs/<%= post.slug %>" class="pb-blog-feed-card">
+            <% if (post.featured_image) { %><img src="<%= post.featured_image %>" alt="<%= post.title %>" loading="lazy"><% } %>
+            <h4><%= post.title %></h4>
+            <p><%= post.excerpt || '' %></p>
+          </a>
+        <% }); %>
+      </div>
+    <% } break; case 'clients': if (p.logos && p.logos.length) { %>
+      <div class="pb-clients-grid">
+        <% p.logos.forEach(function(logo) { %>
+          <% if (logo.src) { %>
+            <img src="<%= logo.src %>" alt="<%= logo.name || '' %>" class="pb-client-logo" loading="lazy">
+          <% } else { %>
+            <div class="pb-client-placeholder"><%= logo.name || 'Client' %></div>
+          <% } %>
+        <% }); %>
+      </div>
+    <% } break; case 'accordion': if (p.items && p.items.length) { %>
+      <div class="pb-accordion">
+        <% p.items.forEach(function(item, i) { %>
+          <div class="pb-accordion-item" onclick="this.classList.toggle('open')">
+            <div class="pb-accordion-q"><span><%= item.question %></span><span class="pb-accordion-icon">▸</span></div>
+            <div class="pb-accordion-a"><p><%= item.answer %></p></div>
+          </div>
+        <% }); %>
+      </div>
+    <% } break; case 'custom-html': %>
+      <div class="pb-custom-html"><%- p.html || '' %></div>
+    <% break; } }); %>
+  </div>
+</section>
+<% } %>

@@ -1,0 +1,275 @@
+<%- include('../partials/header') %>
+
+<% var portfolioItems=sections['portfolio'] || []; 
+   var getYouTubeId=function(url) { 
+       if (!url) return ''; 
+       var m=url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/); 
+       return m ? m[1] : '';
+   }; 
+%>
+
+<!-- JSON-LD Structured Data: ItemList + VideoObject -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "<%= page.title %>",
+    "description": "<%= page.meta_description %>",
+    "url": "https://xdotai.in/portfolio",
+    "publisher": {
+        "@type": "Organization",
+        "name": "X DOT AI",
+        "url": "https://xdotai.in"
+    },
+    "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": <%= portfolioItems.length %>,
+        "itemListElement": [
+            <% portfolioItems.forEach((p, idx) => {
+                const vid = getYouTubeId((p.extra && p.extra.youtube_url) || '');
+            %>
+            {
+                "@type": "ListItem",
+                "position": <%= idx + 1 %>,
+                "item": {
+                    "@type": "VideoObject",
+                    "name": "<%= p.title.replace(/"/g, '\\"') %>",
+                    "description": "<%= p.description.replace(/"/g, '\\"') %>",
+                    <% if (vid) { %>
+                    "thumbnailUrl": "https://img.youtube.com/vi/<%= vid %>/maxresdefault.jpg",
+                    "contentUrl": "https://www.youtube.com/watch?v=<%= vid %>",
+                    "embedUrl": "https://www.youtube.com/embed/<%= vid %>",
+                    <% } %>
+                    "uploadDate": "<%= new Date().toISOString().split('T')[0] %>",
+                    "publisher": { "@type": "Organization", "name": "X DOT AI" }
+                }
+            }<%= idx < portfolioItems.length - 1 ? ',' : '' %>
+            <% }) %>
+        ]
+    }
+}
+</script>
+
+<!-- Immersive Hero (About-style constellation) -->
+<section class="abt-hero" id="portHero">
+    <div class="abt-hero__canvas">
+        <svg class="abt-hero__net" viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+                <radialGradient id="ng-port" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.7)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+                <filter id="gl-port"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <g stroke="rgba(124,58,237,0.12)" stroke-width="0.8" fill="none">
+                <path class="svg-draw-line" d="M0,350 C200,100 500,500 700,300 S1100,100 1400,350"/>
+                <path class="svg-draw-line" d="M0,450 C300,200 600,600 900,350 S1200,150 1400,400" style="animation-delay:.5s"/>
+                <path class="svg-draw-line" d="M100,600 C350,300 650,500 900,250 S1150,400 1400,200" style="animation-delay:1s"/>
+            </g>
+            <g filter="url(#gl-port)">
+                <circle cx="200" cy="220" r="3" fill="url(#ng-port)" class="svg-node--breathe"/>
+                <circle cx="500" cy="400" r="4" fill="url(#ng-port)" class="svg-node--breathe" style="animation-delay:1s"/>
+                <circle cx="700" cy="300" r="5" fill="url(#ng-port)" class="svg-node--breathe" style="animation-delay:2s"/>
+                <circle cx="1000" cy="180" r="3" fill="url(#ng-port)" class="svg-node--breathe" style="animation-delay:.5s"/>
+                <circle cx="1200" cy="380" r="4" fill="url(#ng-port)" class="svg-node--breathe" style="animation-delay:1.5s"/>
+                <circle cx="350" cy="500" r="3" fill="url(#ng-port)" class="svg-node--breathe" style="animation-delay:2.5s"/>
+            </g>
+        </svg>
+        <div class="abt-hero__orb abt-hero__orb--a"></div>
+        <div class="abt-hero__orb abt-hero__orb--b"></div>
+        <div class="abt-hero__orb abt-hero__orb--c"></div>
+    </div>
+    <div class="container abt-hero__inner" style="display:flex;justify-content:center;">
+        <div class="abt-hero__content reveal" style="text-align:center;max-width:800px;">
+            <h1 class="abt-hero__h1">Portfolio</h1>
+            <p class="abt-hero__sub">A mix of AI-powered storytelling and live production — exploring how creativity, technology, and structured workflows come together across formats.</p>
+        </div>
+    </div>
+    <div class="abt-hero__scroll-cue"><div class="scroll-mouse"></div></div>
+</section>
+
+<!-- Section 1: Creative Work, Structured Thinking -->
+<section class="editorial-statement" data-animate="fade-up">
+    <div class="container">
+        <div class="editorial-statement__inner">
+            <h2 class="editorial-statement__title">Creative Work, Structured Thinking</h2>
+            <div class="editorial-statement__body">
+                <p>This portfolio brings together projects across AI-generated content and traditional production.</p>
+                <p>From AI music videos and ad films to live-action campaigns, each project reflects a balance between creative exploration and structured execution.</p>
+            </div>
+            <span class="editorial-statement__accent">Because whether it's AI or live production, the goal remains the same — clear storytelling, strong visual language, and scalable creative systems.</span>
+        </div>
+    </div>
+</section>
+
+<!-- Portfolio Section -->
+<section class="editorial-portfolio" aria-label="Portfolio showcase">
+    <div class="container">
+        
+        <!-- Category Filters -->
+        <nav class="editorial-filters" data-animate="fade-up">
+            <button class="editorial-filter-btn active" data-filter="all">All Projects</button>
+            <% categories.forEach(cat=> { %>
+                <button class="editorial-filter-btn" data-filter="<%= cat.slug %>">
+                    <%= cat.name %>
+                </button>
+            <% }) %>
+        </nav>
+
+        <div class="editorial-filter-desc" id="filterDesc" data-animate="fade-up"></div>
+
+        <!-- Staggered Editorial Grid -->
+        <div class="editorial-gallery" id="portfolioGrid">
+            <% portfolioItems.forEach((p, index) => {
+                const youtubeId = getYouTubeId((p.extra && p.extra.youtube_url) || '');
+                // Try maxresdefault, fallback to custom generated AI placeholder
+                const fallbackThumb = '/images/portfolio-fallback.png';
+                const thumbUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : fallbackThumb;
+                const isFeatured = index % 3 === 0; // Make every 3rd item larger
+            %>
+            <article class="editorial-project <%= isFeatured ? 'editorial-project--featured' : '' %>"
+                     data-category="<%= (p.tag || '').toLowerCase().replace(/\s+/g, '-') %>"
+                     data-animate="fade-up" style="--delay: <%= 0.1 * (index % 3) %>s">
+                     
+                <figure class="editorial-project__media">
+                    <img src="<%= thumbUrl %>" alt="<%= p.title %>" loading="lazy" class="editorial-project__img">
+                    
+                    <% if (youtubeId) { %>
+                    <!-- Custom minimal play button overlay -->
+                    <div class="editorial-project__play" data-youtube-id="<%= youtubeId %>" role="button" tabindex="0" aria-label="Play video">
+                        <svg viewBox="0 0 24 24" fill="none" class="play-icon">
+                            <circle cx="12" cy="12" r="10" stroke="white" stroke-width="1.5"/>
+                            <path d="M10.5 8.5L15.5 12L10.5 15.5V8.5Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <% } %>
+                    
+                    <div class="editorial-project__overlay">
+                        <div class="editorial-project__meta">
+                            <% if (p.tag) { %>
+                                <span class="editorial-project__tag"><%= p.tag %></span>
+                            <% } %>
+                            <h3 class="editorial-project__title"><%= p.title %></h3>
+                            <p class="editorial-project__desc"><%= p.description %></p>
+                        </div>
+                    </div>
+                </figure>
+                
+            </article>
+            <% }) %>
+        </div>
+
+        <% if (portfolioItems.length===0) { %>
+            <div class="editorial-empty">
+                <p>Portfolio items coming soon. Check back later!</p>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<!-- Section 6: Beyond Formats -->
+<section class="editorial-beyond" style="background: var(--bg-card); padding: 8rem 0;" data-animate="fade-up">
+    <div class="container" style="max-width: 800px; text-align: center;">
+        <h2 style="font-family: var(--font-heading); font-size: 3rem; margin-bottom: 2rem;">Beyond Formats</h2>
+        <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem;">
+            Whether it's AI-generated or live production, the focus remains consistent:
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; justify-content: center; align-items: center; margin-bottom: 2.5rem; font-family: var(--font-mono); font-size: 1.25rem; color: var(--accent-primary);">
+            <span>Strong narrative thinking</span>
+            <span>Clear visual direction</span>
+            <span>Structured execution</span>
+            <span>Scalable creative workflows</span>
+        </div>
+        <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.8;">
+            Formats may change.<br>
+            <span style="color: var(--text-primary); font-weight: 500;">The approach does not.</span>
+        </p>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="editorial-cta" style="border-top: 1px solid rgba(255,255,255,0.05);">
+    <div class="editorial-cta__bg"></div>
+    <div class="container editorial-cta__content" data-animate="fade-up">
+        <h2 class="editorial-cta__title">Let's Build <br><span class="text-gradient">What Comes Next</span></h2>
+        <p class="editorial-cta__desc">If you're exploring how AI or structured creative workflows can enhance your brand storytelling, campaigns, or content production — let's connect.</p>
+        <div class="editorial-cta__actions">
+            <a href="/contact" class="btn btn-primary btn-large magnetic-btn"><span>Start a Project →</span></a>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // ── Category descriptions with SEO-friendly text ──
+    // Slugs must match the actual DB category slugs: ai-ad-film, ai-music-video, ai-music-lyrics
+    const categoryDescriptions = {
+        'all': '',
+        'ai-music-video': '<p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;"><strong style="color:var(--text-primary);font-size:1.4rem;">AI Music Videos</strong><br><em style="opacity:0.8;">AI-generated music videos combining storytelling, lyrics, and cinematic visual design.</em></p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">A collection of AI-generated music videos created using generative AI tools for video, audio, and visual storytelling. These projects explore how AI can be used to produce concept-driven music videos with consistent characters, narrative flow, and cinematic composition.</p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">From ideation to execution, each video is built using structured prompt workflows, enabling scalable and repeatable creative production.</p>',
+        'ai-ad-film': '<p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;"><strong style="color:var(--text-primary);font-size:1.4rem;">AI Ad Films</strong><br><em style="opacity:0.8;">AI-powered brand films and marketing creatives designed for digital campaigns.</em></p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">AI-generated ad films created for brand storytelling, campaign launches, and digital marketing. These projects demonstrate how generative AI can be used to produce advertising content — including scripts, visuals, and video sequences — using structured workflows.</p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">The focus is not just on output, but on building repeatable systems for AI-driven ad film production.</p>',
+        'ai-generated-music': '<p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;"><strong style="color:var(--text-primary);font-size:1.4rem;">AI Music &amp; Video Projects</strong><br><em style="opacity:0.8;">Original concepts where lyrics, music, and visuals are all created using AI.</em></p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">These projects are inspired by original poems and concepts, where lyrics are developed from personal writing, music is composed using AI tools, and videos are generated using structured prompt-based workflows.</p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">This section explores the full creative pipeline — from idea to audio to visual — powered by generative AI.</p>',
+        'live-action-ad-films': '<p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;"><strong style="color:var(--text-primary);font-size:1.4rem;">Live Action Ad Films</strong><br><em style="opacity:0.8;">Brand films produced without AI, using traditional production workflows.</em></p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">A collection of live-action ad films and brand videos produced using traditional filmmaking processes. These projects reflect experience in production, direction, and execution — from concept development to final output.</p><p style="font-size:1.1rem;color:var(--text-secondary);line-height:1.8;max-width:800px;margin:0 auto 2rem;text-align:center;">They provide a foundation in storytelling and visual language that continues to influence AI-driven creative systems.</p>'
+    };
+
+    // ── Tab descriptions (from DB — used only as fallback) ──
+    const filterDescsStr = `<%- categoryDescsJson %>`;
+    const filterDescs = filterDescsStr ? JSON.parse(filterDescsStr) : {};
+    const descEl = document.getElementById('filterDesc');
+
+    // ── Category filters ──
+    const filterBtns = document.querySelectorAll('.editorial-filter-btn');
+    const cards = document.querySelectorAll('.editorial-project');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filter = btn.dataset.filter;
+
+            if (descEl) {
+                // Use local rich description first, then DB description as fallback
+                descEl.innerHTML = categoryDescriptions[filter] || filterDescs[filter] || '';
+            }
+
+            cards.forEach(card => {
+                const match = filter === 'all' || card.dataset.category === filter;
+                if (match) {
+                    card.style.display = 'block';
+                    requestAnimationFrame(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    });
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => { card.style.display = 'none'; }, 400);
+                }
+            });
+        });
+    });
+
+    // ── Video Facade Logic ──
+    document.querySelectorAll('.editorial-project__play').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.dataset.youtubeId;
+            const container = this.closest('.editorial-project__media');
+            
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+            iframe.title = 'YouTube video';
+            iframe.frameBorder = '0';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+            iframe.allowFullscreen = true;
+            iframe.style.position = 'absolute';
+            iframe.style.inset = '0';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.zIndex = '10';
+
+            container.appendChild(iframe);
+            this.style.display = 'none';
+        });
+    });
+});
+</script>
+
+<%- include('../partials/footer') %>

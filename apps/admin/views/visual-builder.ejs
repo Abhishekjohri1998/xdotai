@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Builder: <%= page.title %> — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+    <style>
+        .vb-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background: var(--bg-primary, #0a0a1a);
+        }
+
+        .vb-toolbar {
+            height: 60px;
+            background: var(--bg-secondary, #111127);
+            border-bottom: 1px solid var(--border, #1e1e3a);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .vb-toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .vb-toolbar-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .vb-toolbar-title span {
+            color: #a78bfa;
+        }
+
+        . डिवाइस-toggles {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .device-btn {
+            background: transparent;
+            border: none;
+            color: #888;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .device-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .device-btn.active {
+            color: #fff;
+            background: #7c3aed;
+        }
+
+        .page-selector {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .page-selector:focus {
+            border-color: #7c3aed;
+        }
+
+        .btn-close {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+            padding: 6px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-close:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .vb-workspace {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(135deg, #080818 0%, #0d0d25 100%);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .vb-canvas-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .vb-iframe {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Device Sizes */
+        .vb-canvas-container.desktop .vb-iframe {
+            width: 100%;
+            max-width: 1440px;
+        }
+
+        .vb-canvas-container.tablet .vb-iframe {
+            width: 768px;
+        }
+
+        .vb-canvas-container.mobile .vb-iframe {
+            width: 375px;
+        }
+
+        /* Pulse Animation for saving */
+        @keyframes pulseBorder {
+            0% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(124, 58, 237, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+            }
+        }
+
+        .saving {
+            animation: pulseBorder 1.5s infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="vb-layout">
+        <!-- Top Toolbar -->
+        <header class="vb-toolbar">
+            <div class="vb-toolbar-group">
+                <div class="vb-toolbar-title">
+                    <span>X DOT AI</span> Visual Builder
+                </div>
+
+                <select class="page-selector" id="pageSelector" onchange="changePage(this.value)">
+                    <option value="home" <%=page.slug==='home' ? 'selected' : '' %>>Home</option>
+                    <option value="about-da-sachin" <%=page.slug==='about-da-sachin' ? 'selected' : '' %>>About</option>
+                    <option value="services" <%=page.slug==='services' ? 'selected' : '' %>>Services</option>
+                    <option value="portfolio" <%=page.slug==='portfolio' ? 'selected' : '' %>>Portfolio</option>
+                    <option value="insights" <%=page.slug==='insights' ? 'selected' : '' %>>Insights</option>
+                    <!-- Add more pages as needed -->
+                </select>
+            </div>
+
+            <div class="vb-toolbar-group device-toggles">
+                <button class="device-btn active" onclick="setDevice('desktop')" id="btn-desktop" title="Desktop View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </button>
+                <button class="device-btn" onclick="setDevice('tablet')" id="btn-tablet" title="Tablet View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                </button>
+                <button class="device-btn" onclick="setDevice('mobile')" id="btn-mobile" title="Mobile View">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="vb-toolbar-group">
+                <a href="/admin" class="btn-close">Exit Builder</a>
+            </div>
+        </header>
+
+        <!-- Workspace Canvas -->
+        <main class="vb-workspace">
+            <div class="vb-canvas-container desktop" id="canvasContainer">
+                <!-- The iframe points to the public website page. 
+                     Since the admin is logged in (session cookie), the website server 
+                     will inject the inline-editor.ejs scripts automatically. -->
+                <iframe src="<%= page.slug === 'home' ? '/' : '/' + page.slug %>" class="vb-iframe" id="previewIframe"
+                    title="Live Preview">
+                </iframe>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function setDevice(device) {
+            const container = document.getElementById('canvasContainer');
+
+            // Update classes
+            container.className = 'vb-canvas-container ' + device;
+
+            // Update buttons
+            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + device).classList.add('active');
+        }
+
+        function changePage(slug) {
+            // Update iframe src
+            const iframe = document.getElementById('previewIframe');
+            iframe.src = slug === 'home' ? '/' : '/' + slug;
+
+            // Optionally update URL without reloading so sharing links works
+            window.history.replaceState({}, '', '/admin/visual-builder/' + slug);
+        }
+    </script>
+</body>
+
+</html>

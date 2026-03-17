@@ -1,0 +1,57 @@
+<aside class="admin-sidebar">
+    <div class="admin-sidebar-header">
+        <a href="/" class="admin-logo" target="_blank">
+            <span class="logo-x">X</span> DOT AI
+        </a>
+        <span class="admin-badge">CMS</span>
+    </div>
+
+    <div style="padding: 1rem;">
+        <a href="/admin/page-create" class="admin-btn admin-btn-primary"
+            style="width: 100%; box-sizing: border-box; text-align: center; display: block;">✨ Create New Page</a>
+    </div>
+
+    <nav class="admin-nav" style="flex: 1; overflow-y: auto;">
+        <div class="admin-nav-separator">Site Pages</div>
+        <% if (typeof pages !=='undefined' ) { %>
+            <% pages.forEach(p=> { %>
+                <a href="/admin/?page=<%= p.slug %>"
+                    class="admin-nav-item page-nav-item <%= typeof page !== 'undefined' && page && page.slug === p.slug ? 'active' : '' %>">
+                    <span class="admin-nav-icon">📄</span>
+                    <%= p.slug.charAt(0).toUpperCase() + p.slug.slice(1) %>
+                </a>
+                <% }) %>
+                    <% } %>
+
+                        <div class="admin-nav-separator">Management</div>
+                        <a href="/admin/blog"
+                            class="admin-nav-item <%= typeof currentMenu !== 'undefined' && currentMenu === 'blog' ? 'active' : '' %>">
+                            <span class="admin-nav-icon">📝</span> Blog Manager
+                        </a>
+                        <a href="/admin/nav-logos"
+                            class="admin-nav-item <%= typeof currentMenu !== 'undefined' && currentMenu === 'nav' ? 'active' : '' %>">
+                            <span class="admin-nav-icon">🧭</span> Nav & Logos
+                        </a>
+                        <a href="/admin/home-manager"
+                            class="admin-nav-item <%= typeof currentMenu !== 'undefined' && currentMenu === 'home-manager' ? 'active' : '' %>">
+                            <span class="admin-nav-icon">🏠</span> Home Manager
+                        </a>
+
+                        <div class="admin-nav-separator">System</div>
+                        <a href="/admin/?modal=settings" class="admin-nav-item">
+                            <span class="admin-nav-icon">⚙️</span> Settings & Branding
+                        </a>
+                        <a href="/admin/?modal=pages" class="admin-nav-item">
+                            <span class="admin-nav-icon">📊</span> Pages Overview
+                        </a>
+                        <a href="/admin/logout" class="admin-nav-item" style="color: #ef4444;">
+                            <span class="admin-nav-icon">🚪</span> Logout
+                        </a>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+        <span>Logged in as <strong>
+                <%= typeof adminUser !=='undefined' ? adminUser : 'Admin' %>
+            </strong></span>
+    </div>
+</aside>

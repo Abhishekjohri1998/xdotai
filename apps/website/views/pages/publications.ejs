@@ -1,0 +1,178 @@
+<%- include('../partials/header', { page }) %>
+
+<!-- Immersive Hero (About-style constellation) -->
+<section class="abt-hero" id="pubHero">
+    <div class="abt-hero__canvas">
+        <svg class="abt-hero__net" viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+                <radialGradient id="ng-pub" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.7)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+                <filter id="gl-pub"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <g stroke="rgba(124,58,237,0.12)" stroke-width="0.8" fill="none">
+                <path class="svg-draw-line" d="M0,350 C200,100 500,500 700,300 S1100,100 1400,350"/>
+                <path class="svg-draw-line" d="M0,450 C300,200 600,600 900,350 S1200,150 1400,400" style="animation-delay:.5s"/>
+                <path class="svg-draw-line" d="M100,600 C350,300 650,500 900,250 S1150,400 1400,200" style="animation-delay:1s"/>
+            </g>
+            <g filter="url(#gl-pub)">
+                <circle cx="200" cy="220" r="3" fill="url(#ng-pub)" class="svg-node--breathe"/>
+                <circle cx="500" cy="400" r="4" fill="url(#ng-pub)" class="svg-node--breathe" style="animation-delay:1s"/>
+                <circle cx="700" cy="300" r="5" fill="url(#ng-pub)" class="svg-node--breathe" style="animation-delay:2s"/>
+                <circle cx="1000" cy="180" r="3" fill="url(#ng-pub)" class="svg-node--breathe" style="animation-delay:.5s"/>
+                <circle cx="1200" cy="380" r="4" fill="url(#ng-pub)" class="svg-node--breathe" style="animation-delay:1.5s"/>
+                <circle cx="350" cy="500" r="3" fill="url(#ng-pub)" class="svg-node--breathe" style="animation-delay:2.5s"/>
+            </g>
+        </svg>
+        <div class="abt-hero__orb abt-hero__orb--a"></div>
+        <div class="abt-hero__orb abt-hero__orb--b"></div>
+        <div class="abt-hero__orb abt-hero__orb--c"></div>
+    </div>
+    <div class="container abt-hero__inner" style="display:flex;justify-content:center;">
+        <div class="abt-hero__content reveal" style="text-align:center;max-width:800px;">
+            <h1 class="abt-hero__h1">Publications</h1>
+            <p class="abt-hero__sub">Thoughts, frameworks, and practical perspectives on creativity, AI, and the systems that connect them.</p>
+        </div>
+    </div>
+    <div class="abt-hero__scroll-cue"><div class="scroll-mouse"></div></div>
+</section>
+
+<!-- Section 1: Where Ideas Take Shape -->
+<section class="editorial-statement" data-animate="fade-up">
+    <div class="container">
+        <div class="editorial-statement__inner">
+            <h2 class="editorial-statement__title">Where Ideas Take Shape</h2>
+            <div class="editorial-statement__body">
+                <p>Writing, for me, is where ideas slow down.</p>
+                <p>It's where observations turn into clarity, and clarity turns into systems.</p>
+            </div>
+            <span class="editorial-statement__accent">These books are not technical manuals or trend reports. They are reflections on how creativity and AI can work together — in a way that is practical, structured, and usable in the real world.</span>
+        </div>
+    </div>
+</section>
+
+<!-- Book Showcase -->
+<section class="editorial-books">
+    <div class="container">
+        <!-- Book 1: Prompt DOT AI -->
+        <article class="editorial-book" data-animate="fade-up">
+            <div class="editorial-book__visual" style="max-height: 600px; display: flex; align-items: center; justify-content: center;">
+                <div class="editorial-book__cover" style="box-shadow: 0 30px 60px rgba(0,0,0,0.6); max-height: 100%; width: auto;">
+                    <img src="/images/books/prompt-dot-ai-actual.jpg" alt="Prompt DOT AI Book Cover" loading="lazy" style="object-fit: contain; max-height: 500px; width: auto; border-radius: 4px;">
+                </div>
+                <div class="editorial-book__glow" style="--book-glow: rgba(168,85,247,0.3)"></div>
+            </div>
+            <div class="editorial-book__info">
+                <span class="editorial-book__label" style="color: var(--accent-primary); font-family: var(--font-mono); font-size: 0.9rem; text-transform: uppercase;">BOOK 1</span>
+                <h2 class="editorial-book__title" style="margin-top: 0.5rem;">Prompt DOT AI</h2>
+                <h3 class="editorial-book__subtitle" style="color: var(--text-primary); font-size: 1.25rem; margin-bottom: 1.5rem; opacity: 0.9;">Art of Writing Generative AI Prompts</h3>
+                <div class="editorial-book__takeaway" style="background: rgba(168,85,247,0.1); border-left: 3px solid var(--accent-primary); padding: 1rem 1.5rem; margin-bottom: 2rem; font-style: italic;">
+                    "Moving from random outputs to structured, reliable results."
+                </div>
+                <p class="editorial-book__desc" style="margin-bottom: 1rem;">
+                    The AI landscape has evolved rapidly. Basic prompting is no longer enough.
+                </p>
+                <p class="editorial-book__desc" style="margin-bottom: 1rem;">
+                    Prompt DOT AI (July 2025 Edition) introduces a more structured way of working with AI — thinking like an orchestrator, not just a user. It explores how to work across leading AI models, design multi-step creative workflows, and build consistency across text, image, video, and emerging formats like 3D.
+                </p>
+                <p class="editorial-book__desc" style="margin-bottom: 2rem;">
+                    From AI-generated videos and music to repeatable prompt frameworks, the focus is on practical systems rather than isolated techniques. This book is for anyone who wants to move from random outputs to structured, reliable results.
+                </p>
+                <div class="editorial-book__actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="https://www.amazon.in/Prompt-DOT-Artificial-Intelligence-Generative-ebook/dp/B0CDQB4L5J" target="_blank" rel="noopener noreferrer" class="btn btn-primary magnetic-btn" style="padding: 1rem 2rem;">
+                        <span>Buy Now →</span>
+                    </a>
+                    <a href="https://www.amazon.in/Prompt-DOT-Artificial-Intelligence-Generative-ebook/dp/B0CDQB4L5J" target="_blank" rel="noopener noreferrer" class="btn btn-outline magnetic-btn" style="padding: 1rem 2rem;">
+                        <span>Read Sample</span>
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Book 2: Creativity DOT AI -->
+        <article class="editorial-book editorial-book--reverse" data-animate="fade-up" style="--delay: 0.2s">
+            <div class="editorial-book__visual" style="max-height: 600px; display: flex; align-items: center; justify-content: center;">
+                <div class="editorial-book__cover" style="box-shadow: 0 30px 60px rgba(0,0,0,0.6); max-height: 100%; width: auto;">
+                    <img src="/images/books/creativity-dot-ai-actual.jpg" alt="Creativity DOT AI Book Cover" loading="lazy" style="object-fit: contain; max-height: 500px; width: auto; border-radius: 4px;">
+                </div>
+                <div class="editorial-book__glow" style="--book-glow: rgba(239,68,68,0.3)"></div>
+            </div>
+            <div class="editorial-book__info">
+                <span class="editorial-book__label" style="color: #ef4444; font-family: var(--font-mono); font-size: 0.9rem; text-transform: uppercase;">BOOK 2</span>
+                <h2 class="editorial-book__title" style="margin-top: 0.5rem;">Creativity DOT AI</h2>
+                <h3 class="editorial-book__subtitle" style="color: var(--text-primary); font-size: 1.25rem; margin-bottom: 1.5rem; opacity: 0.9;">Empowering Your Creativity in a World Transformed by AI</h3>
+                <div class="editorial-book__takeaway" style="background: rgba(239,68,68,0.1); border-left: 3px solid #ef4444; padding: 1rem 1.5rem; margin-bottom: 2rem; font-style: italic;">
+                    "AI becomes a collaborator — amplifying ideas when guided with clarity and intent."
+                </div>
+                <p class="editorial-book__desc" style="margin-bottom: 1rem;">
+                    Creativity DOT AI explores how creativity evolves in a world shaped by artificial intelligence.
+                </p>
+                <p class="editorial-book__desc" style="margin-bottom: 1rem;">
+                    It looks beyond tools and trends, focusing instead on mindset, observation, and the role of human thinking in an AI-driven environment. The book brings together insights from branding, storytelling, content creation, and design to show how creative professionals can adapt and stay relevant.
+                </p>
+                <p class="editorial-book__desc" style="margin-bottom: 2rem;">
+                    Rather than replacing creativity, AI becomes a collaborator — amplifying ideas when guided with clarity and intent.
+                </p>
+                <div class="editorial-book__actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="https://www.amazon.in/Creativity-DOT-AI-Empowering-Transformed-ebook/dp/B0C34F2DJM" target="_blank" rel="noopener noreferrer" class="btn btn-primary magnetic-btn" style="background: #ef4444; padding: 1rem 2rem;">
+                        <span>Buy Now →</span>
+                    </a>
+                    <a href="https://www.amazon.in/Creativity-DOT-AI-Empowering-Transformed-ebook/dp/B0C34F2DJM" target="_blank" rel="noopener noreferrer" class="btn btn-outline magnetic-btn" style="border-color: #ef4444; color: #ef4444; padding: 1rem 2rem;">
+                        <span>Read Sample</span>
+                    </a>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- Section 3: Beyond Tools -->
+<section class="editorial-beyond" style="background: var(--bg-card); padding: 8rem 0;" data-animate="fade-up">
+    <div class="container" style="max-width: 800px; text-align: center;">
+        <h2 style="font-family: var(--font-heading); font-size: 3rem; margin-bottom: 2rem;">Beyond Tools</h2>
+        <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+            AI will continue to evolve.<br>
+            New tools will emerge. Old ones will fade.
+        </p>
+        <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+            But the fundamentals remain the same:
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; justify-content: center; align-items: center; margin-bottom: 2rem; font-family: var(--font-mono); font-size: 1.5rem; color: var(--accent-primary);">
+            <span>How you think.</span>
+            <span>How you observe.</span>
+            <span>How you structure ideas.</span>
+        </div>
+        <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.8;">
+            These books are built around that belief — that AI is powerful, but only when guided by clear thinking and intentional creativity.
+        </p>
+    </div>
+</section>
+
+<!-- Section 4: From Pages to Practice -->
+<section class="editorial-practice" style="padding: 8rem 0; background: var(--bg-main);" data-animate="fade-up">
+    <div class="container" style="max-width: 800px; text-align: center;">
+        <h2 style="font-family: var(--font-heading); font-size: 3rem; margin-bottom: 2rem;">From Pages to Practice</h2>
+        <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+            The ideas in these books don’t stay on paper.
+        </p>
+        <p style="font-size: 1.25rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem;">
+            They extend into real-world systems, workflows, and implementations — across marketing teams, creative processes, and content operations.
+        </p>
+        <div style="font-size: 1.5rem; color: var(--text-primary); font-family: var(--font-heading); margin-bottom: 1rem; font-style: italic;">
+            "Because understanding AI is one thing.<br>
+            <span class="text-gradient">Using it meaningfully is another.</span>"
+        </div>
+    </div>
+</section>
+
+<!-- Author CTA -->
+<section class="editorial-cta" style="border-top: 1px solid rgba(255,255,255,0.05);">
+    <div class="editorial-cta__bg"></div>
+    <div class="container editorial-cta__content" data-animate="fade-up">
+        <h2 class="editorial-cta__title">Explore the Thinking <br><span class="text-gradient">Behind the Systems</span></h2>
+        <p class="editorial-cta__desc">If you’re looking to understand AI beyond surface-level usage and build a deeper connection with how it fits into creativity and marketing, these books are a good place to start.</p>
+        <div class="editorial-cta__actions">
+            <a href="/contact" class="btn btn-primary btn-large magnetic-btn"><span>Partner With Me</span></a>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>
