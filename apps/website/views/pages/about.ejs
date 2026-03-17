@@ -1,147 +1,433 @@
 <%- include('../partials/header', { page }) %>
 
-    <!-- Hero Section -->
-    <section class="page-hero" aria-label="About Da Sachin Sharma">
-        <div class="container">
-            <div class="hero-badge" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="nav_label" data-type="text">
-                <%= page.nav_label %>
-            </div>
-            <h1 class="hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
-            <p class="hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_subtitle" data-type="text">
-                <%= page.hero_subtitle %>
-            </p>
+<!-- ============================================
+     ABOUT DA SACHIN — V2 Editorial Redesign
+     Immersive / Magazine-Style / Image-Ready
+     ============================================ -->
+
+<!-- HERO -->
+<section class="abt-hero" id="aboutHero">
+    <div class="abt-hero__canvas">
+        <svg class="abt-hero__net" viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+                <radialGradient id="ng" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.7)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+                <filter id="gl"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c3aed" stop-opacity="0.6"/><stop offset="100%" stop-color="#c084fc" stop-opacity="0.2"/></linearGradient>
+            </defs>
+            <!-- Constellation paths -->
+            <g stroke="rgba(124,58,237,0.12)" stroke-width="0.8" fill="none">
+                <path class="svg-draw-line" d="M0,350 C200,100 500,500 700,300 S1100,100 1400,350"/>
+                <path class="svg-draw-line" d="M0,450 C300,200 600,600 900,350 S1200,150 1400,400" style="animation-delay:.5s"/>
+                <path class="svg-draw-line" d="M100,600 C350,300 650,500 900,250 S1150,400 1400,200" style="animation-delay:1s"/>
+            </g>
+            <!-- Nodes -->
+            <g filter="url(#gl)">
+                <circle cx="200" cy="220" r="3" fill="url(#ng)" class="svg-node--breathe"/>
+                <circle cx="500" cy="400" r="4" fill="url(#ng)" class="svg-node--breathe" style="animation-delay:1s"/>
+                <circle cx="700" cy="300" r="5" fill="url(#ng)" class="svg-node--breathe" style="animation-delay:2s"/>
+                <circle cx="1000" cy="180" r="3" fill="url(#ng)" class="svg-node--breathe" style="animation-delay:.5s"/>
+                <circle cx="1200" cy="380" r="4" fill="url(#ng)" class="svg-node--breathe" style="animation-delay:1.5s"/>
+                <circle cx="350" cy="500" r="3" fill="url(#ng)" class="svg-node--breathe" style="animation-delay:2.5s"/>
+                <circle cx="850" cy="450" r="3" fill="url(#ng)" class="svg-node--breathe" style="animation-delay:3s"/>
+            </g>
+        </svg>
+        <div class="abt-hero__orb abt-hero__orb--a"></div>
+        <div class="abt-hero__orb abt-hero__orb--b"></div>
+        <div class="abt-hero__orb abt-hero__orb--c"></div>
+    </div>
+    <div class="container abt-hero__inner">
+        <div class="abt-hero__content reveal">
+            <p class="abt-hero__kicker">About Da Sachin</p>
+            <h1 class="abt-hero__h1">Not an AI Creator.<br><span class="text-gradient">An Architect of Creative&nbsp;Systems.</span></h1>
+            <p class="abt-hero__sub">I work at the intersection of storytelling, marketing, and artificial intelligence — helping brands design structured AI workflows that scale creativity without losing&nbsp;control.</p>
         </div>
-    </section>
+        <!-- VIDEO SLOT: Hero autoplaying YouTube Short -->
+        <div class="abt-hero__image reveal-right">
+            <div class="abt-img-frame abt-img-frame--hero" style="position:relative;overflow:hidden;">
+                <iframe
+                    src="https://www.youtube.com/embed/3L131MmXTcc?autoplay=1&mute=1&loop=1&playlist=3L131MmXTcc&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1&disablekb=1&fs=0&iv_load_policy=3"
+                    title="Da Sachin Sharma"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    style="position:absolute;inset:-20%;width:140%;height:140%;border:none;border-radius:inherit;pointer-events:none;"
+                    loading="eager"
+                ></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="abt-hero__scroll-cue">
+        <div class="scroll-mouse"></div>
+    </div>
+</section>
 
-    <!-- Founder Section -->
-    <% const founder=(sections['about-founder'] || [])[0]; %>
-        <% if (founder) { %>
-            <section class="section" aria-label="About the Founder">
-                <div class="container">
-                    <% var fExtra=founder && founder.extra_json ? JSON.parse(founder.extra_json) : {}; var fStyle="" ;
-                        if (fExtra.background_color) fStyle +=`background-color: ${fExtra.background_color}; `; if
-                        (fExtra.padding) fStyle +=`padding: ${fExtra.padding};`; %>
-                        <div class="about-founder-card glass-card" data-editable-section="true" data-model="Section"
-                            data-id="<%= founder.id %>" data-extra="<%= founder.extra_json || '{}' %>" <%- fStyle ?
-                            `style="${fStyle}" ` : '' %>>
-                            <div class="about-founder-avatar">
-                                <span class="founder-icon" data-editable="true" data-model="Section"
-                                    data-id="<%= founder.id %>" data-field="icon" data-type="text">
-                                    <%= founder.icon %>
-                                </span>
-                            </div>
-                            <div class="about-founder-content">
-                                <span class="founder-role" data-editable="true" data-model="Section"
-                                    data-id="<%= founder.id %>" data-field="subtitle" data-type="text">
-                                    <%= founder.subtitle %>
-                                </span>
-                                <h2 data-editable="true" data-model="Section" data-id="<%= founder.id %>"
-                                    data-field="title" data-type="text">
-                                    <%= founder.title %>
-                                </h2>
-                                <p data-editable="true" data-model="Section" data-id="<%= founder.id %>"
-                                    data-field="description" data-type="text">
-                                    <%= founder.description %>
-                                </p>
-                            </div>
-                        </div>
+<!-- DIVIDER -->
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- THE SHIFT -->
+<section class="abt-sec" id="theShift">
+    <div class="container abt-editorial">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">The Shift</h2>
+        </div>
+        <div class="abt-editorial__body">
+            <div class="abt-col-text reveal">
+                <p>Most people approach AI like a tool.</p>
+                <p>They try prompts, generate content, and move on.</p>
+                <p>But very quickly, things break.</p>
+                <ul class="abt-bullets">
+                    <li>Content becomes inconsistent.</li>
+                    <li>Teams get confused.</li>
+                    <li>Brand voice disappears.</li>
+                    <li>AI creates noise instead of clarity.</li>
+                </ul>
+                <blockquote class="abt-pull">That's where I found my space.</blockquote>
+                <p>Not in creating more content.<br>But in designing <strong>how content gets created.</strong></p>
+                <p>Today, I don't just generate ideas.<br>I architect systems where ideas scale.</p>
+            </div>
+            <div class="abt-col-visual reveal-right">
+                <!-- SVG: Expanding System -->
+                <svg class="abt-illust" viewBox="0 0 420 420" aria-hidden="true">
+                    <circle cx="210" cy="210" r="8" fill="#7c3aed" class="svg-node--breathe"/>
+                    <circle cx="210" cy="210" r="50" fill="none" stroke="rgba(124,58,237,0.2)" stroke-width="1" stroke-dasharray="6 4" class="svg-rotate"/>
+                    <circle cx="210" cy="210" r="110" fill="none" stroke="rgba(124,58,237,0.12)" stroke-width="1" stroke-dasharray="3 6" class="svg-rotate-reverse"/>
+                    <circle cx="210" cy="210" r="170" fill="none" stroke="rgba(124,58,237,0.07)" stroke-width="1" class="svg-rotate" style="animation-duration:50s"/>
+                    <g stroke="url(#lg)" stroke-width="1.2" fill="none">
+                        <path class="svg-draw-line" d="M210,160 L210,60"/>
+                        <path class="svg-draw-line" d="M260,210 L360,210" style="animation-delay:.3s"/>
+                        <path class="svg-draw-line" d="M210,260 L210,360" style="animation-delay:.6s"/>
+                        <path class="svg-draw-line" d="M160,210 L60,210" style="animation-delay:.9s"/>
+                        <path class="svg-draw-line" d="M245,175 L310,110" style="animation-delay:1.2s"/>
+                        <path class="svg-draw-line" d="M175,245 L110,310" style="animation-delay:1.5s"/>
+                        <path class="svg-draw-line" d="M245,245 L310,310" style="animation-delay:1.8s"/>
+                        <path class="svg-draw-line" d="M175,175 L110,110" style="animation-delay:2.1s"/>
+                    </g>
+                    <g filter="url(#gl)">
+                        <circle cx="210" cy="60" r="4" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:.2s"/>
+                        <circle cx="360" cy="210" r="4" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:.5s"/>
+                        <circle cx="210" cy="360" r="4" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:.8s"/>
+                        <circle cx="60" cy="210" r="4" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:1.1s"/>
+                        <circle cx="310" cy="110" r="3" fill="#c084fc" class="svg-node--breathe" style="animation-delay:1.4s"/>
+                        <circle cx="110" cy="310" r="3" fill="#c084fc" class="svg-node--breathe" style="animation-delay:1.7s"/>
+                        <circle cx="310" cy="310" r="3" fill="#c084fc" class="svg-node--breathe" style="animation-delay:2s"/>
+                        <circle cx="110" cy="110" r="3" fill="#c084fc" class="svg-node--breathe" style="animation-delay:2.3s"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- WHAT I DO -->
+<section class="abt-sec abt-sec--alt" id="whatIDo">
+    <div class="container">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">What I Do</h2>
+            <p class="abt-sec__intro">I help brands, agencies, and marketing teams turn AI from an experiment into an operational advantage.</p>
+        </div>
+        <div class="abt-services-grid stagger-children">
+            <div class="abt-svc glass-card">
+                <div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><path d="M24 4L4 14l20 10 20-10L24 4z" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 24l20 10 20-10" stroke="#7c3aed" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 34l20 10 20-10" stroke="#c084fc" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+                <h3>AI-Powered Workflows</h3>
+                <p>Content & marketing workflows with human oversight built in.</p>
+            </div>
+            <div class="abt-svc glass-card">
+                <div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="18" stroke="#a78bfa" stroke-width="1.5"/><path d="M24 12v12l8 4" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/><circle cx="24" cy="24" r="3" fill="#c084fc"/></svg></div>
+                <h3>Brand Brain Systems</h3>
+                <p>Consistency engines — every output sounds like your brand.</p>
+            </div>
+            <div class="abt-svc glass-card">
+                <div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="#a78bfa" stroke-width="1.5"/><path d="M6 18h36" stroke="#7c3aed" stroke-width="1.5"/><circle cx="14" cy="30" r="4" stroke="#c084fc" stroke-width="1.5"/><path d="M22 26h14M22 32h10" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <h3>Campaign Ideation</h3>
+                <p>Repeatable frameworks so ideation isn't a bottleneck.</p>
+            </div>
+            <div class="abt-svc glass-card">
+                <div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><polygon points="20,8 40,24 20,40" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 14v20" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <h3>AI Video Pipelines</h3>
+                <p>End-to-end video and storytelling production with AI.</p>
+            </div>
+            <div class="abt-svc glass-card">
+                <div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><path d="M24 4a20 20 0 110 40 20 20 0 010-40z" stroke="#a78bfa" stroke-width="1.5"/><path d="M16 20l6 6 10-12" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <h3>Team Training</h3>
+                <p>Practical, hands-on, outcome-driven AI adoption.</p>
+            </div>
+        </div>
+        <div class="abt-goal reveal">
+            <p class="abt-goal__label">The goal is simple:</p>
+            <div class="abt-goal__trio">
+                <span>Make AI <em>usable.</em></span>
+                <span class="abt-goal__dot">·</span>
+                <span>Make creativity <em>scalable.</em></span>
+                <span class="abt-goal__dot">·</span>
+                <span>Make systems <em>beautiful.</em></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- CREATIVE ROOTS -->
+<section class="abt-sec" id="creativeRoots">
+    <div class="container abt-editorial">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">Creative Roots</h2>
+        </div>
+        <div class="abt-editorial__body abt-editorial__body--reverse">
+            <div class="abt-col-visual reveal-left">
+                <!-- YouTube Video: Creative Roots -->
+                <div class="abt-img-frame abt-img-frame--wide" style="position:relative;aspect-ratio:16/9;overflow:hidden;cursor:pointer;" id="creativeRootsVideo" onclick="(function(el){var iframe=document.createElement('iframe');iframe.src='https://www.youtube.com/embed/nNBVKDfXQuA?autoplay=1&rel=0&modestbranding=1';iframe.title='Da Sachin Sharma – Creative Roots';iframe.frameBorder='0';iframe.allow='accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share';iframe.allowFullscreen=true;iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;';el.innerHTML='';el.appendChild(iframe);})(this)">
+                    <img src="https://img.youtube.com/vi/nNBVKDfXQuA/maxresdefault.jpg" alt="Da Sachin Sharma – Creative Roots" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;" loading="lazy" />
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);transition:background 0.3s;" onmouseover="this.style.background='rgba(0,0,0,0.15)'" onmouseout="this.style.background='rgba(0,0,0,0.3)'">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="31" stroke="rgba(255,255,255,0.8)" stroke-width="2" fill="rgba(124,58,237,0.7)"/><polygon points="26,20 26,44 46,32" fill="white"/></svg>
+                    </div>
                 </div>
-            </section>
-            <% } %>
+                <!-- SVG: waveform accent -->
+                <svg class="abt-wave-accent" viewBox="0 0 400 60" aria-hidden="true">
+                    <path class="svg-wave-animate" d="M0,30 Q50,5 100,30 T200,30 T300,30 T400,30" stroke="url(#lg)" stroke-width="1.5" fill="none"/>
+                    <path class="svg-wave-animate svg-wave-b" d="M0,30 Q50,15 100,30 T200,30 T300,30 T400,30" stroke="rgba(167,139,250,0.3)" stroke-width="1" fill="none"/>
+                </svg>
+            </div>
+            <div class="abt-col-text reveal">
+                <p>Before systems, there was storytelling.</p>
+                <div class="abt-word-rain">
+                    <span style="--i:0">Music.</span>
+                    <span style="--i:1">Visuals.</span>
+                    <span style="--i:2">Narratives.</span>
+                    <span style="--i:3">Experiments with form and emotion.</span>
+                </div>
+                <p>From AI-generated songs to cinematic video concepts, I've explored how technology can extend creative expression.</p>
+                <p>That experience shaped something important:</p>
+                <blockquote class="abt-pull">AI is powerful.<br>But without taste, structure, and intent — it becomes forgettable.</blockquote>
+                <p>Today, I bring that creative foundation into every system I design.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-                <!-- Achievements -->
-                <% const achievements=(sections['about-achievement'] || []); %>
-                    <% if (achievements.length) { %>
-                        <section class="section section-alt" aria-label="Key Achievements">
-                            <div class="container">
-                                <h2 class="section-title">Key <span class="text-gradient">Achievements</span></h2>
-                                <div class="achievements-grid">
-                                    <% achievements.forEach(ach=> { %>
-                                        <% var achExtra=ach && ach.extra_json ? JSON.parse(ach.extra_json) : {}; var
-                                            achStyle="" ; if (achExtra.background_color) achStyle +=`background-color:
-                                            ${achExtra.background_color}; `; if (achExtra.padding) achStyle +=`padding:
-                                            ${achExtra.padding};`; %>
-                                            <div class="achievement-card glass-card" data-editable-section="true"
-                                                data-model="Section" data-id="<%= ach.id %>"
-                                                data-extra="<%= ach.extra_json || '{}' %>" <%- achStyle ?
-                                                `style="${achStyle}" ` : '' %>>
-                                                <span class="achievement-icon" data-editable="true" data-model="Section"
-                                                    data-id="<%= ach.id %>" data-field="icon" data-type="text">
-                                                    <%= ach.icon %>
-                                                </span>
-                                                <h3 data-editable="true" data-model="Section" data-id="<%= ach.id %>"
-                                                    data-field="title" data-type="text">
-                                                    <%= ach.title %>
-                                                </h3>
-                                                <p data-editable="true" data-model="Section" data-id="<%= ach.id %>"
-                                                    data-field="description" data-type="text">
-                                                    <%= ach.description %>
-                                                </p>
-                                            </div>
-                                            <% }) %>
-                                </div>
-                            </div>
-                        </section>
-                        <% } %>
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
 
-                            <!-- Values -->
-                            <% const values=(sections['about-value'] || []); %>
-                                <% if (values.length) { %>
-                                    <section class="section" aria-label="Our Values">
-                                        <div class="container">
-                                            <h2 class="section-title">Our <span class="text-gradient">Values</span></h2>
-                                            <div class="values-grid">
-                                                <% values.forEach(v=> { %>
-                                                    <% var valExtra=v && v.extra_json ? JSON.parse(v.extra_json) : {};
-                                                        var valStyle="" ; if (valExtra.background_color) valStyle
-                                                        +=`background-color: ${valExtra.background_color}; `; if
-                                                        (valExtra.padding) valStyle +=`padding: ${valExtra.padding};`;
-                                                        %>
-                                                        <div class="value-card glass-card" data-editable-section="true"
-                                                            data-model="Section" data-id="<%= v.id %>"
-                                                            data-extra="<%= v.extra_json || '{}' %>" <%- valStyle ?
-                                                            `style="${valStyle}" ` : '' %>>
-                                                            <span class="value-icon" data-editable="true"
-                                                                data-model="Section" data-id="<%= v.id %>"
-                                                                data-field="icon" data-type="text">
-                                                                <%= v.icon %>
-                                                            </span>
-                                                            <h3 data-editable="true" data-model="Section"
-                                                                data-id="<%= v.id %>" data-field="title"
-                                                                data-type="text">
-                                                                <%= v.title %>
-                                                            </h3>
-                                                            <p data-editable="true" data-model="Section"
-                                                                data-id="<%= v.id %>" data-field="description"
-                                                                data-type="text">
-                                                                <%= v.description %>
-                                                            </p>
-                                                        </div>
-                                                        <% }) %>
-                                            </div>
-                                        </div>
-                                    </section>
-                                    <% } %>
+<!-- EXPERIENCE -->
+<section class="abt-sec abt-sec--alt" id="experience">
+    <div class="container">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">Experience, Experiments & Execution</h2>
+            <p class="abt-sec__intro">My work has evolved across storytelling, marketing, and emerging technology. I've collaborated with brands, agencies, and teams across industries.</p>
+        </div>
+        <div class="abt-exp-layout">
+            <div class="abt-exp-list reveal">
+                <h3 class="abt-exp-list__title">My journey includes:</h3>
+                <ul class="abt-bullets abt-bullets--spaced">
+                    <li>Creating AI-driven music and narrative formats</li>
+                    <li>Developing cinematic AI video concepts and ad film experiments</li>
+                    <li>Working on brand-led content and marketing initiatives</li>
+                    <li>Designing AI workshops and training programs</li>
+                    <li>Writing and publishing on AI, creativity, and prompt thinking</li>
+                </ul>
+                <p class="abt-exp-list__note">I've worked with teams across agencies, enterprise organisations, and content-driven businesses — contributing to both creative output and system-level thinking.</p>
+                <blockquote class="abt-pull">From creating content…<br>to designing <strong>how content gets created.</strong></blockquote>
+            </div>
+            <div class="abt-exp-images reveal-right">
+                <!-- IMAGE SLOTS: Work / Projects -->
+                <div class="abt-img-frame abt-img-frame--stack">
+                    <img src="/images/project-mat-ja-re.jpg" alt="Mat Ja Re — Da Sachin AI Music Project" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;" loading="lazy" />
+                </div>
+                <div class="abt-img-frame abt-img-frame--stack abt-img-frame--offset">
+                    <img src="/images/project-musafir.jpg" alt="Musafir — Da Sachin AI Music Project" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;" loading="lazy" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                                        <!-- CTA -->
-                                        <section class="section section-alt" aria-label="Connect with Da Sachin">
-                                            <div class="container">
-                                                <div class="cta-banner glass-card">
-                                                    <h2>Ready to work with <span class="text-gradient">Da Sachin?</span>
-                                                    </h2>
-                                                    <p>Whether it's AI consulting, creative direction, or corporate
-                                                        training — let's explore what AI can do for you.</p>
-                                                    <div class="cta-buttons">
-                                                        <a href="/contact" class="btn btn-primary btn-lg">Get In
-                                                            Touch</a>
-                                                        <a href="/portfolio" class="btn btn-outline btn-lg">View
-                                                            Portfolio</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </section>
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
 
-                                        <%- include('../partials/footer') %>
+<!-- MY APPROACH -->
+<section class="abt-sec" id="myApproach">
+    <div class="container">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">My Approach</h2>
+            <p class="abt-sec__intro">Everything I build is based on three layers:</p>
+        </div>
+        <div class="abt-layers">
+            <div class="abt-layer reveal">
+                <div class="abt-layer__head">
+                    <svg class="abt-layer__svg" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="24" fill="none" stroke="rgba(124,58,237,0.2)" stroke-width="1"/><circle cx="30" cy="30" r="12" fill="none" stroke="rgba(124,58,237,0.4)" stroke-width="1.5"/><circle cx="30" cy="30" r="4" fill="#7c3aed" class="svg-node--breathe"/></svg>
+                    <div class="abt-layer__meta">
+                        <span class="abt-layer__num">01</span>
+                        <h3>Creative Layer</h3>
+                    </div>
+                </div>
+                <p>What is the story? What is the emotion? What needs to be communicated?</p>
+            </div>
+            <div class="abt-layer-connector" aria-hidden="true">
+                <svg viewBox="0 0 2 60"><line x1="1" y1="0" x2="1" y2="60" stroke="url(#lg)" stroke-width="1.5" stroke-dasharray="4 4" class="svg-draw-line"/></svg>
+            </div>
+            <div class="abt-layer reveal">
+                <div class="abt-layer__head">
+                    <svg class="abt-layer__svg" viewBox="0 0 60 60" aria-hidden="true"><rect x="8" y="8" width="44" height="44" rx="8" fill="none" stroke="rgba(124,58,237,0.2)" stroke-width="1"/><rect x="18" y="18" width="24" height="24" rx="4" fill="none" stroke="rgba(124,58,237,0.4)" stroke-width="1.5"/><circle cx="30" cy="30" r="4" fill="#7c3aed" class="svg-node--breathe"/></svg>
+                    <div class="abt-layer__meta">
+                        <span class="abt-layer__num">02</span>
+                        <h3>System Layer</h3>
+                    </div>
+                </div>
+                <p>How does this scale? What is repeatable? How will a team use this daily?</p>
+            </div>
+            <div class="abt-layer-connector" aria-hidden="true">
+                <svg viewBox="0 0 2 60"><line x1="1" y1="0" x2="1" y2="60" stroke="url(#lg)" stroke-width="1.5" stroke-dasharray="4 4" class="svg-draw-line"/></svg>
+            </div>
+            <div class="abt-layer reveal">
+                <div class="abt-layer__head">
+                    <svg class="abt-layer__svg" viewBox="0 0 60 60" aria-hidden="true"><polygon points="30,6 54,48 6,48" fill="none" stroke="rgba(124,58,237,0.2)" stroke-width="1"/><polygon points="30,18 44,42 16,42" fill="none" stroke="rgba(124,58,237,0.4)" stroke-width="1.5"/><circle cx="30" cy="35" r="4" fill="#7c3aed" class="svg-node--breathe"/></svg>
+                    <div class="abt-layer__meta">
+                        <span class="abt-layer__num">03</span>
+                        <h3>Implementation Layer</h3>
+                    </div>
+                </div>
+                <p>What tools, workflows, and structures make this usable in real environments?</p>
+            </div>
+        </div>
+        <p class="abt-coda reveal">Most people stop at ideas. <strong class="text-gradient">I build what comes after.</strong></p>
+    </div>
+</section>
+
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- WHO I WORK WITH -->
+<section class="abt-sec abt-sec--alt" id="whoIWork">
+    <div class="container abt-editorial">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">Who I Work With</h2>
+        </div>
+        <div class="abt-editorial__body">
+            <div class="abt-col-text abt-col-text--narrow reveal">
+                <p>If your business depends on content, campaigns, and storytelling — AI needs to be structured.</p>
+            </div>
+            <div class="abt-col-visual reveal-right">
+                <div class="abt-client-tags">
+                    <span class="abt-client-tag" style="--d:0s">Marketing Teams</span>
+                    <span class="abt-client-tag" style="--d:.2s">Creative Agencies</span>
+                    <span class="abt-client-tag" style="--d:.4s">Media & Content Businesses</span>
+                    <span class="abt-client-tag" style="--d:.6s">D2C Brands</span>
+                    <span class="abt-client-tag" style="--d:.8s">Founders & Leadership</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- WHAT MAKES THIS DIFFERENT -->
+<section class="abt-sec" id="different">
+    <div class="container">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">What Makes This Different</h2>
+            <p class="abt-sec__intro">There are many AI creators. And many agencies experimenting with AI.<br>But very few focus on what truly matters.</p>
+        </div>
+        <div class="abt-diff-row stagger-children">
+            <div class="abt-diff-item glass-card">
+                <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="18" r="14" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="4 3"/><path d="M12 18h12M18 12v12" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <span>Workflow Design</span>
+            </div>
+            <div class="abt-diff-item glass-card">
+                <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="5" y="5" width="26" height="26" rx="6" stroke="#a78bfa" stroke-width="1.2"/><path d="M13 18h10M18 13v10" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <span>Brand Consistency</span>
+            </div>
+            <div class="abt-diff-item glass-card">
+                <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><circle cx="18" cy="13" r="6" stroke="#a78bfa" stroke-width="1.2"/><path d="M8 32c0-5.5 4.5-10 10-10s10 4.5 10 10" stroke="#7c3aed" stroke-width="1.2"/></svg>
+                <span>Team Adoption</span>
+            </div>
+            <div class="abt-diff-item glass-card">
+                <svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><path d="M10 26l5-7 4 3 7-12" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="5" width="26" height="26" rx="4" stroke="#a78bfa" stroke-width="1.2"/></svg>
+                <span>Structured Implementation</span>
+            </div>
+        </div>
+        <p class="abt-coda reveal">I don't just create outputs. <strong class="text-gradient">I design the system that produces them.</strong></p>
+    </div>
+</section>
+
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- RESULTS -->
+<section class="abt-sec abt-sec--alt" id="results">
+    <div class="container">
+        <div class="abt-editorial__lead reveal">
+            <h2 class="abt-sec__h2">What Changes After Working Together</h2>
+        </div>
+        <div class="abt-results stagger-children">
+            <div class="abt-result">
+                <svg class="abt-result__check" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="rgba(124,58,237,0.25)" stroke-width="1.5"/><path class="svg-check-draw" d="M10 16l4 4 8-10" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Faster campaign execution</span>
+            </div>
+            <div class="abt-result">
+                <svg class="abt-result__check" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="rgba(124,58,237,0.25)" stroke-width="1.5"/><path class="svg-check-draw" d="M10 16l4 4 8-10" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Consistent brand voice across platforms</span>
+            </div>
+            <div class="abt-result">
+                <svg class="abt-result__check" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="rgba(124,58,237,0.25)" stroke-width="1.5"/><path class="svg-check-draw" d="M10 16l4 4 8-10" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Reduced dependency on individuals</span>
+            </div>
+            <div class="abt-result">
+                <svg class="abt-result__check" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="rgba(124,58,237,0.25)" stroke-width="1.5"/><path class="svg-check-draw" d="M10 16l4 4 8-10" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Clear AI workflows across teams</span>
+            </div>
+            <div class="abt-result">
+                <svg class="abt-result__check" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="rgba(124,58,237,0.25)" stroke-width="1.5"/><path class="svg-check-draw" d="M10 16l4 4 8-10" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Scalable content production</span>
+            </div>
+        </div>
+        <p class="abt-coda reveal">AI stops being exciting. <strong class="text-gradient">And starts being useful.</strong></p>
+    </div>
+</section>
+
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- PHILOSOPHY -->
+<section class="abt-sec abt-philosophy" id="philosophy">
+    <div class="abt-philosophy__bg">
+        <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <g stroke="rgba(124,58,237,0.06)" fill="none" stroke-width="1">
+                <polygon points="400,50 720,380 80,380" class="svg-rotate-slow"/>
+                <polygon points="400,380 720,50 80,50" class="svg-rotate-slow-reverse"/>
+                <circle cx="400" cy="250" r="130" stroke-dasharray="6 4" class="svg-rotate"/>
+                <circle cx="400" cy="250" r="200" stroke-dasharray="3 8" class="svg-rotate-reverse"/>
+            </g>
+            <circle cx="400" cy="250" r="4" fill="#7c3aed" class="svg-node--breathe"/>
+        </svg>
+    </div>
+    <div class="container">
+        <div class="abt-philosophy__inner reveal">
+            <h2 class="abt-sec__h2">Organising Chaos</h2>
+            <blockquote class="abt-philosophy__block">
+                <p>Creativity comes from observing, practising, being in the moment… and sometimes just zoning out.</p>
+                <p><strong>It's not clean. It's messy.</strong></p>
+            </blockquote>
+            <div class="abt-philosophy__body">
+                <p>The real skill is organising that chaos into something meaningful.</p>
+                <p>AI doesn't change that.<br>It just amplifies whatever you bring into it.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="abt-divider"><svg viewBox="0 0 1200 2" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="1" x2="1200" y2="1" stroke="url(#lg)" stroke-width="1" class="svg-draw-line"/></svg></div>
+
+<!-- CTA -->
+<section class="abt-sec abt-cta-sec" id="aboutCTA">
+    <div class="container">
+        <div class="abt-cta-card glass-card reveal-scale">
+            <div class="abt-cta-card__glow"></div>
+            <h2 class="abt-sec__h2">Let's Build It Right</h2>
+            <p class="abt-cta-card__sub">If you're serious about integrating AI into your marketing, content, or creative workflows — not just experimenting with it — let's connect.</p>
+            <p class="abt-cta-card__tag">Build systems. Not just prompts.</p>
+            <div class="abt-cta-card__btns">
+                <a href="/contact" class="btn btn-primary btn-lg btn-magnetic">Book a Strategy Call <span class="btn-icon">→</span></a>
+                <a href="/services" class="btn btn-secondary btn-lg">Explore Services</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -214,45 +214,39 @@
                 </article>
 
                 <!-- Related Posts -->
-                <% if (relatedPosts.length> 0) { %>
-                    <section class="section" style="background: var(--bg-secondary);">
+                <% if (relatedPosts.length > 0) { %>
+                    <section class="editorial-magazine" style="padding: 4rem 0;">
                         <div class="container">
-                            <h2 class="section-title" style="text-align:center;margin-bottom:2rem;">Related <span
-                                    class="text-gradient">Articles</span></h2>
-                            <div class="blog-grid" style="max-width:1000px;margin:0 auto;">
-                                <% relatedPosts.forEach(rp=> { %>
-                                    <article class="blog-card">
-                                        <a href="/blogs/<%= rp.slug %>" class="blog-card-link">
-                                            <div class="blog-card-image">
-                                                <% if (rp.featured_image) { %>
-                                                    <img src="<%= rp.featured_image %>"
-                                                        alt="<%= rp.featured_image_alt || rp.title %>" loading="lazy">
-                                                    <% } else { %>
-                                                        <div class="blog-card-placeholder"><span>📝</span></div>
-                                                        <% } %>
+                            <h2 class="editorial-cta__title" style="text-align:center;margin-bottom:3rem;">Related <span class="text-gradient">Articles</span></h2>
+                            <div class="editorial-magazine-grid">
+                                <% relatedPosts.forEach((rp, idx) => { %>
+                                    <article class="editorial-article-card" data-animate="fade-up" style="--delay: <%= idx * 0.1 %>s">
+                                        <div class="editorial-article__media">
+                                            <% if (rp.featured_image) { %>
+                                                <img src="<%= rp.featured_image %>" alt="<%= rp.featured_image_alt || rp.title %>" class="editorial-article__img" loading="lazy">
+                                            <% } else { %>
+                                                <img src="/images/portfolio-fallback.png" alt="Blog Post Placeholder" class="editorial-article__img">
+                                            <% } %>
+                                            <div class="editorial-article__overlay"></div>
+                                        </div>
+                                        <div class="editorial-article__content">
+                                            <div class="editorial-article__meta">
+                                                <span class="editorial-article__date">
+                                                    <%= new Date(rp.published_at).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) %>
+                                                </span>
+                                                <span>• <%= rp.reading_time %> min read</span>
                                             </div>
-                                            <div class="blog-card-body">
-                                                <div class="blog-card-meta">
-                                                    <time>
-                                                        <%= new Date(rp.published_at).toLocaleDateString('en-US',
-                                                            {month:'short',day:'numeric'}) %>
-                                                    </time>
-                                                    <span>•</span>
-                                                    <span>
-                                                        <%= rp.reading_time %> min read
-                                                    </span>
-                                                </div>
-                                                <h3 class="blog-card-title">
-                                                    <%= rp.title %>
-                                                </h3>
-                                            </div>
-                                        </a>
+                                            <h2 class="editorial-article__title">
+                                                <%= rp.title %>
+                                            </h2>
+                                            <a href="/blogs/<%= rp.slug %>" class="editorial-link-magnetic magnetic-btn" style="margin-top:auto;"><span>Read Post →</span></a>
+                                        </div>
                                     </article>
-                                    <% }) %>
+                                <% }) %>
                             </div>
                         </div>
                     </section>
-                    <% } %>
+                <% } %>
 
                         <%- include('../partials/footer') %>
 </body>

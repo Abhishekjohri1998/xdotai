@@ -1,71 +1,85 @@
 <%- include('../partials/header') %>
 
-    <!-- Page Hero -->
-    <section class="page-hero" aria-label="Insights hero">
-        <div class="container">
-            <span class="section-label" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_label" data-type="text">
-                <%= page.hero_label %>
-            </span>
-            <h1 class="page-hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
-            <p class="page-hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_subtitle" data-type="text">
-                <%= page.hero_subtitle %>
-            </p>
+<!-- Immersive Hero (About-style constellation) -->
+<section class="abt-hero" id="insightsHero">
+    <div class="abt-hero__canvas">
+        <svg class="abt-hero__net" viewBox="0 0 1400 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs>
+                <radialGradient id="ng-ins" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(124,58,237,0.7)"/><stop offset="100%" stop-color="rgba(124,58,237,0)"/></radialGradient>
+                <filter id="gl-ins"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <g stroke="rgba(124,58,237,0.12)" stroke-width="0.8" fill="none">
+                <path class="svg-draw-line" d="M0,350 C200,100 500,500 700,300 S1100,100 1400,350"/>
+                <path class="svg-draw-line" d="M0,450 C300,200 600,600 900,350 S1200,150 1400,400" style="animation-delay:.5s"/>
+                <path class="svg-draw-line" d="M100,600 C350,300 650,500 900,250 S1150,400 1400,200" style="animation-delay:1s"/>
+            </g>
+            <g filter="url(#gl-ins)">
+                <circle cx="200" cy="220" r="3" fill="url(#ng-ins)" class="svg-node--breathe"/>
+                <circle cx="500" cy="400" r="4" fill="url(#ng-ins)" class="svg-node--breathe" style="animation-delay:1s"/>
+                <circle cx="700" cy="300" r="5" fill="url(#ng-ins)" class="svg-node--breathe" style="animation-delay:2s"/>
+                <circle cx="1000" cy="180" r="3" fill="url(#ng-ins)" class="svg-node--breathe" style="animation-delay:.5s"/>
+                <circle cx="1200" cy="380" r="4" fill="url(#ng-ins)" class="svg-node--breathe" style="animation-delay:1.5s"/>
+                <circle cx="350" cy="500" r="3" fill="url(#ng-ins)" class="svg-node--breathe" style="animation-delay:2.5s"/>
+            </g>
+        </svg>
+        <div class="abt-hero__orb abt-hero__orb--a"></div>
+        <div class="abt-hero__orb abt-hero__orb--b"></div>
+        <div class="abt-hero__orb abt-hero__orb--c"></div>
+    </div>
+    <div class="container abt-hero__inner" style="display:flex;justify-content:center;">
+        <div class="abt-hero__content reveal" style="text-align:center;max-width:800px;">
+            <p class="abt-hero__kicker" data-editable="true" data-model="Page" data-id="<%= page._id %>" data-field="hero_label" data-type="text"><%= page.hero_label %></p>
+            <h1 class="abt-hero__h1" data-editable="true" data-model="Page" data-id="<%= page._id %>" data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
+            <p class="abt-hero__sub" data-editable="true" data-model="Page" data-id="<%= page._id %>" data-field="hero_subtitle" data-type="text"><%= page.hero_subtitle %></p>
         </div>
-    </section>
+    </div>
+    <div class="abt-hero__scroll-cue"><div class="scroll-mouse"></div></div>
+</section>
 
-    <!-- Insights Grid -->
-    <section class="section" style="background: var(--bg-secondary);" aria-label="AI insights and articles">
-        <div class="container">
-            <div class="insights-grid stagger-children">
-                <% if (sections['insight']) { sections['insight'].forEach(i=> { %>
-                    <article class="insight-card">
-                        <div class="insight-image" <% if (i.extra.gradient) { %>style="background: <%= i.extra.gradient
-                                %>;"<% } %>>
-                                    <div class="img-overlay">
-                                        <%= i.icon %>
-                                    </div>
+<!-- Magazine Grid -->
+<section class="editorial-magazine" aria-label="AI insights and articles">
+    <div class="container">
+        <div class="editorial-magazine-grid">
+            <% if (sections['insight']) { sections['insight'].forEach((i, idx) => { %>
+                <article class="editorial-article-card <%= idx === 0 ? 'editorial-article-card--featured' : '' %>" data-animate="fade-up" style="--delay: <%= idx * 0.1 %>s">
+                    <div class="editorial-article__media">
+                        <!-- Use premium fallback if no image is available, this replaces the old icon/gradient approach -->
+                        <img src="/images/portfolio-fallback.png" alt="Insight Cover" class="editorial-article__img">
+                        <div class="editorial-article__overlay"></div>
+                    </div>
+                    <div class="editorial-article__content">
+                        <div class="editorial-article__meta">
+                            <span class="editorial-article__tag" data-editable="true" data-model="Section" data-id="<%= i.id %>" data-field="tag" data-type="text">
+                                <%= i.tag || 'Insight' %>
+                            </span>
+                            <span class="editorial-article__date"><%= i.extra?.date || 'Recent' %></span>
                         </div>
-                        <div class="insight-body">
-                            <div class="insight-meta">
-                                <span class="insight-tag" data-editable="true" data-model="Section"
-                                    data-id="<%= i.id %>" data-field="tag" data-type="text">
-                                    <%= i.tag %>
-                                </span>
-                                <span>
-                                    <%= i.extra.date || '' %>
-                                </span>
-                            </div>
-                            <h2 data-editable="true" data-model="Section" data-id="<%= i.id %>" data-field="title"
-                                data-type="text">
-                                <%= i.title %>
-                            </h2>
-                            <p data-editable="true" data-model="Section" data-id="<%= i.id %>" data-field="description"
-                                data-type="text">
-                                <%= i.description %>
-                            </p>
-                            <a href="#" class="insight-link">Read more <span>→</span></a>
-                        </div>
-                    </article>
-                    <% }) } %>
-            </div>
+                        <h2 class="editorial-article__title" data-editable="true" data-model="Section" data-id="<%= i.id %>" data-field="title" data-type="text">
+                            <%= i.title %>
+                        </h2>
+                        <p class="editorial-article__desc" data-editable="true" data-model="Section" data-id="<%= i.id %>" data-field="description" data-type="text">
+                            <%= i.description %>
+                        </p>
+                        <a href="/blog/<%= i.slug %>" class="editorial-link-magnetic magnetic-btn"><span>Read Article →</span></a>
+                    </div>
+                </article>
+            <% }) } %>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- CTA Banner -->
-    <section class="cta-banner" aria-label="Subscribe">
-        <div class="container">
-            <div class="cta-content reveal-scale">
-                <h2>Stay <span class="text-gradient">Updated</span></h2>
-                <p>Get our weekly AI insights delivered straight to your inbox.</p>
-                <form class="cta-form" id="ctaForm" aria-label="Newsletter signup">
-                    <input type="email" placeholder="Enter your email" aria-label="Email address" required>
-                    <button type="submit" class="btn btn-primary">Subscribe <span class="btn-icon">→</span></button>
-                </form>
-            </div>
-        </div>
-    </section>
+<!-- CTA Banner -->
+<section class="editorial-cta">
+    <div class="editorial-cta__bg"></div>
+    <div class="container editorial-cta__content" data-animate="fade-up">
+        <h2 class="editorial-cta__title">Subscribe to <span class="text-gradient">Insights</span></h2>
+        <p class="editorial-cta__desc">Get highly curated AI creative strategies delivered straight to your inbox.</p>
+        
+        <form class="editorial-newsletter-form" id="ctaForm" aria-label="Newsletter signup">
+            <input type="email" placeholder="Enter your email" aria-label="Email address" required class="editorial-newsletter-input">
+            <button type="submit" class="btn btn-primary btn-large magnetic-btn"><span>Subscribe →</span></button>
+        </form>
+    </div>
+</section>
 
-    <%- include('../partials/footer') %>
+<%- include('../partials/footer') %>

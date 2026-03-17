@@ -530,4 +530,48 @@ document.addEventListener('DOMContentLoaded', () => {
     progressBar.style.width = progress + '%';
   }, { passive: true });
 
+
+  // =============================================
+  // ABOUT PAGE — SVG PATH DRAW ON SCROLL
+  // =============================================
+  const svgDrawContainers = document.querySelectorAll('.abt-illust, .abt-hero__net, .abt-philosophy__bg');
+  
+  if (svgDrawContainers.length > 0) {
+    const svgDrawObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const lines = entry.target.querySelectorAll('.svg-draw-line');
+          lines.forEach((line, i) => {
+            const length = line.getTotalLength ? line.getTotalLength() : 1200;
+            line.style.strokeDasharray = length;
+            line.style.strokeDashoffset = length;
+            line.style.animation = `lineDraw ${2.5 + i * 0.3}s ease-out ${i * 0.2}s forwards`;
+          });
+          svgDrawObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    svgDrawContainers.forEach(el => svgDrawObs.observe(el));
+  }
+
+
+  // =============================================
+  // ABOUT PAGE — RESULT CHECK ANIMATION
+  // =============================================
+  const abtResults = document.querySelectorAll('.abt-result');
+
+  if (abtResults.length > 0) {
+    const resultObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          resultObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    abtResults.forEach(card => resultObs.observe(card));
+  }
+
 });
