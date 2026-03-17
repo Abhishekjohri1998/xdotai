@@ -3,4 +3,26 @@ Allow: /
 Disallow: /admin/
 Disallow: /admin
 
+# AI Crawlers — Allow for GEO/AIEO visibility
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
 Sitemap: https://xdotai.in/sitemap.xml

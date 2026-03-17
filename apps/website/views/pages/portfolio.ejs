@@ -119,9 +119,8 @@
         <div class="editorial-gallery" id="portfolioGrid">
             <% portfolioItems.forEach((p, index) => {
                 const youtubeId = getYouTubeId((p.extra && p.extra.youtube_url) || '');
-                // Try maxresdefault, fallback to custom generated AI placeholder
                 const fallbackThumb = '/images/portfolio-fallback.png';
-                const thumbUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : fallbackThumb;
+                const thumbUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : (p.image_url || fallbackThumb);
                 const isFeatured = index % 3 === 0; // Make every 3rd item larger
             %>
             <article class="editorial-project <%= isFeatured ? 'editorial-project--featured' : '' %>"
@@ -129,7 +128,8 @@
                      data-animate="fade-up" style="--delay: <%= 0.1 * (index % 3) %>s">
                      
                 <figure class="editorial-project__media">
-                    <img src="<%= thumbUrl %>" alt="<%= p.title %>" loading="lazy" class="editorial-project__img">
+                    <img src="<%= thumbUrl %>" alt="<%= p.title %>" loading="lazy" class="editorial-project__img"
+                         onerror="this.onerror=null; this.src='<%= fallbackThumb %>'">
                     
                     <% if (youtubeId) { %>
                     <!-- Custom minimal play button overlay -->

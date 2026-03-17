@@ -4,27 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0a1a">
 
     <!-- SEO Meta Tags -->
-    <title>
-        <%= page.title %>
-    </title>
+    <title><%= page.title %></title>
     <meta name="description" content="<%= page.meta_description %>">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Da Sachin Sharma">
     <link rel="canonical" href="https://xdotai.in<%= currentPath === '/' ? '/' : currentPath %>">
 
+    <% if (typeof seo !== 'undefined' && seo.keywords) { %>
+    <meta name="keywords" content="<%= seo.keywords %>">
+    <% } %>
+
+    <!-- AIEO / GEO Meta Tags (AI Engine Optimization) -->
+    <% if (typeof seo !== 'undefined') { %>
+    <% if (seo.ai_summary) { %><meta name="ai.summary" content="<%= seo.ai_summary %>"><% } %>
+    <% if (seo.ai_topics) { %><meta name="ai.topics" content="<%= seo.ai_topics %>"><% } %>
+    <% if (seo.ai_entity_type) { %><meta name="ai.entity_type" content="<%= seo.ai_entity_type %>"><% } %>
+    <% } %>
+
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="<%= typeof favicon_url !== 'undefined' && favicon_url ? favicon_url : '/favicon.svg' %>">
-    <link rel="apple-touch-icon"
-        href="<%= typeof favicon_url !== 'undefined' && favicon_url ? favicon_url : '/favicon.svg' %>">
+    <link rel="icon" type="image/svg+xml" href="<%= typeof favicon_url !== 'undefined' && favicon_url ? favicon_url : '/favicon.svg' %>">
+    <link rel="apple-touch-icon" href="<%= typeof favicon_url !== 'undefined' && favicon_url ? favicon_url : '/favicon.svg' %>">
 
     <!-- Open Graph -->
+    <meta property="og:locale" content="en_US">
+    <% if (typeof ogVideo !== 'undefined' && ogVideo) { %>
+    <meta property="og:type" content="video.other">
+    <meta property="og:title" content="<%= page.title %>">
+    <meta property="og:description" content="<%= page.meta_description %>">
+    <meta property="og:url" content="https://xdotai.in<%= currentPath %>">
+    <meta property="og:site_name" content="X DOT AI">
+    <meta property="og:image" content="<%= ogVideo.thumbnail %>">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="720">
+    <meta property="og:video" content="<%= ogVideo.embedUrl %>">
+    <meta property="og:video:secure_url" content="<%= ogVideo.embedUrl %>">
+    <meta property="og:video:type" content="text/html">
+    <meta property="og:video:width" content="1280">
+    <meta property="og:video:height" content="720">
+    <% } else { %>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= page.title %>">
+    <meta property="og:description" content="<%= page.meta_description %>">
+    <meta property="og:url" content="https://xdotai.in<%= currentPath === '/' ? '/' : currentPath %>">
+    <meta property="og:site_name" content="X DOT AI">
+    <meta property="og:image" content="<%= (page.og_image) || 'https://xdotai.in/images/og-default.jpg' %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <% } %>
 
-    <!-- Schema.org JSON-LD -->
+    <!-- Twitter Card -->
+    <% if (typeof ogVideo !== 'undefined' && ogVideo) { %>
+    <meta name="twitter:card" content="player">
+    <meta name="twitter:site" content="@dasachins">
+    <meta name="twitter:creator" content="@dasachins">
+    <meta name="twitter:title" content="<%= page.title %>">
+    <meta name="twitter:description" content="<%= page.meta_description %>">
+    <meta name="twitter:player" content="<%= ogVideo.embedUrl %>">
+    <meta name="twitter:player:width" content="1280">
+    <meta name="twitter:player:height" content="720">
+    <meta name="twitter:image" content="<%= ogVideo.thumbnail %>">
+    <% } else { %>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@dasachins">
+    <meta name="twitter:creator" content="@dasachins">
+    <meta name="twitter:title" content="<%= page.title %>">
+    <meta name="twitter:description" content="<%= page.meta_description %>">
+    <meta name="twitter:image" content="<%= (page.og_image) || 'https://xdotai.in/images/og-default.jpg' %>">
+    <% } %>
+
+    <!-- Schema.org JSON-LD: WebPage -->
     <% if (page.schema_type) { %>
-        <script type="application/ld+json">
+    <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "<%= page.schema_type || 'WebPage' %>",
@@ -33,11 +86,74 @@
         "url": "https://xdotai.in<%= currentPath === '/' ? '/' : currentPath %>"
     }
     </script>
-        <% } %>
+    <% } %>
 
-            <% let headerFaqs=[]; try { headerFaqs=JSON.parse(page.faq_json || '[]' ); } catch(e) { headerFaqs=[]; } if
-                (headerFaqs.length> 0) { %>
-                <script type="application/ld+json">
+    <!-- Schema.org JSON-LD: Organization + WebSite (Homepage) -->
+    <% if (currentPath === '/') { %>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "X DOT AI",
+        "alternateName": "XDOTAI",
+        "url": "https://xdotai.in",
+        "logo": "https://xdotai.in/images/xdotai-logo.png",
+        "description": "An AI Creative Agency empowering brands, agencies, and teams to scale creativity using generative AI.",
+        "founder": {
+            "@type": "Person",
+            "name": "Da Sachin Sharma",
+            "url": "https://xdotai.in/about-da-sachin"
+        },
+        "sameAs": [
+            "https://x.com/dasachins",
+            "https://www.youtube.com/channel/UCwq6q3E3uV0Whqvy6A7YG2w",
+            "https://www.instagram.com/xdotai.in"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "url": "https://xdotai.in/contact"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "X DOT AI",
+        "url": "https://xdotai.in",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://xdotai.in/blogs?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <% } %>
+
+    <!-- Schema.org JSON-LD: BreadcrumbList -->
+    <% if (typeof seo !== 'undefined' && seo.breadcrumbs && seo.breadcrumbs.length > 1) { %>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            <% seo.breadcrumbs.forEach(function(crumb, idx) { %>
+            {
+                "@type": "ListItem",
+                "position": <%= idx + 1 %>,
+                "name": "<%= crumb.name %>",
+                "item": "https://xdotai.in<%= crumb.url %>"
+            }<%= idx < seo.breadcrumbs.length - 1 ? ',' : '' %>
+            <% }) %>
+        ]
+    }
+    </script>
+    <% } %>
+
+    <!-- Schema.org JSON-LD: FAQPage -->
+    <% let headerFaqs=[]; try { headerFaqs=JSON.parse(page.faq_json || '[]'); } catch(e) { headerFaqs=[]; } if (headerFaqs.length > 0) { %>
+    <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "FAQPage",
@@ -55,64 +171,19 @@
         ]
     }
     </script>
-                <% } %>
-                    <% if (typeof ogVideo !=='undefined' && ogVideo) { %>
-                        <meta property="og:type" content="video.other">
-                        <meta property="og:title" content="<%= page.title %>">
-                        <meta property="og:description" content="<%= page.meta_description %>">
-                        <meta property="og:url" content="https://xdotai.in<%= currentPath %>">
-                        <meta property="og:site_name" content="X DOT AI">
-                        <meta property="og:image" content="<%= ogVideo.thumbnail %>">
-                        <meta property="og:image:width" content="1280">
-                        <meta property="og:image:height" content="720">
-                        <meta property="og:video" content="<%= ogVideo.embedUrl %>">
-                        <meta property="og:video:secure_url" content="<%= ogVideo.embedUrl %>">
-                        <meta property="og:video:type" content="text/html">
-                        <meta property="og:video:width" content="1280">
-                        <meta property="og:video:height" content="720">
-                        <% } else { %>
-                            <meta property="og:type" content="website">
-                            <meta property="og:title" content="<%= page.title %>">
-                            <meta property="og:description" content="<%= page.meta_description %>">
-                            <meta property="og:url"
-                                content="https://xdotai.in<%= currentPath === '/' ? '/' : currentPath %>">
-                            <meta property="og:site_name" content="X DOT AI">
-                            <meta property="og:image"
-                                content="<%= (page.og_image) || 'https://xdotai.in/images/og-default.jpg' %>">
-                            <meta property="og:image:width" content="1200">
-                            <meta property="og:image:height" content="630">
-                            <% } %>
+    <% } %>
 
-                                <!-- Twitter Card -->
-                                <% if (typeof ogVideo !=='undefined' && ogVideo) { %>
-                                    <meta name="twitter:card" content="player">
-                                    <meta name="twitter:site" content="@dasachins">
-                                    <meta name="twitter:creator" content="@dasachins">
-                                    <meta name="twitter:title" content="<%= page.title %>">
-                                    <meta name="twitter:description" content="<%= page.meta_description %>">
-                                    <meta name="twitter:player" content="<%= ogVideo.embedUrl %>">
-                                    <meta name="twitter:player:width" content="1280">
-                                    <meta name="twitter:player:height" content="720">
-                                    <meta name="twitter:image" content="<%= ogVideo.thumbnail %>">
-                                    <% } else { %>
-                                        <meta name="twitter:card" content="summary_large_image">
-                                        <meta name="twitter:site" content="@dasachins">
-                                        <meta name="twitter:creator" content="@dasachins">
-                                        <meta name="twitter:title" content="<%= page.title %>">
-                                        <meta name="twitter:description" content="<%= page.meta_description %>">
-                                        <meta name="twitter:image"
-                                            content="<%= (page.og_image) || 'https://xdotai.in/images/og-default.jpg' %>">
-                                        <% } %>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 
-                                            <!-- Fonts -->
-                                            <link rel="preconnect" href="https://fonts.googleapis.com">
-                                            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                                            <link
-                                                href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
-                                                rel="stylesheet">
+    <!-- Preconnect: YouTube embeds -->
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://img.youtube.com">
 
-                                            <!-- Stylesheet -->
-                                            <link rel="stylesheet" href="/styles.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>

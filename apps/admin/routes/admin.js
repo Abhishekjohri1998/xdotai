@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
+const path = require('path');
 const { models } = require('@xdotai/database');
 const { AdminUser, Page, Section, Setting, PortfolioCategory, Media, HeroBanner, BlogPost, BlogCategory, NavLink, ClientLogo, HomeSection } = models;
 const { requireAuth } = require('@xdotai/shared/backend/middleware/auth');
@@ -312,13 +313,16 @@ router.post('/settings', requireAuth, async (req, res) => {
 
 // ─── Branding Upload ─────────────────────────────────────
 router.post('/branding', requireAuth, upload.fields([{ name: 'favicon', maxCount: 1 }, { name: 'site_logo', maxCount: 1 }]), async (req, res) => {
+    const sharedPublic = path.join(__dirname, '..', '..', '..', 'packages', 'shared', 'public');
     if (req.files && req.files.favicon && req.files.favicon[0]) {
         const file = req.files.favicon[0];
         const ext = path.extname(file.originalname).toLowerCase();
         const destName = 'favicon' + ext;
-        const destPath = path.join(__dirname, '..', 'public', destName);
-        fs.copyFileSync(file.path, destPath);
-        await Setting.findOneAndUpdate({ key: 'favicon_url' }, { key: 'favicon_url', value: '/' + destName }, { upsert: true });
+        const destPath = path.join(sharedPublic, destName);
+        try {
+            fs.copyFileSync(file.path, destPath);
+            await Setting.findOneAndUpdate({ key: 'favicon_url' }, { key: 'favicon_url', value: '/' + destName }, { upsert: true });
+        } catch (err) { console.error('Favicon upload error:', err); }
     }
     if (req.files && req.files.site_logo && req.files.site_logo[0]) {
         const file = req.files.site_logo[0];
@@ -495,11 +499,42 @@ router.get('/api/youtube-info', requireAuth, async (req, res) => {
     const url = req.query.url;
     if (!url) return res.json({ error: 'No URL provided' });
     try {
+        // Extract video ID
+        const idMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+        const videoId = idMatch ? idMatch[1] : null;
+
+        // Get title & author from oEmbed
         const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
-        const response = await fetch(oembedUrl);
-        if (!response.ok) return res.json({ error: 'Could not fetch YouTube info' });
-        const data = await response.json();
-        res.json({ title: data.title || '', author: data.author_name || '', thumbnail: data.thumbnail_url || '' });
+        const oembedRes = await fetch(oembedUrl);
+        let title = '', author = '', thumbnail = '';
+        if (oembedRes.ok) {
+            const oembedData = await oembedRes.json();
+            title = oembedData.title || '';
+            author = oembedData.author_name || '';
+            thumbnail = oembedData.thumbnail_url || '';
+        }
+
+        // Use maxresdefault for best quality thumbnail
+        if (videoId) {
+            thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        }
+
+        // Scrape description from YouTube page meta tags
+        let description = '';
+        try {
+            const pageRes = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+                headers: { 'User-Agent': 'Mozilla/5.0 (compatible; XDOTAI/1.0)', 'Accept-Language': 'en-US,en;q=0.9' }
+            });
+            if (pageRes.ok) {
+                const html = await pageRes.text();
+                // Try meta description
+                const descMatch = html.match(/<meta\s+name="description"\s+content="([^"]*)"/i)
+                                || html.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i);
+                if (descMatch) description = descMatch[1].replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            }
+        } catch (e) { /* description fetch is best-effort */ }
+
+        res.json({ title, author, thumbnail, description, videoId: videoId || '' });
     } catch { res.json({ error: 'Failed to fetch YouTube metadata' }); }
 });
 
