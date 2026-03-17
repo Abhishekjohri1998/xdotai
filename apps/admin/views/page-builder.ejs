@@ -494,6 +494,11 @@
                                                                         <input type="url" name="youtube_url"
                                                                             value="<%= (s.extra && s.extra.youtube_url) || '' %>"
                                                                             placeholder="https://www.youtube.com/watch?v=...">
+                                                                        <div class="yt-preview-row" style="margin-top:8px; display:flex; gap:12px; align-items:center;">
+                                                                            <% const thumbUrl = (s.extra && s.extra.thumbnail) || (s.image_url && s.image_url.includes('img.youtube.com') ? s.image_url : ''); %>
+                                                                            <img class="yt-thumb-preview" src="<%= thumbUrl %>" alt="" style="width:160px; height:90px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.1); <%= thumbUrl ? '' : 'display:none;' %>">
+                                                                            <span class="yt-fetch-status" style="font-size:0.75rem; color:var(--text-muted);"></span>
+                                                                        </div>
                                                                     </div>
                                                                     <div class="admin-form-group">
                                                                         <label>Description</label>
@@ -731,11 +736,15 @@
                                                                     </div>
                                                                     <div class="admin-form-group"><label>YouTube
                                                                             URL</label><input type="url"
-                                                                            name="youtube_url" required></div>
+                                                                            name="youtube_url" required>
+                                                                        <div class="yt-preview-row" style="margin-top:8px; display:flex; gap:12px; align-items:center;">
+                                                                            <img class="yt-thumb-preview" src="" alt="" style="width:160px; height:90px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.1); display:none;">
+                                                                            <span class="yt-fetch-status" style="font-size:0.75rem; color:var(--text-muted);"></span>
+                                                                        </div>
+                                                                    </div>
                                                                     <div class="admin-form-group">
                                                                         <label>Description</label><textarea
-                                                                            name="description" rows="2"
-                                                                            required></textarea>
+                                                                            name="description" rows="2"></textarea>
                                                                     </div>
                                                                     <div class="admin-form-group"
                                                                         style="flex:0 0 160px;">
@@ -1440,30 +1449,96 @@
 
         if ("<%= page.slug %>" === 'portfolio') {
             document.querySelectorAll('input[name="youtube_url"]').forEach(input => {
-                input.addEventListener('change', async function () {
-                    const url = this.value.trim();
+                async function fetchAndFillYouTubeData(inputEl) {
+                    const url = inputEl.value.trim();
                     if (!url) return;
-                    const form = this.closest('form');
+                    const form = inputEl.closest('form');
                     const titleField = form.querySelector('input[name="title"]');
-                    this.style.borderColor = '#7c3aed';
+                    const descField = form.querySelector('textarea[name="description"]');
+                    const extraField = form.querySelector('input[name="extra_json"]');
+                    const imageField = form.querySelector('input[name="image_url"]');
+
+                    // Show loading state
+                    inputEl.style.borderColor = '#7c3aed';
+                    inputEl.setAttribute('placeholder', '⏳ Fetching video info...');
+                    const loadingStatus = form.querySelector('.yt-fetch-status');
+                    if (loadingStatus) { loadingStatus.textContent = '⏳ Fetching title, description & thumbnail...'; loadingStatus.style.color = '#a78bfa'; }
+
                     try {
-                        const res = await fetch(`/api/youtube-info?url=${encodeURIComponent(url)}`);
+                        const res = await fetch(`/admin/api/youtube-info?url=${encodeURIComponent(url)}`);
                         const data = await res.json();
-                        if (data.title && titleField && !titleField.value) {
+
+                        if (data.error) {
+                            inputEl.style.borderColor = '#ef4444';
+                            setTimeout(() => inputEl.style.borderColor = '', 3000);
+                            return;
+                        }
+
+                        // Auto-fill title
+                        if (data.title && titleField && !titleField.value.trim()) {
                             titleField.value = data.title;
                             titleField.style.borderColor = '#4ade80';
                             setTimeout(() => titleField.style.borderColor = '', 2000);
                         }
-                        const extraField = form.querySelector('input[name="extra_json"]');
+
+                        // Auto-fill description
+                        if (data.description && descField && !descField.value.trim()) {
+                            descField.value = data.description;
+                            descField.style.borderColor = '#4ade80';
+                            setTimeout(() => descField.style.borderColor = '', 2000);
+                        }
+
+                        // Auto-fill thumbnail as image_url
+                        if (data.thumbnail) {
+                            if (imageField) {
+                                imageField.value = data.thumbnail;
+                            }
+                            // Show thumbnail preview
+                            const thumbImg = form.querySelector('.yt-thumb-preview');
+                            if (thumbImg) {
+                                thumbImg.src = data.thumbnail;
+                                thumbImg.style.display = 'block';
+                            }
+                        }
+
+                        // Update extra_json with youtube_url + thumbnail
                         if (extraField) {
                             try {
                                 const extra = JSON.parse(extraField.value || '{}');
                                 extra.youtube_url = url;
+                                if (data.thumbnail) extra.thumbnail = data.thumbnail;
+                                if (data.videoId) extra.video_id = data.videoId;
                                 extraField.value = JSON.stringify(extra);
-                            } catch { extraField.value = JSON.stringify({ youtube_url: url }); }
+                            } catch { extraField.value = JSON.stringify({ youtube_url: url, thumbnail: data.thumbnail || '' }); }
                         }
-                    } catch { }
-                    this.style.borderColor = '';
+
+                        // Show status
+                        const statusEl = form.querySelector('.yt-fetch-status');
+                        if (statusEl) {
+                            const filled = [];
+                            if (data.title) filled.push('title');
+                            if (data.description) filled.push('description');
+                            if (data.thumbnail) filled.push('thumbnail');
+                            statusEl.textContent = `✅ Auto-filled: ${filled.join(', ')}`;
+                            statusEl.style.color = '#4ade80';
+                            setTimeout(() => { statusEl.style.color = 'var(--text-muted)'; }, 4000);
+                        }
+
+                        // Flash success
+                        inputEl.style.borderColor = '#4ade80';
+                        setTimeout(() => inputEl.style.borderColor = '', 2000);
+                    } catch (err) {
+                        inputEl.style.borderColor = '#ef4444';
+                        const statusEl = form.querySelector('.yt-fetch-status');
+                        if (statusEl) { statusEl.textContent = '❌ Failed to fetch video info'; statusEl.style.color = '#ef4444'; }
+                        setTimeout(() => inputEl.style.borderColor = '', 3000);
+                    }
+                    inputEl.setAttribute('placeholder', 'https://www.youtube.com/watch?v=...');
+                }
+
+                input.addEventListener('change', function () { fetchAndFillYouTubeData(this); });
+                input.addEventListener('paste', function () {
+                    setTimeout(() => fetchAndFillYouTubeData(this), 100);
                 });
             });
         }
