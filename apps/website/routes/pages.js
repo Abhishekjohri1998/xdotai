@@ -346,6 +346,10 @@ router.get('/blogs/:slug', async (req, res) => {
     });
 });
 
+// ─── Redirect: /blog → /blogs (prevent 404s) ────────────
+router.get('/blog', (req, res) => res.redirect(301, '/blogs'));
+router.get('/blog/:slug', (req, res) => res.redirect(301, '/blogs/' + req.params.slug));
+
 // ─── Dynamic Sitemap ─────────────────────────────────────
 router.get('/sitemap.xml', async (req, res) => {
     const baseUrl = 'https://xdotai.in';
@@ -353,11 +357,14 @@ router.get('/sitemap.xml', async (req, res) => {
     let posts = [];
     try { posts = await BlogPost.find({ status: 'published' }).select('slug updated_at').lean(); } catch { posts = []; }
 
+    // Map DB slugs to actual canonical URLs
+    const slugMap = { home: '/', about: '/about-da-sachin', blogs: '/blogs' };
+
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
 
     pages.forEach(p => {
-        const loc = p.slug === 'home' ? '/' : `/${p.slug}`;
+        const loc = slugMap[p.slug] || `/${p.slug}`;
         const lastmod = p.updated_at ? new Date(p.updated_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
         xml += `\n  <url>\n    <loc>${baseUrl}${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${p.slug === 'home' ? 'weekly' : 'monthly'}</changefreq>\n    <priority>${p.slug === 'home' ? '1.0' : '0.8'}</priority>\n  </url>`;
     });
