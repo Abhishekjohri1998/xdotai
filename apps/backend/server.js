@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const { connectDB, models } = require('@xdotai/database');
 

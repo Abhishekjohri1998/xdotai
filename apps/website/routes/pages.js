@@ -60,7 +60,7 @@ async function getSectionsBySlugType(slug, type) {
 
 // ─── Home ────────────────────────────────────────────────
 router.get('/', async (req, res) => {
-    const data = await getPageData('home');
+    const data = await getPageData('home') || { page: { id: '', title: 'X DOT AI', meta_description: '', hero_title: 'Welcome to X DOT AI', hero_subtitle: 'AI Creative Agency', hero_label: 'AI Creative Agency', slug: 'home' }, sections: {}, pageBlocks: [], recentPosts: [] };
     const settings = await getSettings();
 
     const servicesSections = await getSectionsBySlugType('services', 'service');

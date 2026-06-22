@@ -15,7 +15,7 @@
 </script>
 
     <% var _hsMap={}; if (typeof homeSections !=='undefined' && homeSections) { homeSections.forEach(function(s) {
-        _hsMap[s.section_key]=s; }); } function hs(key) { return _hsMap[key] || null; } function hsOn(key) { var
+        _hsMap[s.section_key]=s; }); } function hs(key) { return _hsMap[key] || { id: '', section_key: key, label: '', heading: '', subtitle: '', config: {}, config_json: '{}', extra_json: '{}', is_visible: 1, sort_order: 0 }; } function hsOn(key) { var
         s=hs(key); return !s || s.is_visible; } var orderedKeys=[]; if (typeof homeSections !=='undefined' &&
         homeSections && homeSections.length) { homeSections.forEach(function(s) { if (s.is_visible)
         orderedKeys.push(s.section_key); }); } else {
@@ -64,12 +64,12 @@
                                     <div class="hero-buttons" data-animate="fade-up" style="--delay: 0.8s">
                                         <a href="<%= heroCfg.btn1_url || '/contact' %>" class="btn btn-primary"><span
                                                 data-editable="true" data-model="HomeSection"
-                                                data-id="<%= heroSec.id %>" data-field="cfg_btn1_text" data-type="text">
+                                                data-id="<%= heroSec ? heroSec.id : '' %>" data-field="cfg_btn1_text" data-type="text">
                                                 <%= heroCfg.btn1_text || 'Start a Project' %>
                                             </span> <span class="btn-icon">→</span></a>
                                         <a href="<%= heroCfg.btn2_url || '/portfolio' %>"
                                             class="btn btn-secondary"><span data-editable="true"
-                                                data-model="HomeSection" data-id="<%= heroSec.id %>"
+                                                data-model="HomeSection" data-id="<%= heroSec ? heroSec.id : '' %>"
                                                 data-field="cfg_btn2_text" data-type="text">
                                                 <%= heroCfg.btn2_text || 'View Our Work' %>
                                             </span> <span class="btn-icon">↗</span></a>
@@ -96,10 +96,10 @@
                                                     <div class="stat-number"
                                                         data-target="<%= statsCfg.stat1_value || settings.stat_projects || '50' %>"
                                                         data-editable="true" data-model="HomeSection"
-                                                        data-id="<%= statsSec.id %>" data-field="cfg_stat1_value"
+                                                        data-id="<%= statsSec ? statsSec.id : '' %>" data-field="cfg_stat1_value"
                                                         data-type="text">0</div>
                                                     <div class="stat-label" data-editable="true"
-                                                        data-model="HomeSection" data-id="<%= statsSec.id %>"
+                                                        data-model="HomeSection" data-id="<%= statsSec ? statsSec.id : '' %>"
                                                         data-field="cfg_stat1_label" data-type="text">
                                                         <%= statsCfg.stat1_label || 'Projects Completed' %>
                                                     </div>
@@ -108,10 +108,10 @@
                                                     <div class="stat-number"
                                                         data-target="<%= statsCfg.stat2_value || settings.stat_clients || '25' %>"
                                                         data-editable="true" data-model="HomeSection"
-                                                        data-id="<%= statsSec.id %>" data-field="cfg_stat2_value"
+                                                        data-id="<%= statsSec ? statsSec.id : '' %>" data-field="cfg_stat2_value"
                                                         data-type="text">0</div>
                                                     <div class="stat-label" data-editable="true"
-                                                        data-model="HomeSection" data-id="<%= statsSec.id %>"
+                                                        data-model="HomeSection" data-id="<%= statsSec ? statsSec.id : '' %>"
                                                         data-field="cfg_stat2_label" data-type="text">
                                                         <%= statsCfg.stat2_label || 'Clients Served' %>
                                                     </div>
@@ -120,10 +120,10 @@
                                                     <div class="stat-number"
                                                         data-target="<%= statsCfg.stat3_value || settings.stat_workshops || '100' %>"
                                                         data-editable="true" data-model="HomeSection"
-                                                        data-id="<%= statsSec.id %>" data-field="cfg_stat3_value"
+                                                        data-id="<%= statsSec ? statsSec.id : '' %>" data-field="cfg_stat3_value"
                                                         data-type="text">0</div>
                                                     <div class="stat-label" data-editable="true"
-                                                        data-model="HomeSection" data-id="<%= statsSec.id %>"
+                                                        data-model="HomeSection" data-id="<%= statsSec ? statsSec.id : '' %>"
                                                         data-field="cfg_stat3_label" data-type="text">
                                                         <%= statsCfg.stat3_label || 'Workshops Delivered' %>
                                                     </div>
@@ -132,10 +132,10 @@
                                                     <div class="stat-number"
                                                         data-target="<%= statsCfg.stat4_value || settings.stat_trained || '5000' %>"
                                                         data-editable="true" data-model="HomeSection"
-                                                        data-id="<%= statsSec.id %>" data-field="cfg_stat4_value"
+                                                        data-id="<%= statsSec ? statsSec.id : '' %>" data-field="cfg_stat4_value"
                                                         data-type="text">0</div>
                                                     <div class="stat-label" data-editable="true"
-                                                        data-model="HomeSection" data-id="<%= statsSec.id %>"
+                                                        data-model="HomeSection" data-id="<%= statsSec ? statsSec.id : '' %>"
                                                         data-field="cfg_stat4_label" data-type="text">
                                                         <%= statsCfg.stat4_label || 'Professionals Trained' %>
                                                     </div>

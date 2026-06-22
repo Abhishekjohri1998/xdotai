@@ -22,15 +22,19 @@ async function connectDB() {
 async function seedDatabase() {
   const { AdminUser, Page, Section, Setting, PortfolioCategory, BlogCategory, NavLink, ClientLogo, HomeSection } = models;
 
-  // Check if already seeded
+  // Seed Admin user if not exists
   const adminCount = await AdminUser.countDocuments();
-  if (adminCount > 0) return;
+  if (adminCount === 0) {
+    console.log('🌱 Seeding admin user...');
+    const hashedPassword = bcrypt.hashSync('xdotai2026', 10);
+    await AdminUser.create({ username: 'admin', password: hashedPassword });
+  }
 
-  console.log('🌱 Seeding database...');
+  // Check if pages already seeded
+  const pageCount = await Page.countDocuments();
+  if (pageCount > 0) return;
 
-  // Admin user
-  const hashedPassword = bcrypt.hashSync('xdotai2026', 10);
-  await AdminUser.create({ username: 'admin', password: hashedPassword });
+  console.log('🌱 Seeding content tables...');
 
   // Site settings
   const settingsData = [

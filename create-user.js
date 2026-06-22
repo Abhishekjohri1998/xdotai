@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { connectDB, models } = require('./packages/database');
 const bcrypt = require('bcryptjs');
 
