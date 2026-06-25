@@ -4,14 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= page.title %> — X DOT AI
-    </title>
+    <meta name="theme-color" content="#0a0a1a">
+    <title><%= page.title %> — X DOT AI</title>
     <meta name="description" content="<%= page.meta_description %>">
     <meta name="author" content="<%= post.author %>">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://xdotai.in/blogs/<%= post.slug %>">
+
+    <% if (typeof seo !== 'undefined' && seo.keywords) { %>
+    <meta name="keywords" content="<%= seo.keywords %>">
+    <% } %>
+
+    <!-- AIEO / GEO Meta Tags -->
+    <% if (typeof seo !== 'undefined') { %>
+    <% if (seo.ai_summary) { %><meta name="ai.summary" content="<%= seo.ai_summary %>"><% } %>
+    <% if (seo.ai_topics) { %><meta name="ai.topics" content="<%= seo.ai_topics %>"><% } %>
+    <% if (seo.ai_entity_type) { %><meta name="ai.entity_type" content="<%= seo.ai_entity_type %>"><% } %>
+    <% } %>
 
     <!-- Open Graph -->
+    <meta property="og:locale" content="en_US">
     <meta property="og:type" content="article">
     <meta property="og:title" content="<%= post.meta_title || post.title %>">
     <meta property="og:description" content="<%= post.meta_description || post.excerpt %>">
@@ -53,7 +65,7 @@
             "name": "X DOT AI",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://xdotai.in/logo.png"
+                "url": "https://xdotai.in/images/xdotai-logo.png"
             }
         },
         "datePublished": "<%= post.published_at %>",
