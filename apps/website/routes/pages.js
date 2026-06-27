@@ -105,10 +105,10 @@ router.get('/services', async (req, res) => {
     const data = await getPageData('services');
     if (!data) return res.status(404).render('pages/404', { title: 'Not Found' });
     res.render('pages/services', { ...data, settings: await getSettings(), seo: {
-        keywords: 'AI services, AI creative services, AI filmmaking service, AI marketing service, AI strategy, AI consulting, generative AI solutions',
-        ai_summary: 'X DOT AI offers AI-powered creative services including AI films, music videos, marketing systems, strategy consulting, and rapid prototyping for brands and agencies.',
-        ai_topics: 'AI services, AI creative production, AI consulting, AI marketing systems',
-        ai_entity_type: 'Service',
+        keywords: 'AI consulting, AI workflow architecture, Brand Brain, AI team training, AI marketing systems, AI consulting India, AI creative production, AI strategy, AI workflow automation, generative AI solutions',
+        ai_summary: 'X DOT AI provides AI consulting and creative workflow systems for brands and marketing teams — including AI strategy, workflow architecture, Brand Brain systems, team enablement, creative production, and AI application development.',
+        ai_topics: 'AI consulting, AI workflow architecture, Brand Intelligence Systems, AI team enablement, AI creative production, AI applications, AI marketing automation',
+        ai_entity_type: 'ProfessionalService',
         breadcrumbs: [{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]
     }});
 });
