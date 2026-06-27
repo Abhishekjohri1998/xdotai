@@ -1,98 +1,472 @@
-<%- include('../partials/header') %>
+<%- include('../partials/header', { page }) %>
 
-    <!-- Page Hero -->
-    <section class="page-hero" aria-label="Services hero">
-        <div class="container">
-            <span class="section-label" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_label" data-type="text">
-                <%= page.hero_label %>
-            </span>
-            <h1 class="page-hero-title" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_title" data-type="html"><%- page.hero_title %></h1>
-            <p class="page-hero-subtitle" data-editable="true" data-model="Page" data-id="<%= page._id %>"
-                data-field="hero_subtitle" data-type="text">
-                <%= page.hero_subtitle %>
-            </p>
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfessionalService","name":"X DOT AI — AI Consulting & Creative Workflow Systems","description":"AI consulting, workflow architecture, brand intelligence systems, team enablement, and creative production for brands and marketing teams.","url":"https://xdotai.in/services","provider":{"@type":"Organization","name":"X DOT AI","url":"https://xdotai.in"},"serviceType":["AI Consulting","AI Workflow Architecture","Brand Intelligence Systems","AI Team Training","AI Creative Production","AI Application Development"],"areaServed":["India","Worldwide"],"hasOfferCatalog":{"@type":"OfferCatalog","name":"AI Services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"AI Consulting & Strategy"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"AI Workflow Architecture"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Brand Intelligence Systems"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"AI Team Enablement"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"AI Creative Production"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"AI Applications & Automation"}}]}}
+</script>
+
+<style>
+/* ═══════════════════════════════════════════════
+   SERVICES PAGE — Premium Immersive Design
+   ═══════════════════════════════════════════════ */
+
+/* Hero */
+.svc-hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:8rem 0 6rem}
+.svc-hero__spline{position:absolute;inset:0;z-index:0}
+.svc-hero__spline iframe{width:100%;height:100%;border:none;pointer-events:none}
+.svc-hero__fade{position:absolute;bottom:0;left:0;right:0;height:140px;background:linear-gradient(to top,var(--bg-main,#0a0a0f) 0%,transparent 100%);z-index:1;pointer-events:none}
+.svc-hero__patch{position:absolute;bottom:0;right:0;width:200px;height:60px;background:var(--bg-main,#0a0a0f);z-index:1}
+.svc-hero__wrap{position:relative;z-index:2;text-align:center;max-width:860px;margin:0 auto}
+.svc-hero__badge{display:inline-flex;align-items:center;gap:.6rem;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.3em;color:var(--accent-secondary);margin-bottom:1.75rem;padding:.5rem 1.2rem;border:1px solid rgba(124,58,237,.2);border-radius:100px;background:rgba(124,58,237,.06);backdrop-filter:blur(6px)}
+.svc-hero__badge .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--accent-secondary);box-shadow:0 0 12px var(--accent-glow);animation:pulseDot 2s ease-in-out infinite}
+.svc-hero__h1{font-family:var(--font-heading);font-size:clamp(2.4rem,5.5vw,4.6rem);font-weight:800;line-height:1.06;letter-spacing:-.04em;margin-bottom:2rem}
+.svc-hero__sub{font-size:clamp(1rem,1.35vw,1.12rem);color:var(--text-secondary);line-height:1.85;max-width:680px;margin:0 auto 1rem}
+.svc-hero__ctas{margin-top:2.5rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* Visual Break — cinematic image banner */
+.svc-cinema{position:relative;width:100%;overflow:hidden;border-radius:20px;margin-top:-2rem}
+.svc-cinema img{width:100%;height:auto;display:block;filter:brightness(.75)}
+.svc-cinema__mask{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,26,.2) 0%,rgba(10,10,26,.85) 100%)}
+.svc-cinema__txt{position:absolute;bottom:0;left:0;right:0;padding:3rem clamp(1.5rem,4vw,3rem);z-index:2}
+
+/* Service Pillars — 3×2 grid with gradient glow cards */
+.svc-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.svc-pillar{position:relative;padding:2.5rem 2rem;border-radius:20px;background:linear-gradient(160deg,rgba(15,15,40,.9),rgba(10,10,26,.95));border:1px solid rgba(124,58,237,.12);overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1)}
+.svc-pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#c084fc);opacity:0;transition:opacity .4s}
+.svc-pillar::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.08),transparent 70%);pointer-events:none;transition:opacity .4s;opacity:0}
+.svc-pillar:hover{transform:translateY(-8px);border-color:rgba(124,58,237,.3);box-shadow:0 24px 64px rgba(0,0,0,.4),0 0 40px rgba(124,58,237,.08)}
+.svc-pillar:hover::before{opacity:1}
+.svc-pillar:hover::after{opacity:1}
+.svc-pillar__num{position:absolute;top:1.5rem;right:1.5rem;font-family:var(--font-heading);font-size:.7rem;font-weight:800;color:rgba(167,139,250,.25);letter-spacing:.15em}
+.svc-pillar__icon{width:52px;height:52px;border-radius:14px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem}
+.svc-pillar__icon svg{width:26px;height:26px}
+.svc-pillar h3{font-family:var(--font-heading);font-size:1.15rem;font-weight:700;margin-bottom:.75rem;letter-spacing:-.01em}
+.svc-pillar p{font-size:.92rem;color:var(--text-secondary);line-height:1.75}
+
+/* ── Override section padding for services page ── */
+.svc-page .abt-sec{padding:clamp(3.5rem,6vw,5.5rem) 0}
+.svc-page .abt-divider{margin:0}
+
+/* Deep-Dive Section — Magazine Feature */
+.svc-deep{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
+.svc-deep--flip{direction:rtl}
+.svc-deep--flip>*{direction:ltr}
+.svc-deep__visual{position:relative;border-radius:20px;overflow:visible}
+.svc-deep__visual img{width:100%;display:block;border-radius:20px;border:1px solid rgba(124,58,237,.12)}
+.svc-deep__visual svg{border:1px solid rgba(124,58,237,.15);padding:1.5rem;background:linear-gradient(160deg,rgba(15,15,40,.7) 0%,rgba(10,10,26,.95) 100%)}
+.svc-deep__visual::after{display:none}
+.svc-deep__glow{position:absolute;width:320px;height:320px;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:-1}
+.svc-deep__text h2{font-family:var(--font-heading);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:1.5rem}
+.svc-deep__text .svc-kicker{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.25em;color:var(--accent-secondary);margin-bottom:1rem;display:block}
+.svc-deep__text p{color:var(--text-secondary);line-height:1.85;margin-bottom:1.25rem;font-size:clamp(.95rem,1.15vw,1.05rem)}
+.svc-deep__text strong{color:var(--text-primary);font-weight:600}
+
+/* Outcome tag */
+.svc-outcome{position:relative;padding:1.5rem 0 1.5rem 1.5rem;margin:2rem 0 0;border-left:2px solid var(--accent-primary);font-family:var(--font-heading);font-size:clamp(1.05rem,1.4vw,1.2rem);font-weight:600;color:var(--accent-secondary);line-height:1.6;font-style:normal}
+.svc-outcome strong{color:var(--text-primary)}
+
+/* Split side-by-side list cards */
+.svc-split-lists{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.5rem}
+.svc-split-list{padding:1.5rem;border-radius:16px;background:rgba(124,58,237,.04);border:1px solid rgba(124,58,237,.1)}
+.svc-split-list h4{font-family:var(--font-heading);font-size:.82rem;font-weight:700;color:var(--accent-secondary);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.1em}
+
+/* Process Timeline — Horizontal */
+.svc-timeline{display:grid;grid-template-columns:repeat(7,1fr);gap:.75rem;position:relative;padding-top:4rem}
+.svc-timeline::before{content:'';position:absolute;top:calc(4rem + 28px);left:7%;right:7%;height:2px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.3),transparent)}
+.svc-step{text-align:center;position:relative}
+.svc-step__dot{width:56px;height:56px;border-radius:50%;background:linear-gradient(160deg,rgba(15,15,40,.95),rgba(10,10,26,.98));border:2px solid rgba(124,58,237,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-family:var(--font-heading);font-weight:800;font-size:.85rem;color:var(--accent-secondary);transition:all .4s cubic-bezier(.22,1,.36,1);position:relative;z-index:1}
+.svc-step:hover .svc-step__dot{background:var(--accent-gradient);border-color:transparent;color:#fff;box-shadow:0 0 30px var(--accent-glow);transform:scale(1.2)}
+.svc-step h4{font-family:var(--font-heading);font-size:.82rem;font-weight:700;margin-bottom:.25rem}
+.svc-step span{font-size:.72rem;color:var(--text-muted);line-height:1.4;display:block}
+
+/* Why Cards — 2×2 with glass depth */
+.svc-why{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.svc-why__card{padding:2rem 1.75rem;border-radius:20px;background:linear-gradient(160deg,rgba(15,15,40,.85),rgba(10,10,26,.9));border:1px solid rgba(124,58,237,.1);display:flex;gap:1.25rem;align-items:flex-start;transition:all .4s cubic-bezier(.22,1,.36,1)}
+.svc-why__card:hover{transform:translateY(-6px);border-color:rgba(124,58,237,.3);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 30px rgba(124,58,237,.06)}
+.svc-why__icon{width:48px;height:48px;border-radius:14px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.svc-why__icon svg{width:24px;height:24px}
+.svc-why__card h3{font-family:var(--font-heading);font-size:1.05rem;font-weight:700;margin-bottom:.4rem}
+.svc-why__card p{font-size:.9rem;color:var(--text-secondary);line-height:1.7}
+
+/* Responsive */
+@media(max-width:992px){
+  .svc-pillars{grid-template-columns:repeat(2,1fr)}
+  .svc-deep{grid-template-columns:1fr;gap:2rem}
+  .svc-deep--flip{direction:ltr}
+  .svc-timeline{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:768px){
+  .svc-pillars{grid-template-columns:1fr}
+  .svc-split-lists{grid-template-columns:1fr}
+  .svc-why{grid-template-columns:1fr}
+  .svc-timeline{grid-template-columns:repeat(2,1fr)}
+  .svc-timeline::before{display:none}
+  .svc-hero__h1{font-size:clamp(2rem,8vw,3rem)}
+  .svc-page .abt-sec{padding:2.5rem 0}
+}
+</style>
+
+<div class="svc-page">
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="svc-hero" id="servicesHero">
+    <div class="svc-hero__spline">
+        <iframe src="https://my.spline.design/particleshand-iOqgajme6nPYmGzySbZvC5ef/" loading="lazy" title="3D Particle Animation"></iframe>
+    </div>
+    <div class="svc-hero__patch"></div>
+    <div class="svc-hero__fade"></div>
+    <div class="ambient-orb ambient-orb--hero-1" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb--hero-2" aria-hidden="true"></div>
+    <div class="container svc-hero__wrap">
+        <div class="svc-hero__badge" data-animate="fade-in" style="--delay:0.2s"><span class="pulse-dot"></span> AI Consulting &amp; Creative Workflow Systems</div>
+        <h1 class="svc-hero__h1" data-animate="fade-up" style="--delay:0.4s">Build <span class="text-gradient">AI-Powered Systems</span> That Scale Your Marketing &amp;&nbsp;Creativity</h1>
+        <p class="svc-hero__sub" data-animate="fade-up" style="--delay:0.6s">We help brands and marketing teams move beyond random AI usage. From strategy to workflow architecture to creative production — every system is designed for consistency, speed, and business&nbsp;outcomes.</p>
+        <div class="svc-hero__ctas" data-animate="fade-up" style="--delay:0.8s">
+            <a href="/contact" class="btn btn-primary btn-lg btn-magnetic">Book a Strategy Call <span class="btn-icon">→</span></a>
+            <a href="/portfolio" class="btn btn-secondary btn-lg">View Our Work</a>
         </div>
-        <div class="glow-orb glow-orb-1" aria-hidden="true"></div>
-    </section>
+    </div>
+    <div class="abt-hero__scroll-cue"><div class="scroll-mouse"></div></div>
+</section>
 
-    <!-- Services Grid -->
-    <section class="services section" aria-label="Our services">
-        <div class="container">
-            <div class="services-grid stagger-children" id="servicesGrid">
-                <% if (sections['service']) { sections['service'].forEach(s=> { %>
-                    <% var svcExtra=s && s.extra_json ? JSON.parse(s.extra_json) : {}; var svcStyle="" ; if
-                        (svcExtra.background_color) svcStyle +=`background-color: ${svcExtra.background_color}; `; if
-                        (svcExtra.padding) svcStyle +=`padding: ${svcExtra.padding};`; %>
-                        <article class="service-card" data-editable-section="true" data-model="Section"
-                            data-id="<%= s.id %>" data-extra="<%= s.extra_json || '{}' %>" <%- svcStyle ?
-                            `style="${svcStyle}" ` : '' %>>
-                            <div class="service-icon" data-editable="true" data-model="Section" data-id="<%= s.id %>"
-                                data-field="icon" data-type="text">
-                                <%= s.icon %>
-                            </div>
-                            <h2 data-editable="true" data-model="Section" data-id="<%= s.id %>" data-field="title"
-                                data-type="text">
-                                <%= s.title %>
-                            </h2>
-                            <p data-editable="true" data-model="Section" data-id="<%= s.id %>" data-field="description"
-                                data-type="text">
-                                <%= s.description %>
-                            </p>
-                            <div class="card-link">Learn more <span>→</span></div>
-                        </article>
-                        <% }) } %>
+<!-- CINEMATIC BREAK -->
+<section class="abt-sec" style="padding-top:0;padding-bottom:3rem;">
+<div class="container">
+    <div class="svc-cinema reveal-scale">
+        <img src="/images/services-hero.png" alt="AI-powered workflow systems — neural networks and holographic interfaces" loading="eager"/>
+        <div class="svc-cinema__mask"></div>
+        <div class="svc-cinema__txt">
+            <p style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.25em;color:var(--accent-secondary);margin-bottom:.5rem;">Strategy · Workflows · Implementation · Production</p>
+            <p style="font-size:clamp(1.05rem,1.5vw,1.2rem);color:rgba(255,255,255,.85);max-width:600px;line-height:1.75;">The challenge is not access to AI — it is knowing how to use it in a structured and consistent way that delivers real business results across marketing, branding, and content operations.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<!-- ═══════════════════════ WHAT WE DO — 6 PILLARS ═══════════════════════ -->
+<section class="abt-sec" id="whatWeDo">
+<div class="container">
+    <div style="text-align:center;max-width:700px;margin:0 auto 3.5rem;" class="reveal">
+        <span class="svc-kicker" style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.25em;color:var(--accent-secondary);margin-bottom:1rem;">Our Services</span>
+        <h2 style="font-family:var(--font-heading);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:1rem;">What We Do</h2>
+        <p style="font-size:clamp(1rem,1.3vw,1.1rem);color:var(--text-secondary);line-height:1.8;margin:0 auto;">We work at the intersection of AI, marketing, and creative systems — helping teams turn ideas into structured, scalable processes that drive measurable business outcomes.</p>
+    </div>
+    <div class="svc-pillars stagger-children">
+        <div class="svc-pillar">
+            <span class="svc-pillar__num">01</span>
+            <div class="svc-pillar__icon"><svg viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="9" stroke="#a78bfa" stroke-width="1.3"/><path d="M13 8v3l2.5 1.5" stroke="#7c3aed" stroke-width="1.3" stroke-linecap="round"/><circle cx="13" cy="13" r="2" fill="#c084fc"/></svg></div>
+            <h3>AI Consulting &amp; Strategy</h3>
+            <p>Identify high-impact AI use cases across your marketing ecosystem. We design roadmaps that reduce trial-and-error and tie every AI initiative directly to business goals and measurable outcomes.</p>
+        </div>
+        <div class="svc-pillar">
+            <span class="svc-pillar__num">02</span>
+            <div class="svc-pillar__icon"><svg viewBox="0 0 26 26" fill="none"><path d="M3 13h6l2-5 3 10 2-5h7" stroke="#7c3aed" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="3" cy="13" r="1.5" fill="#c084fc"/><circle cx="23" cy="13" r="1.5" fill="#c084fc"/></svg></div>
+            <h3>AI Workflow Architecture</h3>
+            <p>Design repeatable AI workflows that connect tools, prompts, and processes. From campaign ideation to content pipelines, every workflow ensures consistency and scalability.</p>
+        </div>
+        <div class="svc-pillar">
+            <span class="svc-pillar__num">03</span>
+            <div class="svc-pillar__icon"><svg viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="8" stroke="#a78bfa" stroke-width="1.3"/><circle cx="13" cy="13" r="4" stroke="#7c3aed" stroke-width="1.3"/><circle cx="13" cy="13" r="1.5" fill="#c084fc"/><path d="M13 5v-2M13 23v-2M5 13H3M23 13h-2" stroke="rgba(167,139,250,.4)" stroke-width="1"/></svg></div>
+            <h3>Brand Intelligence (Brand Brain)</h3>
+            <p>Build AI-powered brand systems that maintain voice, tone, and messaging consistency. Every piece of content — across platforms and formats — stays aligned with your brand identity.</p>
+        </div>
+        <div class="svc-pillar">
+            <span class="svc-pillar__num">04</span>
+            <div class="svc-pillar__icon"><svg viewBox="0 0 26 26" fill="none"><circle cx="13" cy="9" r="4" stroke="#a78bfa" stroke-width="1.3"/><path d="M5 22c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#7c3aed" stroke-width="1.3"/><circle cx="13" cy="9" r="1.5" fill="#c084fc"/></svg></div>
+            <h3>AI Team Enablement</h3>
+            <p>Live workshops and role-based training for marketing, design, and strategy teams. We teach systems thinking — not just prompts — so teams become self-sufficient with AI.</p>
+        </div>
+        <div class="svc-pillar">
+            <span class="svc-pillar__num">05</span>
+            <div class="svc-pillar__icon"><svg viewBox="0 0 26 26" fill="none"><polygon points="10,4 22,13 10,22" stroke="#a78bfa" stroke-width="1.3" stroke-linejoin="round"/><path d="M4 8v10" stroke="#7c3aed" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <h3>AI Creative Production</h3>
+            <p>AI ad films, music videos, short-form content, and product visuals. Every project is built using structured workflows, making the process scalable and repeatable for brands.</p>
+        </div>
+        <div class="svc-pillar">
+            <span class="svc-pillar__num">06</span>
+            <div class="svc-pillar__icon"><svg viewBox="0 0 26 26" fill="none"><rect x="4" y="6" width="18" height="14" rx="3" stroke="#a78bfa" stroke-width="1.3"/><path d="M4 10h18" stroke="#7c3aed" stroke-width="1.3"/><circle cx="7.5" cy="8" r="1" fill="#c084fc"/><circle cx="10.5" cy="8" r="1" fill="#a78bfa"/></svg></div>
+            <h3>AI Applications &amp; Automation</h3>
+            <p>Web apps, agentic AI systems, workflow automation, and AI-powered MVPs. Custom solutions tailored to solve specific business problems across marketing, operations, and growth.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+
+
+<!-- ═══════════════ DEEP DIVE 1: AI Consulting ═══════════════ -->
+<section class="abt-sec abt-sec--alt" id="aiConsulting">
+<div class="container">
+    <div class="svc-deep">
+        <div class="svc-deep__visual reveal-scale" style="position:relative;">
+            <div class="svc-deep__glow" style="background:rgba(124,58,237,.12);top:-60px;left:-60px;"></div>
+            <svg viewBox="0 0 500 400" aria-hidden="true" style="width:100%;border-radius:20px;">
+                <defs><linearGradient id="slg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c3aed" stop-opacity=".6"/><stop offset="100%" stop-color="#c084fc" stop-opacity=".2"/></linearGradient></defs>
+                <circle cx="250" cy="200" r="14" fill="#7c3aed" class="svg-node--breathe"/>
+                <text x="250" y="235" text-anchor="middle" fill="rgba(167,139,250,.45)" font-size="9" font-family="Inter,sans-serif" font-weight="600">STRATEGY</text>
+                <circle cx="250" cy="200" r="65" fill="none" stroke="rgba(124,58,237,.15)" stroke-width="1.5" stroke-dasharray="8 4" class="svg-rotate"/>
+                <circle cx="250" cy="200" r="130" fill="none" stroke="rgba(124,58,237,.08)" stroke-width="1" stroke-dasharray="4 8" class="svg-rotate-reverse"/>
+                <g stroke="url(#slg)" stroke-width="1.2" fill="none">
+                    <path class="svg-draw-line" d="M250,186 L250,75"/>
+                    <path class="svg-draw-line" d="M264,200 L400,200" style="animation-delay:.4s"/>
+                    <path class="svg-draw-line" d="M250,214 L250,325" style="animation-delay:.8s"/>
+                    <path class="svg-draw-line" d="M236,200 L100,200" style="animation-delay:1.2s"/>
+                    <path class="svg-draw-line" d="M264,186 L355,115" style="animation-delay:1.6s"/>
+                    <path class="svg-draw-line" d="M236,214 L145,285" style="animation-delay:2s"/>
+                </g>
+                <g filter="url(#gl)">
+                    <circle cx="250" cy="75" r="6" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:.2s"/>
+                    <circle cx="400" cy="200" r="6" fill="#c084fc" class="svg-node--breathe" style="animation-delay:.6s"/>
+                    <circle cx="250" cy="325" r="6" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:1s"/>
+                    <circle cx="100" cy="200" r="6" fill="#c084fc" class="svg-node--breathe" style="animation-delay:1.4s"/>
+                    <circle cx="355" cy="115" r="5" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:1.8s"/>
+                    <circle cx="145" cy="285" r="5" fill="#c084fc" class="svg-node--breathe" style="animation-delay:2.2s"/>
+                </g>
+                <text x="250" y="60" text-anchor="middle" fill="rgba(167,139,250,.3)" font-size="7" font-family="Inter,sans-serif">USE CASES</text>
+                <text x="415" y="195" text-anchor="start" fill="rgba(167,139,250,.3)" font-size="7" font-family="Inter,sans-serif">CAMPAIGNS</text>
+                <text x="250" y="350" text-anchor="middle" fill="rgba(167,139,250,.3)" font-size="7" font-family="Inter,sans-serif">PLATFORMS</text>
+                <text x="85" y="195" text-anchor="end" fill="rgba(167,139,250,.3)" font-size="7" font-family="Inter,sans-serif">ROADMAP</text>
+            </svg>
+        </div>
+        <div class="svc-deep__text reveal">
+            <span class="svc-kicker">Deep Dive · 01</span>
+            <h2>AI Consulting &amp; Strategy</h2>
+            <p>AI adoption often fails not because of the technology, but because of a lack of clarity. Many organisations experiment with tools without defining where AI fits into their marketing ecosystem and how it connects to business objectives.</p>
+            <p>Our consulting approach starts with understanding your business, your content needs, and your marketing challenges. From there, we define where AI can create real, measurable impact and how it should be implemented across your organisation.</p>
+            <ul class="abt-bullets">
+                <li>Identifying high-impact AI use cases across marketing and content operations</li>
+                <li>Mapping opportunities across campaigns, workflows, and platforms</li>
+                <li>Designing AI adoption roadmaps aligned with business goals</li>
+                <li>Defining how teams will use AI on a daily basis with clear SOPs</li>
+            </ul>
+            <div class="svc-outcome">Outcome:<br><strong>A clear and structured AI strategy that reduces trial-and-error and improves ROI from day one.</strong></div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<!-- ═══════════════ DEEP DIVE 2: Workflow Architecture ═══════════════ -->
+<section class="abt-sec" id="workflowArchitecture">
+<div class="container">
+    <div class="svc-deep svc-deep--flip">
+        <div class="svc-deep__visual reveal-scale" style="position:relative;">
+            <svg viewBox="0 0 500 350" aria-hidden="true" style="width:100%;border-radius:20px;">
+                <rect x="30" y="135" width="110" height="80" rx="12" fill="rgba(124,58,237,.05)" stroke="rgba(124,58,237,.2)" stroke-width="1.5"/>
+                <text x="85" y="180" text-anchor="middle" fill="rgba(167,139,250,.55)" font-size="8" font-family="Inter,sans-serif" font-weight="600">INPUT</text>
+                <rect x="195" y="110" width="110" height="130" rx="12" fill="rgba(124,58,237,.07)" stroke="rgba(124,58,237,.3)" stroke-width="1.5"/>
+                <text x="250" y="170" text-anchor="middle" fill="rgba(167,139,250,.65)" font-size="10" font-family="Inter,sans-serif" font-weight="700">WORKFLOW</text>
+                <text x="250" y="195" text-anchor="middle" fill="rgba(167,139,250,.35)" font-size="7" font-family="Inter,sans-serif">AI ENGINE</text>
+                <rect x="360" y="135" width="110" height="80" rx="12" fill="rgba(124,58,237,.05)" stroke="rgba(124,58,237,.2)" stroke-width="1.5"/>
+                <text x="415" y="180" text-anchor="middle" fill="rgba(167,139,250,.55)" font-size="8" font-family="Inter,sans-serif" font-weight="600">OUTPUT</text>
+                <g stroke="url(#slg)" stroke-width="2" fill="none">
+                    <path class="svg-draw-line" d="M140,175 L195,175"/>
+                    <path class="svg-draw-line" d="M305,175 L360,175" style="animation-delay:.5s"/>
+                </g>
+                <g stroke="rgba(124,58,237,.12)" stroke-width="1" stroke-dasharray="4 4" fill="none">
+                    <path class="svg-draw-line" d="M250,110 L250,55" style="animation-delay:.8s"/>
+                    <path class="svg-draw-line" d="M250,240 L250,300" style="animation-delay:1.2s"/>
+                </g>
+                <g filter="url(#gl)">
+                    <circle cx="250" cy="50" r="5" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:.5s"/>
+                    <circle cx="250" cy="305" r="5" fill="#c084fc" class="svg-node--breathe" style="animation-delay:1s"/>
+                </g>
+                <text x="250" y="38" text-anchor="middle" fill="rgba(167,139,250,.3)" font-size="7" font-family="Inter,sans-serif">TOOLS &amp; APIs</text>
+                <text x="250" y="325" text-anchor="middle" fill="rgba(167,139,250,.3)" font-size="7" font-family="Inter,sans-serif">FEEDBACK LOOP</text>
+            </svg>
+        </div>
+        <div class="svc-deep__text reveal">
+            <span class="svc-kicker">Deep Dive · 02</span>
+            <h2>AI Workflow Architecture</h2>
+            <p>The real power of AI lies not in any single tool, but in how it is structured into workflows. Without a defined system, AI outputs become inconsistent and impossible to scale across teams and campaigns.</p>
+            <p>We design AI workflows that connect tools, prompts, and processes into a repeatable structure that teams can follow independently. These workflows ensure that AI is not used randomly, but as part of a controlled and scalable operational system.</p>
+            <p><strong>Examples of workflows we build:</strong></p>
+            <ul class="abt-bullets">
+                <li>Campaign ideation systems for marketing teams</li>
+                <li>Social media content generation pipelines</li>
+                <li>Script and video production workflows</li>
+                <li>SEO and content distribution systems</li>
+            </ul>
+            <div class="svc-outcome">Why this matters:<br><strong>It enables consistency, improves efficiency, and reduces dependency on individual expertise.</strong></div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<!-- ═══════════════ BRAND BRAIN — Full Image Feature ═══════════════ -->
+<section class="abt-sec abt-sec--alt" id="brandBrain">
+<div class="container">
+    <div class="svc-deep">
+        <div class="svc-deep__visual reveal-scale">
+            <img src="/images/services-brand-brain.png" alt="Brand Brain — AI-powered brand intelligence system with neural pathways connecting voice, messaging, audience segments and templates" loading="lazy"/>
+        </div>
+        <div class="svc-deep__text reveal">
+            <span class="svc-kicker">Deep Dive · 03</span>
+            <h2>Brand Intelligence Systems <span style="opacity:.45;">(Brand Brain)</span></h2>
+            <p>One of the biggest challenges with AI-generated content is maintaining brand consistency. Without structure, AI outputs quickly become misaligned with your tone, messaging, and positioning — creating more work, not less.</p>
+            <p>We solve this by building AI-powered <strong>Brand Brain</strong> systems — structured frameworks that train AI on your brand so that every output feels authentic and on-brand.</p>
+            <ul class="abt-bullets">
+                <li>Defining brand voice, tone, and messaging frameworks</li>
+                <li>Mapping audience segments and communication styles</li>
+                <li>Creating prompt libraries aligned with brand identity</li>
+                <li>Designing reusable templates for teams to use daily</li>
+            </ul>
+            <div class="svc-outcome">Result:<br><strong>Every piece of content — across platforms and formats — stays aligned with your brand.</strong></div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<!-- ═══════════════ CREATIVE PRODUCTION — Image + Cards ═══════════════ -->
+<section class="abt-sec" id="creativeProduction">
+<div class="container">
+    <div style="text-align:center;max-width:700px;margin:0 auto 2.5rem;" class="reveal">
+        <span class="svc-kicker" style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.25em;color:var(--accent-secondary);margin-bottom:1rem;">Deep Dive · 04</span>
+        <h2 style="font-family:var(--font-heading);font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:1rem;">AI-Powered Creative Production</h2>
+        <p style="font-size:clamp(1rem,1.3vw,1.1rem);color:var(--text-secondary);line-height:1.8;margin:0 auto;">While our core focus is systems and workflows, we also support creative execution where required. This includes AI-powered content production for marketing and brand storytelling — built using structured, repeatable processes.</p>
+    </div>
+    <div class="svc-cinema reveal-scale" style="margin-bottom:3rem;border-radius:20px;">
+        <img src="/images/services-creative-production.png" alt="AI creative production studio — floating holographic screens with video editing, music production and visual content creation" loading="lazy"/>
+        <div class="svc-cinema__mask"></div>
+    </div>
+    <div class="abt-services-grid stagger-children">
+        <div class="abt-svc glass-card"><div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><polygon points="20,8 40,24 20,40" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 14v20" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></svg></div><h3>AI Ad Films</h3><p>Cinematic AI-generated ad films for digital campaigns and brand storytelling with structured production pipelines.</p></div>
+        <div class="abt-svc glass-card"><div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="18" stroke="#a78bfa" stroke-width="1.5"/><path d="M18 20c0 0 3-4 6-4s6 4 6 4v10c0 0-3 4-6 4s-6-4-6-4V20z" stroke="#7c3aed" stroke-width="1.5"/><circle cx="24" cy="24" r="3" fill="#c084fc"/></svg></div><h3>AI Music Videos</h3><p>Visual storytelling fused with AI artistry — conceptualised, produced, and delivered through scalable creative workflows.</p></div>
+        <div class="abt-svc glass-card"><div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><rect x="10" y="6" width="28" height="36" rx="4" stroke="#a78bfa" stroke-width="1.5"/><path d="M18 16h12M18 22h8" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/><circle cx="24" cy="34" r="3" fill="#c084fc"/></svg></div><h3>Short-Form Content</h3><p>Social-ready video content designed at scale for Instagram, YouTube Shorts, and digital marketing campaigns.</p></div>
+        <div class="abt-svc glass-card"><div class="abt-svc__icon"><svg viewBox="0 0 48 48" fill="none"><path d="M12 38V14l12-6 12 6v24l-12 6-12-6z" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/><circle cx="24" cy="24" r="4" fill="#c084fc"/></svg></div><h3>Product &amp; E-Commerce Visuals</h3><p>AI-generated product images, videos, and visual assets optimised for e-commerce and brand campaign performance.</p></div>
+    </div>
+</div>
+</section>
+
+
+<!-- ═══════════════ AI APPS + PROCESS ═══════════════ -->
+<section class="abt-sec abt-sec--alt" id="aiApplications">
+<div class="container">
+    <div class="svc-deep svc-deep--flip" style="margin-bottom:3rem;">
+        <div class="svc-deep__visual reveal-scale" style="position:relative;">
+            <svg viewBox="0 0 420 420" aria-hidden="true" style="width:100%;max-width:420px;border-radius:20px;">
+                <circle cx="210" cy="210" r="12" fill="#7c3aed" class="svg-node--breathe"/>
+                <text x="210" y="248" text-anchor="middle" fill="rgba(167,139,250,.4)" font-size="8" font-family="Inter,sans-serif">SYSTEM</text>
+                <circle cx="210" cy="210" r="55" fill="none" stroke="rgba(124,58,237,.2)" stroke-width="1.5" stroke-dasharray="8 4" class="svg-rotate"/>
+                <circle cx="210" cy="210" r="110" fill="none" stroke="rgba(124,58,237,.1)" stroke-width="1" stroke-dasharray="4 6" class="svg-rotate-reverse"/>
+                <circle cx="210" cy="210" r="165" fill="none" stroke="rgba(124,58,237,.05)" stroke-width="1" class="svg-rotate" style="animation-duration:50s"/>
+                <g filter="url(#gl)">
+                    <circle cx="210" cy="55" r="6" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:.2s"/>
+                    <circle cx="365" cy="210" r="6" fill="#c084fc" class="svg-node--breathe" style="animation-delay:.7s"/>
+                    <circle cx="210" cy="365" r="6" fill="#a78bfa" class="svg-node--breathe" style="animation-delay:1.2s"/>
+                    <circle cx="55" cy="210" r="6" fill="#c084fc" class="svg-node--breathe" style="animation-delay:1.7s"/>
+                </g>
+                <g stroke="url(#slg)" stroke-width="1.2" fill="none">
+                    <path class="svg-draw-line" d="M210,198 L210,55"/>
+                    <path class="svg-draw-line" d="M222,210 L365,210" style="animation-delay:.3s"/>
+                    <path class="svg-draw-line" d="M210,222 L210,365" style="animation-delay:.6s"/>
+                    <path class="svg-draw-line" d="M198,210 L55,210" style="animation-delay:.9s"/>
+                </g>
+            </svg>
+        </div>
+        <div class="svc-deep__text reveal">
+            <span class="svc-kicker">Deep Dive · 05</span>
+            <h2>AI Applications &amp; Workflow Automation</h2>
+            <p>Beyond marketing, we design and build AI-powered applications and systems that solve real business problems. These are not generic tools — but solutions tailored to specific use cases and workflows.</p>
+            <div class="svc-split-lists">
+                <div class="svc-split-list"><h4>We Build</h4><ul class="abt-bullets" style="margin:0;"><li>AI web applications</li><li>Agentic AI systems</li><li>Productivity tools</li><li>Workflow automation</li><li>AI-driven MVPs</li></ul></div>
+                <div class="svc-split-list"><h4>Use Cases</h4><ul class="abt-bullets" style="margin:0;"><li>Content automation</li><li>Campaign management</li><li>AI-powered assistants</li><li>Workflow orchestration</li></ul></div>
+            </div>
+            <div class="svc-outcome">Outcome:<br><strong>AI becomes embedded into your business processes, improving efficiency and scalability.</strong></div>
+        </div>
+    </div>
+
+    <!-- PROCESS TIMELINE -->
+    <div style="text-align:center;max-width:600px;margin:0 auto 2rem;" class="reveal">
+        <span class="svc-kicker" style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.25em;color:var(--accent-secondary);margin-bottom:1rem;">Our Methodology</span>
+        <h2 style="font-family:var(--font-heading);font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:1rem;">Our Approach</h2>
+        <p style="font-size:clamp(1rem,1.3vw,1.1rem);color:var(--text-secondary);line-height:1.8;margin:0 auto;">Every project follows a structured 7-step methodology to ensure clarity, usability, and sustained impact.</p>
+    </div>
+    <div class="svc-timeline stagger-children">
+        <div class="svc-step"><div class="svc-step__dot">01</div><h4>Problem</h4><span>Define the real challenge</span></div>
+        <div class="svc-step"><div class="svc-step__dot">02</div><h4>Use Case</h4><span>Identify AI impact areas</span></div>
+        <div class="svc-step"><div class="svc-step__dot">03</div><h4>Design</h4><span>Structure the workflows</span></div>
+        <div class="svc-step"><div class="svc-step__dot">04</div><h4>Select</h4><span>Choose right AI tools</span></div>
+        <div class="svc-step"><div class="svc-step__dot">05</div><h4>Build</h4><span>Implement the systems</span></div>
+        <div class="svc-step"><div class="svc-step__dot">06</div><h4>Train</h4><span>Enable your teams</span></div>
+        <div class="svc-step"><div class="svc-step__dot">07</div><h4>Optimise</h4><span>Refine &amp; scale output</span></div>
+    </div>
+    <p class="abt-coda reveal" style="margin-top:2.5rem;">This ensures AI is not just implemented — <strong class="text-gradient">it is sustained and scaled across your organisation.</strong></p>
+</div>
+</section>
+
+
+<!-- ═══════════════ WHO + WHY ═══════════════ -->
+<section class="abt-sec" id="whoAndWhy">
+<div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:5rem;align-items:start;">
+        <div class="reveal">
+            <span class="svc-kicker" style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.25em;color:var(--accent-secondary);margin-bottom:1rem;">Target Audience</span>
+            <h2 style="font-family:var(--font-heading);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:1.25rem;">Who This Is For</h2>
+            <p style="color:var(--text-secondary);line-height:1.85;margin-bottom:1.5rem;font-size:clamp(.95rem,1.15vw,1.05rem);">Our services are designed for organisations that rely on content, campaigns, and digital operations — where structured AI can create a significant competitive advantage in speed, consistency, and scale.</p>
+            <div class="abt-client-tags" style="margin-bottom:2rem;">
+                <span class="abt-client-tag" style="--d:0s">Marketing Teams</span>
+                <span class="abt-client-tag" style="--d:.1s">Creative Agencies</span>
+                <span class="abt-client-tag" style="--d:.2s">Media &amp; Entertainment</span>
+                <span class="abt-client-tag" style="--d:.3s">E-Commerce Brands</span>
+                <span class="abt-client-tag" style="--d:.4s">Startups &amp; Founders</span>
+                <span class="abt-client-tag" style="--d:.5s">Enterprise Organisations</span>
             </div>
         </div>
-        <div class="glow-orb glow-orb-1" aria-hidden="true"></div>
-    </section>
-
-    <!-- Deliverables -->
-    <section class="section" aria-label="Our deliverables">
-        <div class="container">
-            <div class="reveal">
-                <span class="section-label">Deliverables</span>
-                <h2 class="section-title">What We <span class="text-gradient">Create</span></h2>
-                <p class="section-subtitle">Every format, every platform — powered by AI creativity and human vision.
-                </p>
-            </div>
-            <div class="deliverables-grid stagger-children">
-                <% if (sections['deliverable']) { sections['deliverable'].forEach(d=> { %>
-                    <% var delExtra=d && d.extra_json ? JSON.parse(d.extra_json) : {}; var delStyle=`--tile-gradient:
-                        linear-gradient(135deg, ${d.extra.gradient || 'rgba(168,85,247,0.15)' } 0%, transparent 100%);
-                        `; if (delExtra.background_color) delStyle +=`background-color: ${delExtra.background_color}; `;
-                        if (delExtra.padding) delStyle +=`padding: ${delExtra.padding};`; %>
-                        <div class="deliverable-tile" data-editable-section="true" data-model="Section"
-                            data-id="<%= d.id %>" data-extra="<%= d.extra_json || '{}' %>" <%- delStyle ?
-                            `style="${delStyle}" ` : '' %>>
-                            <div class="tile-icon" data-editable="true" data-model="Section" data-id="<%= d.id %>"
-                                data-field="icon" data-type="text">
-                                <%= d.icon %>
-                            </div>
-                            <h4 data-editable="true" data-model="Section" data-id="<%= d.id %>" data-field="title"
-                                data-type="text">
-                                <%= d.title %>
-                            </h4>
-                            <p data-editable="true" data-model="Section" data-id="<%= d.id %>" data-field="description"
-                                data-type="text">
-                                <%= d.description %>
-                            </p>
-                        </div>
-                        <% }) } %>
+        <div class="reveal">
+            <span class="svc-kicker" style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.25em;color:var(--accent-secondary);margin-bottom:1rem;">Our Edge</span>
+            <h2 style="font-family:var(--font-heading);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:1.25rem;">Why X DOT AI</h2>
+            <p style="color:var(--text-secondary);line-height:1.85;margin-bottom:1.5rem;font-size:clamp(.95rem,1.15vw,1.05rem);">AI is evolving rapidly, but implementation remains the biggest challenge. What sets us apart is our ability to combine creative thinking with structured systems and practical, real-world execution.</p>
+            <div class="svc-why">
+                <div class="svc-why__card"><div class="svc-why__icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="3 2"/><path d="M8 12h8M12 8v8" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><h3>Systems Thinking</h3><p>We build repeatable, structured systems — not one-off experiments.</p></div></div>
+                <div class="svc-why__card"><div class="svc-why__icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#a78bfa" stroke-width="1.2"/><path d="M8 12h8M12 8v8" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><h3>Real-World Tested</h3><p>Every solution is validated in actual business environments.</p></div></div>
+                <div class="svc-why__card"><div class="svc-why__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M6 18l4-5 3 2 5-9" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="6" r="2" fill="#c084fc"/></svg></div><div><h3>Creative + Operational</h3><p>Marketing expertise meets technical precision and clarity.</p></div></div>
+                <div class="svc-why__card"><div class="svc-why__icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#a78bfa" stroke-width="1.2"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="#7c3aed" stroke-width="1.2"/></svg></div><div><h3>Teachable Workflows</h3><p>Every process is documented, structured, and designed to be taught.</p></div></div>
             </div>
         </div>
-    </section>
+    </div>
+</div>
+</section>
 
-    <!-- CTA Banner -->
-    <section class="cta-banner" aria-label="Get in touch">
-        <div class="container">
-            <div class="cta-content reveal-scale">
-                <h2>Ready to <span class="text-gradient">Supercharge</span> Your Creativity?</h2>
-                <p>Let us show you how AI can transform your creative pipeline.</p>
-                <a href="/contact" class="btn btn-primary">Start a Project <span class="btn-icon">→</span></a>
-            </div>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AI consulting for marketing teams?","acceptedAnswer":{"@type":"Answer","text":"AI consulting helps organisations identify where AI can be used in their marketing stack, design structured workflows, and implement systems for content creation, campaign execution, and brand consistency at scale."}},{"@type":"Question","name":"How can AI improve content production for brands?","acceptedAnswer":{"@type":"Answer","text":"AI enables faster ideation, automated content creation, and scalable production across text, images, and video — all while maintaining brand consistency through structured workflows and brand intelligence systems."}},{"@type":"Question","name":"Do you offer AI consulting in India?","acceptedAnswer":{"@type":"Answer","text":"Yes, X DOT AI works with brands, agencies, and marketing teams across India and globally. We offer both on-site workshops and remote consulting engagements."}},{"@type":"Question","name":"What is an AI workflow and why does it matter?","acceptedAnswer":{"@type":"Answer","text":"An AI workflow is a structured process where AI tools, prompts, and models are used in a defined sequence to produce consistent, scalable outputs. It transforms random AI usage into a reliable operational system."}},{"@type":"Question","name":"Can AI replace creative teams?","acceptedAnswer":{"@type":"Answer","text":"No. AI enhances creative execution and speeds up production, but human thinking, strategic direction, and creative judgement remain essential. We train teams to use AI as a force multiplier, not a replacement."}}]}
+</script>
+
+<section class="abt-sec abt-sec--alt" id="servicesFAQs">
+<div class="container">
+    <div style="text-align:center;max-width:600px;margin:0 auto 3rem;" class="reveal">
+        <h2 style="font-family:var(--font-heading);font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;">Frequently Asked <span class="text-gradient">Questions</span></h2>
+    </div>
+    <div class="faq-list reveal" id="servicesFaqList" style="max-width:800px;margin:0 auto;">
+        <div class="faq-item"><button class="faq-question" aria-expanded="false">What is AI consulting for marketing teams?<span class="faq-icon">+</span></button><div class="faq-answer" role="region"><div class="faq-answer-content">AI consulting helps organisations identify where AI can be used in their marketing stack, design structured workflows, and implement systems for content creation, campaign execution, and brand consistency at scale.</div></div></div>
+        <div class="faq-item"><button class="faq-question" aria-expanded="false">How can AI improve content production for brands?<span class="faq-icon">+</span></button><div class="faq-answer" role="region"><div class="faq-answer-content">AI enables faster ideation, automated content creation, and scalable production across text, images, and video — all while maintaining brand consistency through structured workflows and brand intelligence systems.</div></div></div>
+        <div class="faq-item"><button class="faq-question" aria-expanded="false">Do you offer AI consulting in India?<span class="faq-icon">+</span></button><div class="faq-answer" role="region"><div class="faq-answer-content">Yes, X DOT AI works with brands, agencies, and marketing teams across India and globally. We offer both on-site workshops and remote consulting engagements.</div></div></div>
+        <div class="faq-item"><button class="faq-question" aria-expanded="false">What is an AI workflow and why does it matter?<span class="faq-icon">+</span></button><div class="faq-answer" role="region"><div class="faq-answer-content">An AI workflow is a structured process where AI tools, prompts, and models are used in a defined sequence to produce consistent, scalable outputs. It transforms random AI usage into a reliable operational system.</div></div></div>
+        <div class="faq-item"><button class="faq-question" aria-expanded="false">Can AI replace creative teams?<span class="faq-icon">+</span></button><div class="faq-answer" role="region"><div class="faq-answer-content">No. AI enhances creative execution and speeds up production, but human thinking, strategic direction, and creative judgement remain essential. We train teams to use AI as a force multiplier, not a replacement.</div></div></div>
+    </div>
+</div>
+</section>
+
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<section class="abt-sec abt-cta-sec" id="servicesCTA">
+<div class="container">
+    <div class="abt-cta-card glass-card reveal-scale">
+        <div class="abt-cta-card__glow"></div>
+        <h2 class="abt-sec__h2">Let's Build Your <span class="text-gradient">AI&nbsp;System</span></h2>
+        <p class="abt-cta-card__sub">If you're looking to move beyond experimentation and implement AI in a structured, scalable way across your marketing, content, or operations — let's&nbsp;connect.</p>
+        <p class="abt-cta-card__tag">Build systems. Not just prompts.</p>
+        <div class="abt-cta-card__btns">
+            <a href="/contact" class="btn btn-primary btn-lg btn-magnetic">Book a Strategy Call <span class="btn-icon">→</span></a>
+            <a href="/portfolio" class="btn btn-secondary btn-lg">View Our Work</a>
         </div>
-    </section>
+    </div>
+</div>
+</section>
+</div><!-- /svc-page -->
 
-    <%- include('../partials/footer') %>
+<%- include('../partials/footer') %>
